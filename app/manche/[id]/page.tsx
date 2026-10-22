@@ -5,12 +5,17 @@ import { Suspense } from "react";
 import { choisirLettreAction, lancerPartieLibre, signalerDecisionAction, mancheSuivanteAction, mancheSuivanteSalonAction, quitterSalonAction, relancerJugement } from "@/app/actions";
 import { ChoixLettre } from "@/components/choix-lettre";
 import { ChatSalon } from "@/components/chat-salon";
+import { DernierResultat } from "@/components/dernier-resultat";
+import { Serie } from "@/components/serie";
 import { Decouverte } from "@/components/decouverte";
 import { SuiviSalon } from "@/components/suivi-salon";
 import { GrilleEnCours } from "@/components/grille-en-cours";
 import { CLASSE_PALIER, LegendePaliers } from "@/components/paliers";
 import { obtenirDb } from "@/db/client";
 import { lireChat, type ChatVu } from "@/lib/jeu/chat";
+import { positionAuDefi } from "@/lib/jeu/classement";
+import { jourAParis } from "@/lib/jeu/defi";
+import { dernierResultat, serie } from "@/lib/jeu/serie";
 import { freine, MESSAGES_D_ATTENTE } from "@/lib/jeu/limites";
 import { lireManche, type Manche } from "@/lib/jeu/manches";
 import { decouverte } from "@/lib/jeu/decouverte";
@@ -91,7 +96,17 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
   const fin = manche.salonCode && salon?.partie.etat === "terminee" ? await finDePartie(db, manche.salonCode, joueur.id) : null;
   const chat = manche.salonCode ? await lireChat(db, manche.salonCode, joueur.id) : undefined;
   const freinee = manche.etat !== "jugee" && !manche.salonCode && (await freine(db, "reponses", { joueurId: joueur.id }));
-  return <Resultat manche={manche} partie={partie} salon={salon} reponsesDeTous={reponsesDeTous} fin={fin} chat={chat} freinee={freinee} />;
+  // Le résultat du Défi porte la Série et la place au classement, qui ne sont plus sur l'accueil.
+  const apresDefi = manche.defiNumero !== null && manche.etat === "jugee" ? await apresLeDefi(db, joueur.id) : null;
+  return (
+    <Resultat manche={manche} partie={partie} salon={salon} reponsesDeTous={reponsesDeTous} fin={fin} chat={chat} freinee={freinee} apresDefi={apresDefi} />
+  );
+}
+
+async function apresLeDefi(db: Awaited<ReturnType<typeof obtenirDb>>, joueurId: string) {
+  const [laSerie, resultat] = await Promise.all([serie(db, joueurId), dernierResultat(db, joueurId)]);
+  const position = resultat ? await positionAuDefi(db, joueurId, resultat.numero) : null;
+  return { laSerie, resultat, position };
 }
 
 function Resultat({
@@ -102,6 +117,7 @@ function Resultat({
   fin,
   chat,
   freinee = false,
+  apresDefi = null,
 }: {
   manche: Manche;
   partie?: Partie;
@@ -111,6 +127,7 @@ function Resultat({
   chat?: ChatVu;
   /** L'appareil a envoyé trop de Réponses dans la minute : la correction attend. */
   freinee?: boolean;
+  apresDefi?: Awaited<ReturnType<typeof apresLeDefi>> | null;
 }) {
   const derniere = !manche.partie || manche.partie.numero >= manche.partie.nbManches || partie?.etat === "terminee";
   const defi = manche.defiNumero !== null;
@@ -190,6 +207,13 @@ function Resultat({
             );
           })}
         </ol>
+
+        {apresDefi && manche.defiNumero !== null && (
+          <>
+            <Serie {...apresDefi.laSerie} numeroDuJour={manche.defiNumero} />
+            {apresDefi.resultat && <DernierResultat resultat={apresDefi.resultat} aujourdHui={jourAParis(new Date())} position={apresDefi.position} />}
+          </>
+        )}
 
         {manche.etat === "jugee" && !salon && <SignalerUneDecision manche={manche} />}
 

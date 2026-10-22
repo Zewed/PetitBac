@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petit Bac — Accueil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Shantell+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="p-acc">
+
+<header class="top">
+  <div class="wrap top__in">
+    <a class="mark" href="index.html">Petit <span class="mark__hl">Bac</span></a>
+    <a class="me" href="#" aria-label="Ton pseudo : Juju. Le changer"><span class="me__k">Ton pseudo</span><span class="me__n">Juju</span></a>
+  </div>
+</header>
+
+<main class="wrap grille">
+  <h1 class="sr">Petit Bac : à quoi on joue ?</h1>
+
+  <!-- 1. Entre amis : créer un salon. La plus grande tuile, le surligneur jaune passé trois fois, une bulle de copain. -->
+  <form class="tuile cr" action="#" aria-labelledby="cr-t">
+    <span class="bulle" aria-hidden="true">Un petit bac ?</span>
+    <p class="kick">Entre amis</p>
+    <h2 id="cr-t" class="cr__t"><span class="cr__t1">Créer</span> <span class="cr__t2">un salon</span></h2>
+
+    <!-- le préréglage choisi, sur une bande de papier ; on le change sur la feuille (suite.html) -->
+    <div class="cr__pre">
+      <p class="cr__pn">Classique</p>
+      <p class="cr__pd">6 catégories · 1 min 30 · 5 manches</p>
+      <a class="ink-link cr__chg" href="suite.html" aria-label="Changer de préréglage (Classique)">Changer</a>
+    </div>
+    <input type="hidden" name="prereglage" value="classique">
+
+    <button class="btn btn--xl btn--wide cr__go" type="submit">Créer le salon <span aria-hidden="true">→</span></button>
+  </form>
+
+  <!-- 1 bis. Entre amis : rejoindre, en rose, une clé ; le champ du code directement dans la tuile -->
+  <section class="tuile rj" aria-labelledby="rj-t">
+    <!-- le titre, puis la clé centrée dans la place qui reste : à côté du titre sur téléphone, entre le titre et le champ sur ordinateur -->
+    <div class="rj__head">
+      <h2 id="rj-t" class="rj__t">Rejoindre un salon</h2>
+      <svg class="cle" viewBox="0 0 240 104" aria-hidden="true">
+        <path fill="#fff" fill-rule="evenodd" d="M52 6a46 46 0 1 1 0 92a46 46 0 1 1 0-92zm0 30a16 16 0 1 0 0 32a16 16 0 1 0 0-32z"/>
+        <path fill="#fff" d="M90 40h142l-8 24H90z"/>
+        <path fill="#fff" d="M196 60h22l-4 30h-22zM162 60h20l-3 20h-20z"/>
+      </svg>
+    </div>
+    <form class="join rj__form" action="#">
+      <div class="field"><input type="text" name="code" placeholder="Code ou lien" aria-label="Code ou lien du salon" autocomplete="off" autocapitalize="characters"></div>
+      <button class="btn btn--ink" type="submit">Rejoindre</button>
+    </form>
+  </section>
+
+  <!-- 2. Seul : la partie libre, en vert, un crayon ; le préréglage se choisit sur la feuille (suite-libre.html) -->
+  <section class="tuile se" aria-labelledby="se-t">
+    <div class="se__titles">
+      <p class="kick">Seul</p>
+      <h2 id="se-t" class="se__t">Partie libre</h2>
+    </div>
+    <svg class="crayon" viewBox="0 0 300 64" aria-hidden="true">
+      <path fill="#fff" d="M4 12h30v40H4z"/>
+      <path class="crayon__ink" d="M38 12h14v40H38z"/>
+      <path fill="#fff" d="M56 12h176v40H56z"/>
+      <path class="crayon__pan" d="M56 26h176v12H56z"/>
+      <path fill="#fff" d="M236 12l58 20-58 20z"/>
+      <path class="crayon__ink" d="M274 25l20 7-20 7z"/>
+    </svg>
+    <a class="se__go" href="suite-libre.html" aria-label="Jouer une partie libre : choisir le préréglage">Jouer <span aria-hidden="true">→</span></a>
+  </section>
+
+  <!-- 3. Le défi du jour, déjà fait : l'essentiel seulement, et la Lettre B écrite au stylo bleu -->
+  <section class="tuile dj" aria-labelledby="dj-t">
+    <span class="dj__l" role="img" aria-label="Lettre B">B</span>
+    <p class="kick" aria-hidden="true">Défi du jour</p>
+    <div class="dj__row">
+      <h2 id="dj-t" class="dj__t"><span class="dj__tk">Défi du jour </span>n°1</h2>
+      <p class="dj__fait">
+        <svg class="dj__tick" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5l4.2 4.3L16.5 5"/></svg>
+        <span>Fait</span>
+      </p>
+    </div>
+    <p class="dj__pts">15<small>pts</small></p>
+    <a class="ink-link dj__voir" href="#" aria-label="Voir mon résultat du défi n°1"><span>Voir<span class="dj__voir-x"> mon résultat</span></span><span aria-hidden="true">→</span></a>
+  </section>
+
+</main>
+</body>
+</html>

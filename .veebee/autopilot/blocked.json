@@ -3,5 +3,15 @@
     "kind": "waiting-human",
     "reason": "Les Comptes touchent à l'authentification : pas de faux. Il faut un vrai fournisseur (Supabase Auth via la Marketplace Vercel, ticket 29), un envoi d'e-mails pour le lien de connexion, et un client OAuth Google (ID et secret), que seul Antoine peut créer.",
     "pr": ""
+  },
+  "28": {
+    "kind": "waiting-human",
+    "reason": "Il faut la clé AI_GATEWAY_API_KEY (ou vercel link + vercel env pull) pour brancher Claude Haiku via Vercel AI Gateway.",
+    "pr": ""
+  },
+  "29": {
+    "kind": "waiting-human",
+    "reason": "Supabase n'est pas provisionné : à installer via la Marketplace Vercel.",
+    "pr": ""
   }
 }
