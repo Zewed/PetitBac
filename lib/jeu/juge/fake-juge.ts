@@ -4,7 +4,7 @@ import type { Decision, Juge, ReponseAJuger } from "./types";
 
 /**
  * Un faux Juge, en attendant le Juge IA (Claude Haiku via Vercel AI Gateway, sans clé pour l'instant).
- * Il ne connaît que les mots de LISTES_FAKE et refuse tout le reste ; il estime la part des joueurs
+ * Il ne connaît que les mots de LISTES_FAKE et refuse tout le reste (sauf pour une Catégorie qui n'a pas de liste) ; il estime la part des joueurs
  * d'après le rang du mot dans sa liste, les premiers étant les plus donnés.
  * Comme le ferait le vrai Juge, il range les variantes sous une seule Forme de référence :
  * article, pluriel, petite faute de frappe, abréviation.
@@ -12,6 +12,7 @@ import type { Decision, Juge, ReponseAJuger } from "./types";
 export class FakeJuge implements Juge {
   async juger(lettre: string, reponses: ReponseAJuger[]): Promise<Decision[]> {
     return reponses.map(({ categorie, saisie }) => {
+      if (!LISTES_FAKE[categorie]) return sansListe(lettre, saisie);
       const groupe = (LISTES_FAKE[categorie] ?? []).filter((mot) => normaliser(mot).startsWith(lettre.toLowerCase()));
       const rang = reconnaitre(groupe.map(normaliser), saisie);
       if (rang < 0) return { valide: false, formeReference: null, partEstimee: null };
@@ -20,6 +21,17 @@ export class FakeJuge implements Juge {
       return { valide: true, formeReference: groupe[rang], partEstimee: poids[rang] / somme };
     });
   }
+}
+
+/**
+ * Une Catégorie du Catalogue sans liste : le faux Juge accepte toute Réponse d'au moins deux lettres qui commence
+ * par la Lettre, et la compte Courante. Seul le vrai Juge saura dire si c'est bien un Dessert.
+ */
+function sansListe(lettre: string, saisie: string): Decision {
+  const nu = sansArticle(normaliser(saisie));
+  if (nu.length < 2 || !nu.startsWith(lettre.toLowerCase())) return { valide: false, formeReference: null, partEstimee: null };
+  const propre = saisie.trim().replace(/\s+/g, " ");
+  return { valide: true, formeReference: propre.charAt(0).toUpperCase() + propre.slice(1), partEstimee: 0.15 };
 }
 
 /** Le rang du mot reconnu dans le groupe, ou -1. */

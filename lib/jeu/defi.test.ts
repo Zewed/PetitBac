@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { choisirPseudo } from "./joueurs";
 import { commencerDefi, defiDuJour, DUREE_DEFI_S, monDefi } from "./defi";
 import { lireManche, terminerManche } from "./manches";
-import { PACK_CLASSIQUE } from "./packs";
+import { CATALOGUE } from "./packs";
 import { unJoueur } from "./test-outils";
 
 // Jeudi 22 octobre 2026, 20 h à Paris (heure d'été, UTC+2).
@@ -32,7 +32,7 @@ describe("Le Défi est le même pour tous", () => {
     const m1 = await commencerDefi(db, juju.id, JOUR_1);
     const m2 = await commencerDefi(db, lea.id, a("2026-10-22T19:30:00.000Z"));
     expect(m1.categories).toHaveLength(12);
-    for (const c of m1.categories) expect(PACK_CLASSIQUE).toContain(c);
+    for (const c of m1.categories) expect(CATALOGUE).toContain(c);
     expect(m2.lettre).toBe(m1.lettre);
     expect(m2.categories).toEqual(m1.categories);
     expect(["K", "Q", "W", "X", "Y", "Z"]).not.toContain(m1.lettre);

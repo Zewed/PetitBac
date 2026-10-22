@@ -2,7 +2,7 @@ import { and, desc, eq, ne } from "drizzle-orm";
 import { manches, parties } from "@/db/schema";
 import type { Db } from "@/db/types";
 import { categoriesPour, PREREGLAGES, type IdPrereglage } from "./prereglages";
-import { dureeStockeeS, lettrePour, lettresRestantes, nbManchesPour, objectifDe, reglagesDe, reglagesDuPrereglage, type Reglages } from "./reglages";
+import { categoriesDeLaManche, categoriesInitiales, dureeStockeeS, lettrePour, lettresRestantes, nbManchesPour, objectifDe, reglagesDe, reglagesDuPrereglage, type Reglages } from "./reglages";
 
 type Options = { prereglage?: IdPrereglage; reglages?: Reglages; lettre?: string; maintenant?: Date; aleatoire?: () => number };
 
@@ -16,7 +16,7 @@ export async function commencerPartieLibre(db: Db, joueurId: string, { prereglag
       prereglage,
       nbManches: nbManchesPour(r),
       dureeS: dureeStockeeS(r),
-      categories: categoriesPour(prereglage, aleatoire),
+      categories: prereglage === "personnalise" ? categoriesInitiales(r, aleatoire) : categoriesPour(prereglage, aleatoire),
       reglages: prereglage === "personnalise" ? r : null,
     })
     .returning();
@@ -50,7 +50,7 @@ async function lancerManche(
       numero,
       // En Partie libre, « choisie par l'Hôte », c'est le Joueur qui choisit.
       lettre: lettrePour(reglages, dejaTirees, { lettre: reglages.choixLettre === "hote" ? lettre : undefined, aleatoire }),
-      categories: partie.categories,
+      categories: categoriesDeLaManche(reglages, partie.categories, numero, aleatoire),
       commenceeLe: maintenant,
       finitLe: new Date(maintenant.getTime() + partie.dureeS * 1000),
     })
