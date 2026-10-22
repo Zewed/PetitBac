@@ -8,6 +8,7 @@ import { obtenirDb } from "@/db/client";
 import { DernierResultat } from "@/components/dernier-resultat";
 import { Serie } from "@/components/serie";
 import { jourAParis, jourEnToutesLettres, monDefi, NB_CATEGORIES_DEFI } from "@/lib/jeu/defi";
+import { positionAuDefi } from "@/lib/jeu/classement";
 import { dernierResultat, serie } from "@/lib/jeu/serie";
 import { records } from "@/lib/jeu/parties";
 import { ORDRE_PREREGLAGES, PREREGLAGES } from "@/lib/jeu/prereglages";
@@ -37,11 +38,12 @@ async function Contenu() {
   const meilleurs = await records(db, joueur.id);
   const defi = await monDefi(db, joueur.id);
   const [laSerie, resultat] = await Promise.all([serie(db, joueur.id), dernierResultat(db, joueur.id)]);
+  const position = resultat ? await positionAuDefi(db, joueur.id, resultat.numero) : null;
   return (
     <>
       <BlocDefi {...defi} />
       <Serie {...laSerie} numeroDuJour={defi.defi.numero} />
-      {resultat && <DernierResultat resultat={resultat} aujourdHui={jourAParis(new Date())} />}
+      {resultat && <DernierResultat resultat={resultat} aujourdHui={jourAParis(new Date())} position={position} />}
       <section className="seul" aria-labelledby="seul-t">
         <h2 id="seul-t" className="sec">
           <span className="sec__hl">Seul</span>

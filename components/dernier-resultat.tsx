@@ -11,7 +11,15 @@ function quand(date: string, aujourdHui: string): string {
   return new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${date}T12:00:00Z`));
 }
 
-export function DernierResultat({ resultat, aujourdHui }: { resultat: Resultat; aujourdHui: string }) {
+export function DernierResultat({
+  resultat,
+  aujourdHui,
+  position,
+}: {
+  resultat: Resultat;
+  aujourdHui: string;
+  position: { joueurs: number; mieuxQue: number | null } | null;
+}) {
   const compte = new Map<string, number>();
   for (const p of resultat.cases) compte.set(p ?? "vide", (compte.get(p ?? "vide") ?? 0) + 1);
   const description = [...compte].map(([p, n]) => `${n} ${p === "vide" ? "à 0 point" : LIBELLE[p]}`).join(", ");
@@ -48,6 +56,20 @@ export function DernierResultat({ resultat, aujourdHui }: { resultat: Resultat; 
           {resultat.total}
           <small>pts</small>
         </p>
+        {position &&
+          (position.mieuxQue === null ? (
+            <p className="hier__rank">
+              <b>Premier</b> à finir ce défi.
+              <br />
+              Ta place arrive avec les suivants.
+            </p>
+          ) : (
+            <p className="hier__rank">
+              mieux que <b>{position.mieuxQue} %</b>
+              <br />
+              des joueurs
+            </p>
+          ))}
       </div>
       <BoutonPartager texte={texteDePartage(resultat)} />
     </section>
