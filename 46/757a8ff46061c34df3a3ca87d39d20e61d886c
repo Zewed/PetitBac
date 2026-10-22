@@ -1,0 +1,44 @@
+app/jeu.css
+  s_f47e83bd1733a2::t_7e572a6146744a 257-265
+  s_f47e83bd1733a2::t_2f97046d91b5e1 248
+db/schema.ts
+  s_f47e83bd1733a2::t_8163b21a580dbc 275-293
+lib/jeu/manches.ts
+  s_f47e83bd1733a2::t_f5811734beb928 1-2,16-27,60-66,83,90
+db/migrations/0013_wet_freak.sql
+  s_f47e83bd1733a2::t_8163b21a580dbc 1-12
+db/migrations/meta/0013_snapshot.json
+  s_f47e83bd1733a2::t_8163b21a580dbc 1-1368
+.veebee/tickets/21-joueur-signale-une-decision.md
+  s_f47e83bd1733a2::t_1d80a2268ee322 8
+lib/jeu/signalement.test.ts
+  s_f47e83bd1733a2::t_8163b21a580dbc 1-53
+app/actions.ts
+  s_f47e83bd1733a2::t_7e572a6146744a 18,251-257
+  s_f47e83bd1733a2::t_a1a23d5c05aca4 258
+lib/jeu/signalement.ts
+  s_f47e83bd1733a2::t_8163b21a580dbc 1-49
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_8163b21a580dbc 95-101
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_8163b21a580dbc 35
+app/manche/[id]/page.tsx
+  s_f47e83bd1733a2::t_7e572a6146744a 5,189-190,314-346
+  s_f47e83bd1733a2::t_04bbbe24d4d578 347-349
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "46757a8ff46061c34df3a3ca87d39d20e61d886c",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
