@@ -291,3 +291,14 @@ export const signalementsReponses = pgTable("signalements_reponses", {
   etat: text("etat").$type<"en_attente" | "tranche">().notNull().default("en_attente"),
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),
 });
+
+/** Les compteurs des limites anti-abus : combien d'envois une clé (appareil ou adresse IP) a faits dans une minute. */
+export const compteurs = pgTable(
+  "compteurs",
+  {
+    cle: text("cle").notNull(),
+    fenetre: timestamp("fenetre", { withTimezone: true }).notNull(),
+    n: integer("n").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.cle, t.fenetre] })],
+);

@@ -11,6 +11,7 @@ import { GrilleEnCours } from "@/components/grille-en-cours";
 import { CLASSE_PALIER, LegendePaliers } from "@/components/paliers";
 import { obtenirDb } from "@/db/client";
 import { lireChat, type ChatVu } from "@/lib/jeu/chat";
+import { freine, MESSAGES_D_ATTENTE } from "@/lib/jeu/limites";
 import { lireManche, type Manche } from "@/lib/jeu/manches";
 import { decouverte } from "@/lib/jeu/decouverte";
 import { finDePartie, type FinDePartie } from "@/lib/jeu/fin-partie";
@@ -89,7 +90,8 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
   const reponsesDeTous = manche.salonCode ? await decouverte(db, manche.salonCode, joueur.id) : null;
   const fin = manche.salonCode && salon?.partie.etat === "terminee" ? await finDePartie(db, manche.salonCode, joueur.id) : null;
   const chat = manche.salonCode ? await lireChat(db, manche.salonCode, joueur.id) : undefined;
-  return <Resultat manche={manche} partie={partie} salon={salon} reponsesDeTous={reponsesDeTous} fin={fin} chat={chat} />;
+  const freinee = manche.etat !== "jugee" && !manche.salonCode && (await freine(db, "reponses", { joueurId: joueur.id }));
+  return <Resultat manche={manche} partie={partie} salon={salon} reponsesDeTous={reponsesDeTous} fin={fin} chat={chat} freinee={freinee} />;
 }
 
 function Resultat({
@@ -99,6 +101,7 @@ function Resultat({
   reponsesDeTous,
   fin,
   chat,
+  freinee = false,
 }: {
   manche: Manche;
   partie?: Partie;
@@ -106,6 +109,8 @@ function Resultat({
   reponsesDeTous?: Awaited<ReturnType<typeof decouverte>>;
   fin?: FinDePartie | null;
   chat?: ChatVu;
+  /** L'appareil a envoyé trop de Réponses dans la minute : la correction attend. */
+  freinee?: boolean;
 }) {
   const derniere = !manche.partie || manche.partie.numero >= manche.partie.nbManches || partie?.etat === "terminee";
   const defi = manche.defiNumero !== null;
@@ -156,8 +161,8 @@ function Resultat({
           </p>
         ) : (
           <div className="panne" role="alert">
-            <p className="panne__t">Le Juge ne répond pas.</p>
-            <p>Ta grille est gardée telle quelle. Relance le jugement pour voir tes points.</p>
+            <p className="panne__t">{freinee ? "Doucement !" : "Le Juge ne répond pas."}</p>
+            <p>{freinee ? MESSAGES_D_ATTENTE.reponses : "Ta grille est gardée telle quelle. Relance le jugement pour voir tes points."}</p>
             <form action={relancerJugement.bind(null, manche.id)}>
               <button className="btn" type="submit">
                 Relancer le jugement
