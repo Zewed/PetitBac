@@ -4,6 +4,7 @@ import type { Db } from "@/db/types";
 import { mancheDuSalon } from "./decouverte";
 import { palierPourPart } from "./paliers";
 import { normaliser, sansArticle } from "./texte";
+import { reglagesDe } from "./reglages";
 
 type Resultat<T = object> = ({ ok: true } & T) | { ok: false; erreur: string };
 
@@ -15,6 +16,7 @@ type Resultat<T = object> = ({ ok: true } & T) | { ok: false; erreur: string };
 export async function contester(db: Db, code: string, reponseId: string, joueurId: string): Promise<Resultat<{ contestationId: string }>> {
   const m = await mancheDuSalon(db, code, joueurId);
   if (!m || !m.grilles.length || !m.grilles.every((g) => g.etat === "jugee")) return { ok: false, erreur: "On conteste pendant la découverte des points." };
+  if (!reglagesDe(m.partie).contestation) return { ok: false, erreur: "La contestation est désactivée pour cette partie." };
   const [reponse] = await db.select().from(reponses).where(and(eq(reponses.id, reponseId), inArray(reponses.mancheId, m.grilles.map((g) => g.id))));
   if (!reponse) return { ok: false, erreur: "Cette réponse n'est pas dans la manche." };
   if (reponse.saisie.trim() === "") return { ok: false, erreur: "Une case vide ne se conteste pas." };

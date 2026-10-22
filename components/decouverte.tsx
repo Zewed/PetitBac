@@ -2,10 +2,15 @@ import { contesterAction, reagirAction, voterAction } from "@/app/actions";
 import { CLASSE_PALIER } from "@/components/paliers";
 import { EMOJIS, type ReponseDecouverte } from "@/lib/jeu/decouverte";
 
-type Props = { code: string; categories: { categorie: string; reponses: ReponseDecouverte[] }[] };
+type Props = {
+  code: string;
+  categories: { categorie: string; reponses: ReponseDecouverte[] }[];
+  /** Désactivée dans les Réglages de la Partie : le bouton « Contester » n'apparaît pas. */
+  contestation?: boolean;
+};
 
 /** La découverte des points : les Réponses de tout le monde, Catégorie par Catégorie, et de quoi se chambrer. */
-export function Decouverte({ code, categories }: Props) {
+export function Decouverte({ code, categories, contestation = true }: Props) {
   return (
     <section className="decouverte" aria-labelledby="dec-t">
       <h2 id="dec-t" className="kick">
@@ -25,7 +30,7 @@ export function Decouverte({ code, categories }: Props) {
                   <span className="dec__pts">
                     <b>{r.points}</b> {vide ? "vide" : refus ? "refusée" : r.palier}
                   </span>
-                  {!vide && <Contestation code={code} r={r} />}
+                  {!vide && contestation && <Contestation code={code} r={r} />}
                   <span className="dec__reac">
                     {r.moi
                       ? r.reactions.map((x) => (

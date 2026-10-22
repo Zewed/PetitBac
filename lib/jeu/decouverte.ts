@@ -2,6 +2,7 @@ import { and, desc, eq, inArray } from "drizzle-orm";
 import { contestations, joueurs, manches, parties, reactions, reponses, salonJoueurs, salons, votes } from "@/db/schema";
 import type { Db } from "@/db/types";
 import { codeDepuisSaisie } from "./salons";
+import { reglagesDe } from "./reglages";
 
 /** La palette des réactions : de quoi chambrer, sans pouvoir écrire n'importe quoi. */
 export const EMOJIS = ["😂", "🔥", "👏", "🤯", "🤔"] as const;
@@ -56,6 +57,8 @@ export async function decouverte(db: Db, code: string, joueurId: string) {
     ? await db.select().from(votes).where(inArray(votes.contestationId, contestees.map((x) => x.c.id)))
     : [];
   return {
+    /** La Contestation est-elle activée dans les Réglages de la Partie ? */
+    contestation: reglagesDe(m.partie).contestation,
     categories: m.partie.categories.map((categorie) => ({
       categorie,
       reponses: lignes

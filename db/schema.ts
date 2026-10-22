@@ -11,6 +11,7 @@ import {
   unique,
   uuid,
 } from "drizzle-orm/pg-core";
+import type { Reglages } from "@/lib/jeu/reglages";
 
 export const joueurs = pgTable("joueurs", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -31,6 +32,10 @@ export const parties = pgTable("parties", {
   nbManches: integer("nb_manches").notNull(),
   dureeS: integer("duree_s").notNull(),
   categories: jsonb("categories").$type<string[]>().notNull(),
+  /** Les Réglages d'une Partie Personnalisée ; null : ceux de son Préréglage. */
+  reglages: jsonb("reglages").$type<Reglages>(),
+  /** La Lettre de la prochaine Manche, choisie par le dernier de la Manche précédente. */
+  lettreSuivante: text("lettre_suivante"),
   etat: text("etat").$type<EtatPartie>().notNull().default("en_cours"),
   total: integer("total").notNull().default(0),
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),

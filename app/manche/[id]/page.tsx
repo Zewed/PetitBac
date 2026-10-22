@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { lancerPartieLibre, mancheSuivanteAction, mancheSuivanteSalonAction, quitterSalonAction, relancerJugement } from "@/app/actions";
+import { choisirLettreAction, lancerPartieLibre, mancheSuivanteAction, mancheSuivanteSalonAction, quitterSalonAction, relancerJugement } from "@/app/actions";
+import { ChoixLettre } from "@/components/choix-lettre";
 import { ChatSalon } from "@/components/chat-salon";
 import { Decouverte } from "@/components/decouverte";
 import { SuiviSalon } from "@/components/suivi-salon";
@@ -15,6 +16,8 @@ import { decouverte } from "@/lib/jeu/decouverte";
 import { finDePartie, type FinDePartie } from "@/lib/jeu/fin-partie";
 import { etatPartieSalon, type EtatPartieSalon } from "@/lib/jeu/partie-salon";
 import { lirePartie, type Partie } from "@/lib/jeu/parties";
+import { etiquetteManche } from "@/lib/jeu/reglages";
+import { casesAvantStop } from "@/lib/jeu/stop";
 import { joueurCourant } from "@/lib/session";
 
 export default function PageManche({ params }: PageProps<"/manche/[id]">) {
@@ -56,7 +59,14 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
                 ? `Partie libre · ${manche.partie.nom}`
                 : "Partie libre"
         }
-        etiquette={manche.defiNumero ? `Défi n°${manche.defiNumero}` : manche.partie ? `Manche ${manche.partie.numero}/${manche.partie.nbManches}` : "Partie libre"}
+        etiquette={
+          manche.defiNumero
+            ? `Défi n°${manche.defiNumero}`
+            : manche.partie
+              ? etiquetteManche(manche.partie.numero, manche.partie.nbManches, manche.partie.reglages)
+              : "Partie libre"
+        }
+        sansLimite={manche.sansLimite}
         salon={
           manche.salonCode && salon
             ? {
@@ -64,6 +74,11 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
                 titreScores: salon.manche.numero > 1 ? `Scores après la manche ${salon.manche.numero - 1}` : "Les joueurs",
                 scores: salon.classement,
                 stopPar: salon.manche.stopPar,
+                stop: {
+                  actif: salon.reglages.stop.actif,
+                  cases: casesAvantStop(salon.reglages.stop.des, manche.categories.length),
+                  graceS: salon.reglages.stop.graceS,
+                },
               }
             : undefined
         }
@@ -92,7 +107,7 @@ function Resultat({
   fin?: FinDePartie | null;
   chat?: ChatVu;
 }) {
-  const derniere = !manche.partie || manche.partie.numero >= manche.partie.nbManches;
+  const derniere = !manche.partie || manche.partie.numero >= manche.partie.nbManches || partie?.etat === "terminee";
   const defi = manche.defiNumero !== null;
   return (
     <>
@@ -123,9 +138,7 @@ function Resultat({
         </div>
         {manche.partie && partie && (
           <p className="res__partie">
-            <span>
-              Manche <b>{manche.partie.numero}</b>/{manche.partie.nbManches}
-            </span>
+            <span>{etiquetteManche(manche.partie.numero, manche.partie.nbManches, manche.partie.reglages)}</span>
             {manche.etat === "jugee" && partie.etat !== "terminee" && (
               <span>
                 Total de la partie : <b>{partie.total} pts</b>
@@ -175,7 +188,9 @@ function Resultat({
 
         {manche.etat === "jugee" && partie?.etat === "terminee" && <FinDePartie partie={partie} />}
 
-        {salon && manche.salonCode && reponsesDeTous && <Decouverte code={manche.salonCode} categories={reponsesDeTous.categories} />}
+        {salon && manche.salonCode && reponsesDeTous && (
+          <Decouverte code={manche.salonCode} categories={reponsesDeTous.categories} contestation={reponsesDeTous.contestation} />
+        )}
 
         {salon && manche.salonCode && <ApresMancheSalon code={manche.salonCode} mancheId={manche.id} salon={salon} />}
 
@@ -186,7 +201,10 @@ function Resultat({
         {!salon && (
         <div className="res__actions">
           {defi ? null : manche.etat === "jugee" && !derniere && manche.partie ? (
-            <form action={mancheSuivanteAction.bind(null, manche.partie.id)}>
+            <form action={mancheSuivanteAction.bind(null, manche.partie.id)} className="choix-lettre">
+              {manche.partie.reglages.choixLettre === "hote" && partie && (
+                <ChoixLettre restantes={partie.lettresRestantes} titre="Choisis la lettre de la manche suivante" />
+              )}
               <button className="btn btn--wide" type="submit">
                 Manche suivante <span aria-hidden="true">→</span>
               </button>
@@ -194,6 +212,7 @@ function Resultat({
           ) : (
             <form action={lancerPartieLibre}>
               <input type="hidden" name="prereglage" value={partie?.prereglage ?? "classique"} />
+              {partie?.reglages && <input type="hidden" name="depuis" value={partie.id} />}
               <button className="btn btn--wide" type="submit">
                 Rejouer{partie ? ` en ${partie.nom}` : ""} <span aria-hidden="true">→</span>
               </button>
@@ -217,6 +236,11 @@ function FinDePartie({ partie }: { partie: Partie }) {
         {partie.total}
         <small>pts</small>
       </p>
+      {partie.objectif !== null && (
+        <p>
+          Objectif de {partie.objectif} pts {partie.total >= partie.objectif ? "atteint" : "manqué : plus de lettres à jouer"}
+        </p>
+      )}
       {partie.nouveauRecord ? (
         <p className="fin__rec">Nouveau record en {partie.nom} !</p>
       ) : (
@@ -233,7 +257,7 @@ function ApresMancheSalon({ code, mancheId, salon }: { code: string; mancheId: s
       <SuiviSalon code={code} mancheId={mancheId} />
       {!finie && (
         <h2 id="cl-t" className="kick">
-          Classement après la manche {salon.manche.numero}/{salon.manche.nbManches}
+          Classement après la {etiquetteManche(salon.manche.numero, salon.manche.nbManches, salon.reglages).replace("Manche", "manche")}
         </h2>
       )}
       {!finie && (
@@ -256,16 +280,24 @@ function ApresMancheSalon({ code, mancheId, salon }: { code: string; mancheId: s
           <p className="attente__p" role="status">
             On attend la fin de la manche pour tout le monde…
           </p>
-        ) : salon.jeSuisHote ? (
-          <form action={mancheSuivanteSalonAction.bind(null, code)}>
-            <button className="btn btn--wide" type="submit">
-              Manche suivante <span aria-hidden="true">→</span>
-            </button>
-          </form>
         ) : (
-          <p className="attente__p" role="status">
-            L&apos;hôte lance la manche {salon.manche.numero + 1} quand tout le monde est prêt.
-          </p>
+          <>
+            {salon.choixLettre && salon.reglages.choixLettre === "dernier" && <LettreDuDernier code={code} choix={salon.choixLettre} />}
+            {salon.jeSuisHote ? (
+              <form action={mancheSuivanteSalonAction.bind(null, code)} className="choix-lettre">
+                {salon.choixLettre && salon.reglages.choixLettre === "hote" && (
+                  <ChoixLettre restantes={salon.choixLettre.restantes} titre="Choisis la lettre de la manche suivante" />
+                )}
+                <button className="btn btn--wide" type="submit">
+                  Manche suivante <span aria-hidden="true">→</span>
+                </button>
+              </form>
+            ) : (
+              <p className="attente__p" role="status">
+                L&apos;hôte lance la manche {salon.manche.numero + 1} quand tout le monde est prêt.
+              </p>
+            )}
+          </>
         )}
         <form action={quitterSalonAction.bind(null, code)}>
           <button className="btn btn--ink btn--wide" type="submit">
@@ -274,6 +306,30 @@ function ApresMancheSalon({ code, mancheId, salon }: { code: string; mancheId: s
         </form>
       </div>
     </section>
+  );
+}
+
+/** Le dernier de la Manche choisit la Lettre de la suivante ; les autres voient qui choisit, sans la Lettre. */
+function LettreDuDernier({ code, choix }: { code: string; choix: NonNullable<EtatPartieSalon["choixLettre"]> }) {
+  if (!choix.moi) {
+    return (
+      <p className="attente__p" role="status">
+        {choix.lettre ? `${choix.par} a choisi la lettre de la prochaine manche.` : `${choix.par}, dernier de la manche, choisit la lettre de la prochaine.`}
+      </p>
+    );
+  }
+  return (
+    <form action={choisirLettreAction.bind(null, code)} className="choix-lettre">
+      <ChoixLettre
+        restantes={choix.restantes}
+        titre={choix.lettre ? `Tu as choisi le ${choix.lettre}. Tu peux encore changer d'avis :` : "Dernier de la manche : à toi de choisir la prochaine lettre."}
+        auHasard={false}
+        choisie={choix.lettre}
+      />
+      <button className="btn btn--ink btn--wide" type="submit">
+        {choix.lettre ? "Changer de lettre" : "Choisir cette lettre"}
+      </button>
+    </form>
   );
 }
 

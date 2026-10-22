@@ -5,6 +5,7 @@ import { coupleJoue } from "./cotes";
 import type { Decision, Juge } from "./juge/types";
 import { lireManche } from "./manches";
 import { palierPourPart } from "./paliers";
+import { objectifAtteint, reglagesDe } from "./reglages";
 import { normaliser, sansArticle } from "./texte";
 
 /**
@@ -70,15 +71,17 @@ export async function jugerManche(db: Db, juge: Juge, id: string, joueurId: stri
   if (manche.partie && !manche.salonCode) await compterPartie(db, manche.partie.id, manche.partie.numero === manche.partie.nbManches);
 }
 
-/** Le total de la Partie suit ses Manches jugées ; après la dernière, la Partie est terminée. */
+/** Le total de la Partie suit ses Manches jugées ; après la dernière, ou l'objectif atteint, la Partie est terminée. */
 async function compterPartie(db: Db, partieId: string, derniere: boolean) {
   const [{ total }] = await db
     .select({ total: sql<number>`coalesce(sum(${manches.total}), 0)::int` })
     .from(manches)
     .where(and(eq(manches.partieId, partieId), eq(manches.etat, "jugee")));
+  const [partie] = await db.select().from(parties).where(eq(parties.id, partieId));
+  const finie = derniere || objectifAtteint(reglagesDe(partie), [total]);
   await db
     .update(parties)
-    .set(derniere ? { total, etat: "terminee", termineeLe: new Date() } : { total })
+    .set(finie ? { total, etat: "terminee", termineeLe: new Date() } : { total })
     .where(eq(parties.id, partieId));
 }
 

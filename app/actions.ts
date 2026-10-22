@@ -11,9 +11,10 @@ import { choisirPseudo } from "@/lib/jeu/joueurs";
 import { obtenirJuge } from "@/lib/jeu/juge";
 import { jugerManche } from "@/lib/jeu/jugement";
 import { enregistrerReponses, lireManche, terminerManche, type Saisies } from "@/lib/jeu/manches";
-import { commencerPartieLibre, mancheSuivante } from "@/lib/jeu/parties";
+import { commencerPartieLibre, lirePartie, mancheSuivante } from "@/lib/jeu/parties";
 import { estPrereglage } from "@/lib/jeu/prereglages";
-import { cloturerManche, lancerPartieSalon, mancheSuivanteSalon } from "@/lib/jeu/partie-salon";
+import { lireReglages } from "@/lib/jeu/reglages";
+import { choisirLettreSuivante, cloturerManche, lancerPartieSalon, mancheSuivanteSalon } from "@/lib/jeu/partie-salon";
 import { quitterSalon } from "@/lib/jeu/presence";
 import { creerSalon, rejoindreSalon, type ResultatRejoindre } from "@/lib/jeu/salons";
 import { direStop } from "@/lib/jeu/stop";
@@ -30,11 +31,29 @@ export async function choisirPseudoAction(_avant: EtatPseudo, form: FormData): P
   return {};
 }
 
+/** Le Préréglage choisi, et pour « Personnalisé » ses Réglages ; undefined quand les Réglages ne tiennent pas. */
+async function prereglageDuFormulaire(form: FormData, salon: boolean, joueurId: string) {
+  const choix = form.get("prereglage");
+  const prereglage = estPrereglage(choix) ? choix : "classique";
+  const lettre = String(form.get("lettre") ?? "") || undefined;
+  if (prereglage !== "personnalise") return { prereglage, lettre };
+  // « Rejouer » reprend les Réglages de la Partie qu'on vient de finir.
+  const depuis = String(form.get("depuis") ?? "");
+  if (depuis) {
+    const precedente = await lirePartie(await obtenirDb(), depuis, joueurId);
+    if (precedente?.reglages) return { prereglage, reglages: precedente.reglages, lettre };
+  }
+  const lus = lireReglages(form, { salon });
+  return lus.ok ? { prereglage, reglages: lus.reglages, lettre } : undefined;
+}
+
 export async function lancerPartieLibre(form: FormData) {
   const joueur = await joueurCourant();
   if (!joueur) redirect("/");
-  const choix = form.get("prereglage");
-  const manche = await commencerPartieLibre(await obtenirDb(), joueur.id, { prereglage: estPrereglage(choix) ? choix : "classique" });
+  const choix = await prereglageDuFormulaire(form, false, joueur.id);
+  // Les Réglages sont vérifiés dans le formulaire avant l'envoi : ici, des Réglages invalides ne lancent rien.
+  if (!choix) redirect("/");
+  const manche = await commencerPartieLibre(await obtenirDb(), joueur.id, choix);
   redirect(`/manche/${manche.id}`);
 }
 
@@ -46,10 +65,11 @@ export async function lancerDefi() {
   redirect(`/manche/${manche.id}`);
 }
 
-export async function mancheSuivanteAction(partieId: string) {
+export async function mancheSuivanteAction(partieId: string, form?: FormData) {
   const joueur = await joueurCourant();
   if (!joueur) redirect("/");
-  const manche = await mancheSuivante(await obtenirDb(), partieId, joueur.id);
+  const lettre = String(form?.get("lettre") ?? "") || undefined;
+  const manche = await mancheSuivante(await obtenirDb(), partieId, joueur.id, { lettre });
   if (!manche) refresh();
   else redirect(`/manche/${manche.id}`);
 }
@@ -112,16 +132,26 @@ export async function rejoindreParCodeAction(_avant: EtatRejoindre, form: FormDa
 export async function lancerPartieSalonAction(code: string, form: FormData) {
   const joueur = await joueurCourant();
   if (!joueur) redirect("/");
-  const choix = form.get("prereglage");
-  const resultat = await lancerPartieSalon(await obtenirDb(), code, joueur.id, estPrereglage(choix) ? choix : "classique");
+  const choix = await prereglageDuFormulaire(form, true, joueur.id);
+  if (!choix) return;
+  const resultat = await lancerPartieSalon(await obtenirDb(), code, joueur.id, choix.prereglage, choix);
   if (!resultat.ok) return;
   refresh();
 }
 
-export async function mancheSuivanteSalonAction(code: string) {
+export async function mancheSuivanteSalonAction(code: string, form?: FormData) {
   const joueur = await joueurCourant();
   if (!joueur) redirect("/");
-  await mancheSuivanteSalon(await obtenirDb(), code, joueur.id);
+  const lettre = String(form?.get("lettre") ?? "") || undefined;
+  await mancheSuivanteSalon(await obtenirDb(), code, joueur.id, { lettre });
+  refresh();
+}
+
+/** Le dernier de la Manche choisit la Lettre de la suivante. */
+export async function choisirLettreAction(code: string, form: FormData) {
+  const joueur = await joueurCourant();
+  if (!joueur) redirect("/");
+  await choisirLettreSuivante(await obtenirDb(), code, joueur.id, String(form.get("lettre") ?? ""));
   refresh();
 }
 

@@ -3,6 +3,7 @@ import { manches, parties, reponses, salons, type EtatManche } from "@/db/schema
 import type { Db } from "@/db/types";
 
 import { PREREGLAGES, type IdPrereglage } from "./prereglages";
+import { estSansLimite, reglagesDe, type Reglages } from "./reglages";
 
 export type Manche = {
   id: string;
@@ -16,13 +17,25 @@ export type Manche = {
   /** Secondes qui restent au chrono selon l'horloge du serveur, 0 quand il est écoulé. */
   resteS: number;
   /** La Partie de cette Manche : son Préréglage, le numéro de la Manche et le total de la Partie. */
-  partie: { id: string; prereglage: IdPrereglage; nom: string; numero: number; nbManches: number; dureeS: number; total: number; etat: "en_cours" | "terminee" } | null;
+  partie: {
+    id: string;
+    prereglage: IdPrereglage;
+    nom: string;
+    numero: number;
+    nbManches: number;
+    dureeS: number;
+    total: number;
+    etat: "en_cours" | "terminee";
+    reglages: Reglages;
+  } | null;
   /** Le code du Salon quand la Manche est jouée entre amis. */
   salonCode: string | null;
   /** Le numéro du Défi du jour quand la Manche en est un. */
   defiNumero: number | null;
   /** La durée du chrono, en secondes. */
   dureeS: number;
+  /** Une Partie Personnalisée sans limite de temps : pas de chrono, c'est le STOP ou « J'ai fini » qui termine. */
+  sansLimite: boolean;
 };
 
 export async function lireManche(db: Db, id: string, joueurId: string, maintenant = new Date()): Promise<Manche | undefined> {
@@ -40,6 +53,7 @@ export async function lireManche(db: Db, id: string, joueurId: string, maintenan
     salonCode: salon?.code ?? null,
     // La durée du chrono vient de la Partie : un STOP raccourcit l'heure de fin, pas la durée affichée.
     dureeS: partie?.dureeS ?? Math.round((manche.finitLe.getTime() - manche.commenceeLe.getTime()) / 1000),
+    sansLimite: partie ? estSansLimite(partie.dureeS) : false,
     lettre: manche.lettre,
     categories: manche.categories,
     finitLe: manche.finitLe,
@@ -67,6 +81,7 @@ export async function lireManche(db: Db, id: string, joueurId: string, maintenan
           dureeS: partie.dureeS,
           total: partie.total,
           etat: partie.etat,
+          reglages: reglagesDe(partie),
         }
       : null,
   };

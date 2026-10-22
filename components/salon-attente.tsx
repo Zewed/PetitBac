@@ -88,7 +88,7 @@ export function SalonAttente({ initial, lien, qr, chat }: { initial: SalonEnDire
       {salon.jeSuisHote && !spectateur && salon.partie?.partie.etat !== "en_cours" && (
         <form className="lancer" action={lancerPartieSalonAction.bind(null, initial.code)}>
           <h2 className="kick">Préréglage de la partie</h2>
-          <ChoixPrereglage />
+          <ChoixPrereglage defaut={salon.prereglage} reglages="salon" />
           <button className="btn btn--xl btn--wide" type="submit" disabled={salon.enAttente}>
             Lancer la partie <span aria-hidden="true">→</span>
           </button>

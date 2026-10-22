@@ -5,6 +5,7 @@ milestone: null
 depends_on: [10, 12]
 design: .aeom/direction/index.html
 tracker: null            # filled after the push: { tool, id, url }
+status: done
 ---
 
 ## Ce que l'utilisateur fait
