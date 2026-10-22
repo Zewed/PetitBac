@@ -3,6 +3,7 @@ id: 04
 title: Les Paliers suivent les Réponses des Joueurs, recalculés chaque nuit
 milestone: null
 depends_on: [02]
+status: done
 design: null
 tracker: null            # filled after the push: { tool, id, url }
 ---
