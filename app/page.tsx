@@ -81,7 +81,7 @@ async function Contenu() {
           <span className="sec__hl">Seul</span>
         </h2>
         <form action={lancerPartieLibre} className="seul__form">
-          <ChoixPrereglage meilleurs={meilleurs} />
+          <ChoixPrereglage meilleurs={meilleurs} reglages="solo" />
           <button className="libre" type="submit">
             <span className="libre__t">
               Partie libre <span aria-hidden="true">→</span>

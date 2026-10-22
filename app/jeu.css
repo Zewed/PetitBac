@@ -50,9 +50,8 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 
 /* la Partie libre : les Préréglages au-dessus du gros bloc qu'on tape */
 .seul__form{display:grid;gap:6px}
-.seul .presets{grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 18px}
+.seul .presets{margin:0 0 18px}
 .preset__rec{display:block;margin-top:6px;font-family:var(--hand);font-weight:700;font-size:16px;color:var(--blue);white-space:nowrap}
-@media (max-width:560px){.seul .presets{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 .res__partie{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;font-size:17px;color:var(--ink-2)}
 .res__partie b{color:var(--ink);font-weight:800}
@@ -83,9 +82,8 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 .invite__qr svg{width:100%;height:100%;display:block}
 .chips--salon{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
 .chip__r{font-size:12px;font-weight:700;color:var(--ink-2)}
-.amis .presets{grid-template-columns:repeat(3,minmax(0,1fr))}
+
 .join__err{margin-top:10px}
-@media (max-width:560px){.amis .presets{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:900px){
   .attente{max-width:960px;margin:0 auto}
   .invite__cols{grid-template-columns:minmax(0,1fr) 240px;align-items:center}
@@ -95,8 +93,7 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 
 /* la Partie entre amis */
 .lancer{display:grid;gap:14px}
-.lancer .presets{grid-template-columns:repeat(3,minmax(0,1fr));margin:6px 0 4px}
-@media (max-width:560px){.lancer .presets{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.lancer .presets{margin:6px 0 4px}
 .fini__hint--salon{padding:6px 6px 28px;font-weight:700}
 .classement{display:grid;gap:8px}
 .classement li{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:52px;padding:0 18px;position:relative;isolation:isolate}
@@ -194,3 +191,35 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 .chat__form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px}
 .chat__form .btn{min-height:64px;padding:0 22px}
 .chat__muet{font-weight:700;color:var(--red);padding:6px 4px}
+
+/* ---------- Partie Personnalisée ---------- */
+.clock__t--libre{font-size:72px;line-height:.9}
+.stop__hint--seul{margin-top:0;padding:18px 8px;font-size:15px}
+.reglages{display:grid;gap:22px;margin:4px 0 22px;padding:22px 20px 20px;position:relative;isolation:isolate}
+.reglages::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--wash);transform:skewX(var(--skew-tall,var(--skew))) rotate(-.3deg)}
+.reglage{display:grid;gap:10px;border:0;padding:0;margin:0;min-width:0}
+.reglage legend{padding:0;margin-bottom:10px}
+.reglage__choix{display:grid;gap:6px}
+.option{display:flex;align-items:center;gap:10px;min-height:40px;font-size:16px;font-weight:600;cursor:pointer}
+.option input{width:20px;height:20px;margin:0;accent-color:var(--blue);flex:none}
+.reglage__val{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:15px;font-weight:700}
+.reglage__val small{font-size:14px;font-weight:600;color:var(--ink-2)}
+.reglage__val input[type=range]{flex:1 1 140px;min-width:0;accent-color:var(--blue)}
+.nombre{min-width:0;width:auto;min-height:48px;padding:0 12px;border:3px solid var(--ink);background:var(--paper);font:inherit;font-size:17px;font-weight:800;color:var(--ink)}
+input.nombre{width:96px}
+.reglage__aide{font-size:14px;line-height:1.4;color:var(--ink-2)}
+.lettres-choix{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.lettre-c{position:relative;display:grid;place-items:center;min-height:44px;cursor:pointer;font-weight:800;font-size:18px;isolation:isolate}
+.lettre-c input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.lettre-c span{position:relative;z-index:1;color:var(--ink-2);text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px}
+.lettre-c::before{content:"";position:absolute;inset:0;background:var(--paper);transform:skewX(var(--skew))}
+.lettre-c:has(input:checked)::before{background:var(--y)}
+.lettre-c:has(input:checked) span{color:var(--ink);text-decoration:none}
+.lettre-c:has(input:focus-visible)::before{box-shadow:var(--ring)}
+@media (min-width:720px){.lettres-choix{grid-template-columns:repeat(13,minmax(0,1fr))}}
+/* le choix de la Lettre avant une Manche */
+.choix-lettre{display:grid;gap:12px}
+.choix-lettre__t{font-size:17px;font-weight:700}
+.choix-lettre .lettre-c span{color:var(--ink);text-decoration:none}
+.choix-lettre .lettre-c::before{background:var(--wash)}
+.choix-lettre .lettre-c:has(input:checked)::before{background:var(--y)}

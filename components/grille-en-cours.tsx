@@ -16,8 +16,19 @@ type Props = {
   dureeS: number;
   titre: string;
   etiquette: string;
-  /** Entre amis : le Salon, et le classement avant cette Manche. Pas de « J'ai fini » : la Manche s'arrête pour tous à la fin du chrono. */
-  salon?: { code: string; titreScores: string; scores: { pseudo: string; total: number; moi: boolean }[]; stopPar: string | null };
+  /** Une Partie Personnalisée sans limite de temps : pas de chrono, jusqu'au STOP ou à « J'ai fini ». */
+  sansLimite?: boolean;
+  /**
+   * Entre amis : le Salon, le classement avant cette Manche et le STOP tel que la Partie le règle (désactivé, ou possible
+   * dès un certain nombre de cases). Pas de « J'ai fini » : la Manche s'arrête pour tous à la fin du chrono ou au STOP.
+   */
+  salon?: {
+    code: string;
+    titreScores: string;
+    scores: { pseudo: string; total: number; moi: boolean }[];
+    stopPar: string | null;
+    stop: { actif: boolean; cases: number; graceS: number };
+  };
 };
 
 function formater(s: number) {
@@ -25,7 +36,7 @@ function formater(s: number) {
 }
 
 /** La Grille d'une Manche : le chrono suit l'heure de fin donnée par le serveur, pas l'horloge du téléphone. */
-export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, maintenantServeur, dureeS, titre, etiquette, salon }: Props) {
+export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, maintenantServeur, dureeS, titre, etiquette, sansLimite = false, salon }: Props) {
   const [valeurs, setValeurs] = useState<Record<string, string>>(() =>
     Object.fromEntries(categories.map((c) => [c, saisies[c] ?? ""])),
   );
@@ -87,6 +98,10 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
   const resteS = Math.max(0, Math.ceil(resteMs / 1000));
   const remplies = categories.filter((c) => valeurs[c].trim() !== "").length;
   const ferme = fini || resteS === 0 || termineEtat;
+  // Sans limite, le chrono n'apparaît qu'après un STOP : il compte alors le Temps de grâce.
+  const sansChrono = sansLimite && !salon?.stopPar;
+  const stop = salon?.stop;
+  const manquent = stop ? Math.max(0, stop.cases - remplies) : 0;
 
   return (
     <>
@@ -113,14 +128,27 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
           </div>
           <div className="clock">
             <p className="clock__round">{etiquette}</p>
-            <p className="clock__t" aria-live="off">
-              {formater(resteS)}
-            </p>
-            <p className="clock__of">restantes sur {formater(dureeS)}</p>
+            {sansChrono ? (
+              <>
+                <p className="clock__t clock__t--libre" aria-label="Sans limite de temps">
+                  ∞
+                </p>
+                <p className="clock__of">{salon ? "jusqu'au STOP" : "pas de chrono"}</p>
+              </>
+            ) : (
+              <>
+                <p className="clock__t" aria-live="off">
+                  {formater(resteS)}
+                </p>
+                <p className="clock__of">{sansLimite ? "pour finir ta grille" : `restantes sur ${formater(dureeS)}`}</p>
+              </>
+            )}
           </div>
-          <div className="timebar" role="img" aria-label={`Chrono : ${resteS} secondes restantes sur ${dureeS}`}>
-            <span className="timebar__ink" style={{ width: `${Math.min(100, (resteS / dureeS) * 100)}%` }} />
-          </div>
+          {!sansChrono && (
+            <div className="timebar" role="img" aria-label={`Chrono : ${resteS} secondes restantes sur ${dureeS}`}>
+              <span className="timebar__ink" style={{ width: `${Math.min(100, (resteS / (sansLimite ? Math.max(1, salon?.stop.graceS ?? 1) : dureeS)) * 100)}%` }} />
+            </div>
+          )}
         </section>
 
         {salon && (
@@ -187,7 +215,13 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
           </div>
         </section>
 
-        {salon ? (
+        {salon && stop && !stop.actif ? (
+          <div className="stop">
+            <p className="stop__hint stop__hint--seul">
+              {ferme ? "Le Juge corrige les grilles de tout le monde…" : "Pas de STOP dans cette partie : la manche s'arrête au bout du chrono."}
+            </p>
+          </div>
+        ) : salon && stop ? (
           <div className="stop">
             {salon.stopPar && !ferme && (
               <p className="stop__annonce" role="alert">
@@ -198,7 +232,7 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
               className="stop__btn"
               type="button"
               onClick={direStop}
-              disabled={ferme || stopEnCours || remplies < categories.length || salon.stopPar !== null}
+              disabled={ferme || stopEnCours || manquent > 0 || salon.stopPar !== null}
               aria-describedby="stop-h"
             >
               <span className="stop__fill" aria-hidden="true" style={{ width: `${(remplies / categories.length) * 100}%` }} />
@@ -213,9 +247,11 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
                   ? "Le Juge corrige les grilles de tout le monde…"
                   : salon.stopPar
                     ? "Un seul STOP compte par manche."
-                    : remplies < categories.length
-                      ? `Encore ${categories.length - remplies} case${categories.length - remplies > 1 ? "s" : ""} à remplir pour dire STOP.`
-                      : "Ta grille est pleine : dis STOP, les autres n'auront plus que 10 s.")}
+                    : manquent > 0
+                      ? `Encore ${manquent} case${manquent > 1 ? "s" : ""} à remplir pour dire STOP.`
+                      : remplies < categories.length
+                        ? `Tu peux dire STOP : les autres n'auront plus que ${stop.graceS} s.`
+                        : `Ta grille est pleine : dis STOP, les autres n'auront plus que ${stop.graceS} s.`)}
             </p>
           </div>
         ) : (
