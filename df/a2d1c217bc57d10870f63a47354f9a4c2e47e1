@@ -1,0 +1,27 @@
+app/globals.css
+  s_f47e83bd1733a2::t_c676061421ae9c 5
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_aa446d8cd3856c 42,47
+app/stabilo.css
+  s_f47e83bd1733a2::t_c676061421ae9c 1-45
+app/layout.tsx
+  s_f47e83bd1733a2::t_84036c25c0f86c 5,23-25
+.veebee/tickets/32-stabilo-partout.md
+  s_f47e83bd1733a2::t_aa446d8cd3856c 1-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dfa2d1c217bc57d10870f63a47354f9a4c2e47e1",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
