@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Partie libre — Petit Bac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Shantell+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="p-suite">
+
+<!-- les filtres du trait de stabilo, partagés par tous les traits (jamais par le texte) :
+     stries du feutre dans le sens du trait (bruit très étiré), encre qui sèche là où elle est déjà maigre,
+     bords tremblés puis grenus (déplacement de 2 à 4 px). Trois réglages pour que les traits ne se ressemblent pas tous. -->
+<svg class="filtres" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <filter id="stabilo-a" x="-6%" y="-14%" width="112%" height="128%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.004 0.35" numOctaves="2" seed="3" result="bruit"/>
+    <feColorMatrix in="bruit" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.62 0 0 0 0.6" result="stries"/>
+    <feComposite in="SourceGraphic" in2="stries" operator="in" result="encre"/>
+    <feComponentTransfer in="encre" result="seche"><feFuncA type="table" tableValues="0 0.07 0.42 0.8 1"/></feComponentTransfer>
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.03" numOctaves="1" seed="5" result="vague"/>
+    <feDisplacementMap in="seche" in2="vague" scale="11" xChannelSelector="G" yChannelSelector="R" result="tremble"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.08 0.16" numOctaves="2" seed="9" result="grain"/>
+    <feDisplacementMap in="tremble" in2="grain" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="stabilo-b" x="-6%" y="-14%" width="112%" height="128%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.005 0.28" numOctaves="2" seed="11" result="bruit"/>
+    <feColorMatrix in="bruit" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.62 0 0 0 0.6" result="stries"/>
+    <feComposite in="SourceGraphic" in2="stries" operator="in" result="encre"/>
+    <feComponentTransfer in="encre" result="seche"><feFuncA type="table" tableValues="0 0.06 0.4 0.79 1"/></feComponentTransfer>
+    <feTurbulence type="fractalNoise" baseFrequency="0.006 0.025" numOctaves="1" seed="6" result="vague"/>
+    <feDisplacementMap in="seche" in2="vague" scale="12" xChannelSelector="G" yChannelSelector="R" result="tremble"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.1 0.18" numOctaves="2" seed="12" result="grain"/>
+    <feDisplacementMap in="tremble" in2="grain" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="stabilo-c" x="-6%" y="-14%" width="112%" height="128%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.003 0.42" numOctaves="2" seed="23" result="bruit"/>
+    <feColorMatrix in="bruit" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.66 0 0 0 0.58" result="stries"/>
+    <feComposite in="SourceGraphic" in2="stries" operator="in" result="encre"/>
+    <feComponentTransfer in="encre" result="seche"><feFuncA type="table" tableValues="0 0.08 0.44 0.8 1"/></feComponentTransfer>
+    <feTurbulence type="fractalNoise" baseFrequency="0.01 0.035" numOctaves="1" seed="8" result="vague"/>
+    <feDisplacementMap in="seche" in2="vague" scale="10" xChannelSelector="G" yChannelSelector="R" result="tremble"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.09 0.14" numOctaves="2" seed="15" result="grain"/>
+    <feDisplacementMap in="tremble" in2="grain" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<!-- l'accueil reste derrière, assombri : la feuille monte par-dessus, depuis « Jouer » dans la tuile Partie libre -->
+<iframe class="fond" src="index.html" title="Accueil, derrière la feuille" tabindex="-1" aria-hidden="true" inert></iframe>
+<div class="voile" aria-hidden="true"></div>
+
+<form class="sheet sheet--libre" action="#" role="dialog" aria-modal="true" aria-labelledby="sheet-t">
+  <span class="sheet__grip" aria-hidden="true"></span>
+  <div class="sheet__head">
+    <p class="kick">Seul · Partie libre</p>
+    <a class="quit" href="index.html"><span aria-hidden="true">×</span> Fermer</a>
+  </div>
+  <h1 id="sheet-t" class="sheet__t"><span class="sheet__hl">Préréglage</span> de la partie</h1>
+
+  <fieldset class="presets">
+    <legend class="sr">Préréglage de la partie libre</legend>
+    <label class="preset"><input type="radio" name="prereglage" value="express"><span class="preset__n">Express</span><span class="preset__d">4 catégories</span><span class="preset__d">45 s · 3 manches</span><span class="preset__rec">Record <b>17 pts</b></span></label>
+    <label class="preset"><input type="radio" name="prereglage" value="classique" checked><span class="preset__tag">par défaut</span><span class="preset__n">Classique</span><span class="preset__d">6 catégories</span><span class="preset__d">1 min 30 · 5 manches</span></label>
+    <label class="preset"><input type="radio" name="prereglage" value="marathon"><span class="preset__n">Marathon</span><span class="preset__d">12 catégories</span><span class="preset__d">3 min · 10 manches</span></label>
+  </fieldset>
+
+  <button class="btn btn--wide" type="submit">Lancer la partie <span aria-hidden="true">→</span></button>
+</form>
+
+</body>
+</html>

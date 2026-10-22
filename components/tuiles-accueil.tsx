@@ -30,6 +30,10 @@ export function TuileCreer({ attente }: { attente: string | null }) {
       <span className="bulle" aria-hidden="true">
         Un petit bac ?
       </span>
+      <svg className="gri gri--fleche" viewBox="0 0 80 50" aria-hidden="true">
+        <path d="M4 12C18 2 30 6 30 18s-12 16-6 22 26 0 46-8" />
+        <path d="M62 24l12 8-11 9" />
+      </svg>
       <p className="kick">Entre amis</p>
       <h2 id="cr-t" className="cr__t">
         <span className="cr__t1">Créer</span> <span className="cr__t2">un salon</span>
@@ -78,6 +82,13 @@ export function TuileSeul({ meilleurs, regles }: { meilleurs: Partial<Record<IdP
         <path fill="#fff" d="M236 12l58 20-58 20z" />
         <path className="crayon__ink" d="M274 25l20 7-20 7z" />
       </svg>
+      <p className="gri-note gri-note--toi" aria-hidden="true">
+        <svg className="gri gri--toi" viewBox="0 0 30 34" aria-hidden="true">
+          <path d="M13 32C10 24 12 14 16 4" />
+          <path d="M9 10l7-6 6 8" />
+        </svg>
+        <span>à toi !</span>
+      </p>
       <button className="se__go" type="button" onClick={() => setOuverte(true)} aria-label="Jouer une partie libre : choisir le préréglage">
         Jouer <span aria-hidden="true">→</span>
       </button>
