@@ -3,6 +3,7 @@ id: 06
 title: Le Joueur partage son résultat du Défi et prolonge sa Série
 milestone: null
 depends_on: [05]
+status: done
 design: .aeom/direction/index.html
 tracker: null            # filled after the push: { tool, id, url }
 ---

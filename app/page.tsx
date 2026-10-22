@@ -5,7 +5,10 @@ import { ChoisirPseudo } from "@/components/choisir-pseudo";
 import { Entete } from "@/components/entete";
 import { LegendePaliers } from "@/components/paliers";
 import { obtenirDb } from "@/db/client";
-import { jourEnToutesLettres, monDefi, NB_CATEGORIES_DEFI } from "@/lib/jeu/defi";
+import { DernierResultat } from "@/components/dernier-resultat";
+import { Serie } from "@/components/serie";
+import { jourAParis, jourEnToutesLettres, monDefi, NB_CATEGORIES_DEFI } from "@/lib/jeu/defi";
+import { dernierResultat, serie } from "@/lib/jeu/serie";
 import { records } from "@/lib/jeu/parties";
 import { ORDRE_PREREGLAGES, PREREGLAGES } from "@/lib/jeu/prereglages";
 import { joueurCourant } from "@/lib/session";
@@ -33,9 +36,12 @@ async function Contenu() {
   const db = await obtenirDb();
   const meilleurs = await records(db, joueur.id);
   const defi = await monDefi(db, joueur.id);
+  const [laSerie, resultat] = await Promise.all([serie(db, joueur.id), dernierResultat(db, joueur.id)]);
   return (
     <>
       <BlocDefi {...defi} />
+      <Serie {...laSerie} numeroDuJour={defi.defi.numero} />
+      {resultat && <DernierResultat resultat={resultat} aujourdHui={jourAParis(new Date())} />}
       <section className="seul" aria-labelledby="seul-t">
         <h2 id="seul-t" className="sec">
           <span className="sec__hl">Seul</span>
