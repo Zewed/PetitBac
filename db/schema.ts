@@ -272,3 +272,22 @@ export const regles = pgTable("regles", {
   salon: boolean("salon").notNull(),
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),
 });
+
+/**
+ * Un Signalement : en solo ou au Défi du jour, le Joueur remet en cause la décision du Juge sur une de ses Réponses.
+ * Il attend d'être tranché dans /admin et ne change pas les points d'ici là.
+ */
+export const signalementsReponses = pgTable("signalements_reponses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  reponseId: uuid("reponse_id")
+    .notNull()
+    .unique()
+    .references(() => reponses.id),
+  joueurId: uuid("joueur_id")
+    .notNull()
+    .references(() => joueurs.id),
+  /** La décision du Juge au moment du Signalement. */
+  valideParLeJuge: boolean("valide_par_le_juge").notNull(),
+  etat: text("etat").$type<"en_attente" | "tranche">().notNull().default("en_attente"),
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),
+});

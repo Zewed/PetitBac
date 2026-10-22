@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { choisirLettreAction, lancerPartieLibre, mancheSuivanteAction, mancheSuivanteSalonAction, quitterSalonAction, relancerJugement } from "@/app/actions";
+import { choisirLettreAction, lancerPartieLibre, signalerDecisionAction, mancheSuivanteAction, mancheSuivanteSalonAction, quitterSalonAction, relancerJugement } from "@/app/actions";
 import { ChoixLettre } from "@/components/choix-lettre";
 import { ChatSalon } from "@/components/chat-salon";
 import { Decouverte } from "@/components/decouverte";
@@ -186,6 +186,8 @@ function Resultat({
           })}
         </ol>
 
+        {manche.etat === "jugee" && !salon && <SignalerUneDecision manche={manche} />}
+
         {manche.etat === "jugee" && partie?.etat === "terminee" && <FinDePartie partie={partie} />}
 
         {salon && manche.salonCode && reponsesDeTous && (
@@ -306,6 +308,42 @@ function ApresMancheSalon({ code, mancheId, salon }: { code: string; mancheId: s
         </form>
       </div>
     </section>
+  );
+}
+
+/**
+ * En solo ou au Défi du jour : le Joueur signale la décision du Juge sur une de ses Réponses. Le Signalement est relu
+ * plus tard (ticket 22) et ne change pas ses points d'ici là.
+ */
+function SignalerUneDecision({ manche }: { manche: Manche }) {
+  const remplies = manche.reponses.filter((r) => r.id && r.saisie.trim() !== "");
+  if (!remplies.length) return null;
+  const envoyes = remplies.some((r) => r.signalee);
+  return (
+    <details className="signaler" open={envoyes}>
+      <summary>Une décision du Juge te semble fausse ?</summary>
+      <p className="signaler__p">Signale-la : elle sera relue. Tes points ne changent pas tout de suite.</p>
+      <ul className="signaler__liste">
+        {remplies.map((r) => (
+          <li key={r.categorie}>
+            <span className="signaler__rep">
+              <b>{r.categorie}</b> · {r.formeReference ?? r.saisie} · {r.valide === false ? "refusée" : (r.palier ?? "acceptée")}
+            </span>
+            {r.signalee ? (
+              <span className="signaler__fait" role="status">
+                Signalement envoyé
+              </span>
+            ) : (
+              <form action={signalerDecisionAction.bind(null, r.id!)}>
+                <button className="lien-contester" type="submit">
+                  Signaler
+                </button>
+              </form>
+            )}
+          </li>
+        ))}
+      </ul>
+    </details>
   );
 }
 
