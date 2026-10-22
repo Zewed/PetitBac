@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { obtenirDb } from "@/db/client";
+import { commencerDefi } from "@/lib/jeu/defi";
 import { choisirPseudo } from "@/lib/jeu/joueurs";
 import { obtenirJuge } from "@/lib/jeu/juge";
 import { jugerManche } from "@/lib/jeu/jugement";
@@ -27,6 +28,14 @@ export async function lancerPartieLibre(form: FormData) {
   if (!joueur) redirect("/");
   const choix = form.get("prereglage");
   const manche = await commencerPartieLibre(await obtenirDb(), joueur.id, { prereglage: estPrereglage(choix) ? choix : "classique" });
+  redirect(`/manche/${manche.id}`);
+}
+
+/** Lance le Défi du jour, ou ramène à celui déjà lancé : un seul essai. */
+export async function lancerDefi() {
+  const joueur = await joueurCourant();
+  if (!joueur) redirect("/");
+  const manche = await commencerDefi(await obtenirDb(), joueur.id);
   redirect(`/manche/${manche.id}`);
 }
 

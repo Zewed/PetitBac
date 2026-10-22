@@ -35,14 +35,25 @@ export const parties = pgTable("parties", {
   termineeLe: timestamp("terminee_le", { withTimezone: true }),
 });
 
+/** Le Défi du jour : une Manche identique pour tous, une par jour à Paris, numérotée depuis le lancement. */
+export const defis = pgTable("defis", {
+  numero: integer("numero").primaryKey(),
+  date: text("date").notNull().unique(),
+  lettre: text("lettre").notNull(),
+  categories: jsonb("categories").$type<string[]>().notNull(),
+});
+
 export type EtatManche = "en_cours" | "a_juger" | "jugee" | "jugement_echoue";
 
-export const manches = pgTable("manches", {
+export const manches = pgTable(
+  "manches",
+  {
   id: uuid("id").primaryKey().defaultRandom(),
   joueurId: uuid("joueur_id")
     .notNull()
     .references(() => joueurs.id),
   partieId: uuid("partie_id").references(() => parties.id),
+  defiNumero: integer("defi_numero").references(() => defis.numero),
   numero: integer("numero").notNull().default(1),
   lettre: text("lettre").notNull(),
   categories: jsonb("categories").$type<string[]>().notNull(),
@@ -51,7 +62,10 @@ export const manches = pgTable("manches", {
   termineeLe: timestamp("terminee_le", { withTimezone: true }),
   etat: text("etat").$type<EtatManche>().notNull().default("en_cours"),
   total: integer("total"),
-});
+},
+  // Un seul essai par Joueur et par Défi.
+  (t) => [unique().on(t.joueurId, t.defiNumero)],
+);
 
 export const reponses = pgTable(
   "reponses",

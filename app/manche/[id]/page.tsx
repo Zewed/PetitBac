@@ -36,9 +36,9 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
         saisies={Object.fromEntries(manche.reponses.map((r) => [r.categorie, r.saisie]))}
         finitLe={manche.finitLe.toISOString()}
         maintenantServeur={maintenant.toISOString()}
-        dureeS={manche.partie?.dureeS ?? 90}
-        titre={manche.partie ? `Partie libre · ${manche.partie.nom}` : "Partie libre"}
-        etiquette={manche.partie ? `Manche ${manche.partie.numero}/${manche.partie.nbManches}` : "Partie libre"}
+        dureeS={manche.dureeS}
+        titre={manche.defiNumero ? `Défi du jour n°${manche.defiNumero}` : manche.partie ? `Partie libre · ${manche.partie.nom}` : "Partie libre"}
+        etiquette={manche.defiNumero ? `Défi n°${manche.defiNumero}` : manche.partie ? `Manche ${manche.partie.numero}/${manche.partie.nbManches}` : "Partie libre"}
       />
     );
   }
@@ -48,6 +48,7 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
 
 function Resultat({ manche, partie }: { manche: Manche; partie?: Partie }) {
   const derniere = !manche.partie || manche.partie.numero >= manche.partie.nbManches;
+  const defi = manche.defiNumero !== null;
   return (
     <>
       <header className="top">
@@ -56,7 +57,7 @@ function Resultat({ manche, partie }: { manche: Manche; partie?: Partie }) {
             <span aria-hidden="true">←</span> Accueil
           </Link>
           <p className="salon">
-            <b>Partie libre{partie ? ` · ${partie.nom}` : ""}</b> · lettre {manche.lettre}
+            <b>{defi ? `Défi du jour n°${manche.defiNumero}` : `Partie libre${partie ? ` · ${partie.nom}` : ""}`}</b> · lettre {manche.lettre}
           </p>
         </div>
       </header>
@@ -124,7 +125,7 @@ function Resultat({ manche, partie }: { manche: Manche; partie?: Partie }) {
         {manche.etat === "jugee" && <LegendePaliers />}
 
         <div className="res__actions">
-          {manche.etat === "jugee" && !derniere && manche.partie ? (
+          {defi ? null : manche.etat === "jugee" && !derniere && manche.partie ? (
             <form action={mancheSuivanteAction.bind(null, manche.partie.id)}>
               <button className="btn btn--wide" type="submit">
                 Manche suivante <span aria-hidden="true">→</span>
@@ -139,7 +140,7 @@ function Resultat({ manche, partie }: { manche: Manche; partie?: Partie }) {
             </form>
           )}
           <Link className="btn btn--ink btn--wide" href="/">
-            {derniere ? "Retour à l'accueil" : "Quitter la partie"}
+            {defi || derniere ? "Retour à l'accueil" : "Quitter la partie"}
           </Link>
         </div>
       </main>
