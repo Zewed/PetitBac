@@ -1,5 +1,5 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
-import { joueurs, manches, parties, reactions, reponses, salonJoueurs, salons } from "@/db/schema";
+import { contestations, joueurs, manches, parties, reactions, reponses, salonJoueurs, salons, votes } from "@/db/schema";
 import type { Db } from "@/db/types";
 import { codeDepuisSaisie } from "./salons";
 
@@ -15,9 +15,10 @@ export type ReponseDecouverte = {
   palier: string | null;
   points: number;
   reactions: { emoji: string; nombre: number; moi: boolean }[];
+  contestation: { id: string; etat: "en_cours" | "acceptee" | "rejetee"; par: string; pour: number; contre: number; monVote: boolean | null } | null;
 };
 
-async function mancheDuSalon(db: Db, code: string, joueurId: string) {
+export async function mancheDuSalon(db: Db, code: string, joueurId: string) {
   const [salon] = await db.select().from(salons).where(eq(salons.code, codeDepuisSaisie(code)));
   if (!salon) return undefined;
   const [membre] = await db.select().from(salonJoueurs).where(and(eq(salonJoueurs.salonId, salon.id), eq(salonJoueurs.joueurId, joueurId)));
@@ -26,7 +27,7 @@ async function mancheDuSalon(db: Db, code: string, joueurId: string) {
   if (!partie) return undefined;
   const grilles = await db.select().from(manches).where(eq(manches.partieId, partie.id)).orderBy(desc(manches.numero));
   const numero = grilles[0]?.numero;
-  return { partie, grilles: grilles.filter((g) => g.numero === numero) };
+  return { salon, partie, grilles: grilles.filter((g) => g.numero === numero) };
 }
 
 /**
@@ -44,6 +45,16 @@ export async function decouverte(db: Db, code: string, joueurId: string) {
     .where(inArray(reponses.mancheId, m.grilles.map((g) => g.id)));
   const ids = lignes.map((l) => l.reponse.id);
   const toutes = ids.length ? await db.select().from(reactions).where(inArray(reactions.reponseId, ids)) : [];
+  const contestees = ids.length
+    ? await db
+        .select({ c: contestations, par: joueurs.pseudo })
+        .from(contestations)
+        .innerJoin(joueurs, eq(joueurs.id, contestations.parJoueurId))
+        .where(inArray(contestations.reponseId, ids))
+    : [];
+  const lesVotes = contestees.length
+    ? await db.select().from(votes).where(inArray(votes.contestationId, contestees.map((x) => x.c.id)))
+    : [];
   return {
     categories: m.partie.categories.map((categorie) => ({
       categorie,
@@ -59,6 +70,19 @@ export async function decouverte(db: Db, code: string, joueurId: string) {
             valide: l.reponse.saisie.trim() === "" ? null : l.reponse.valide,
             palier: l.reponse.palier,
             points: l.reponse.points ?? 0,
+            contestation: (() => {
+              const x = contestees.find((y) => y.c.reponseId === l.reponse.id);
+              if (!x) return null;
+              const siens = lesVotes.filter((v) => v.contestationId === x.c.id);
+              return {
+                id: x.c.id,
+                etat: x.c.etat,
+                par: x.par,
+                pour: siens.filter((v) => v.pour).length,
+                contre: siens.filter((v) => !v.pour).length,
+                monVote: siens.find((v) => v.joueurId === joueurId)?.pour ?? null,
+              };
+            })(),
             reactions: EMOJIS.flatMap((emoji) => {
               const de = siennes.filter((r) => r.emoji === emoji);
               return de.length ? [{ emoji, nombre: de.length, moi: de.some((r) => r.joueurId === joueurId) }] : [];
@@ -98,6 +122,18 @@ export async function nombreDeReactions(db: Db, mancheIds: string[]) {
     .select({ id: reactions.reponseId })
     .from(reactions)
     .innerJoin(reponses, eq(reponses.id, reactions.reponseId))
+    .where(inArray(reponses.mancheId, mancheIds));
+  return lignes.length;
+}
+
+/** Le nombre de votes de Contestation de la Manche : quand il change, les autres rafraîchissent leur découverte. */
+export async function nombreDeVotes(db: Db, mancheIds: string[]) {
+  if (!mancheIds.length) return 0;
+  const lignes = await db
+    .select({ id: votes.joueurId })
+    .from(votes)
+    .innerJoin(contestations, eq(contestations.id, votes.contestationId))
+    .innerJoin(reponses, eq(reponses.id, contestations.reponseId))
     .where(inArray(reponses.mancheId, mancheIds));
   return lignes.length;
 }

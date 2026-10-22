@@ -165,3 +165,34 @@ export const reactions = pgTable(
   },
   (t) => [primaryKey({ columns: [t.reponseId, t.joueurId, t.emoji] })],
 );
+
+/** Une Contestation : un Joueur remet en cause la décision du Juge sur une Réponse ; le vote du Salon ne vaut que pour cette Partie. */
+export const contestations = pgTable("contestations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  reponseId: uuid("reponse_id")
+    .notNull()
+    .unique()
+    .references(() => reponses.id),
+  parJoueurId: uuid("par_joueur_id")
+    .notNull()
+    .references(() => joueurs.id),
+  /** La décision du Juge au moment de la Contestation, que le vote renverse ou non. */
+  valideParLeJuge: boolean("valide_par_le_juge").notNull(),
+  etat: text("etat").$type<"en_cours" | "acceptee" | "rejetee">().notNull().default("en_cours"),
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),
+});
+
+export const votes = pgTable(
+  "votes",
+  {
+    contestationId: uuid("contestation_id")
+      .notNull()
+      .references(() => contestations.id),
+    joueurId: uuid("joueur_id")
+      .notNull()
+      .references(() => joueurs.id),
+    /** Le Joueur donne raison à celui qui conteste. */
+    pour: boolean("pour").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.contestationId, t.joueurId] })],
+);

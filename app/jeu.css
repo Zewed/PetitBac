@@ -134,3 +134,14 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 .reac.is-on{background:var(--blue);color:#fff}
 .reac--vue{display:inline-flex;align-items:center;min-height:32px;cursor:default;font-size:15px;font-weight:700}
 .reac:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+/* la Contestation : un vote du Salon qui ne vaut que pour la Partie */
+.dec{grid-template-areas:"qui pts" "rep pts" "cont cont" "reac reac"}
+.dec__contester{grid-area:cont;margin-top:6px;font-size:14px}
+.lien-contester{min-height:44px;padding:0;border:0;background:none;color:var(--blue);font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;cursor:pointer}
+.dec__vote{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.dec__vote span{flex-basis:100%;font-weight:600}
+.vote{min-height:44px;padding:0 16px;border:0;background:var(--paper);font-weight:800;cursor:pointer}
+.vote.is-on{background:var(--blue);color:#fff}
+.vote:focus-visible,.lien-contester:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.dec__tranche{font-weight:700}

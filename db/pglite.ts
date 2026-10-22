@@ -12,10 +12,19 @@ import * as schema from "./schema";
  */
 export const DOSSIER_PGLITE_DEV = process.env.PGLITE_DIR ?? path.join(os.homedir(), ".cache", "petit-bac", "pglite");
 
+async function migree(dossier?: string) {
+  const client = new PGlite(dossier);
+  await migrate(drizzle(client, { schema }), { migrationsFolder: path.join(process.cwd(), "db/migrations") });
+  return client;
+}
+
+// En mémoire (les tests), une base modèle est migrée une fois par processus, puis clonée pour chaque base demandée.
+let modele: Promise<PGlite> | undefined;
+
 /** Une base Postgres embarquée, migrée : en mémoire sans dossier (tests), sur disque sinon (développement). */
 export async function ouvrirPglite(dossier?: string): Promise<Db> {
-  const client = new PGlite(dossier);
-  const db = drizzle(client, { schema });
-  await migrate(db, { migrationsFolder: path.join(process.cwd(), "db/migrations") });
-  return db as unknown as Db;
+  if (dossier) return drizzle(await migree(dossier), { schema }) as unknown as Db;
+  modele ??= migree();
+  const client = (await (await modele).clone()) as PGlite;
+  return drizzle(client, { schema }) as unknown as Db;
 }

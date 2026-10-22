@@ -1,7 +1,7 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { joueurs, manches, parties, salonJoueurs, salons } from "@/db/schema";
 import type { Db } from "@/db/types";
-import { nombreDeReactions } from "./decouverte";
+import { nombreDeReactions, nombreDeVotes } from "./decouverte";
 import type { Juge } from "./juge/types";
 import { jugerManche } from "./jugement";
 import { LETTRES_EXCLUES_PAR_DEFAUT, tirerLettre } from "./lettres";
@@ -95,7 +95,7 @@ export async function mancheSuivanteSalon(db: Db, code: string, joueurId: string
 
 export type EtatPartieSalon = {
   partie: { id: string; nom: string; nbManches: number; etat: "en_cours" | "terminee" };
-  manche: { numero: number; nbManches: number; close: boolean; finitLe: string; stopPar: string | null; reactions: number };
+  manche: { numero: number; nbManches: number; close: boolean; finitLe: string; stopPar: string | null; reactions: number; votes: number };
   maMancheId: string | null;
   classement: { pseudo: string; total: number; moi: boolean }[];
   jeSuisHote: boolean;
@@ -131,6 +131,7 @@ export async function etatPartieSalon(db: Db, code: string, joueurId: string, ma
       finitLe: (grilles[0]?.finitLe ?? maintenant).toISOString(),
       stopPar: stoppeur?.pseudo ?? null,
       reactions: await nombreDeReactions(db, grilles.map((g) => g.id)),
+      votes: await nombreDeVotes(db, grilles.map((g) => g.id)),
     },
     maMancheId: ma?.id ?? null,
     classement: [...parJoueur.values()].sort((a, b) => b.total - a.total || a.pseudo.localeCompare(b.pseudo)),
