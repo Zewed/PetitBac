@@ -1,0 +1,53 @@
+app/manche/[id]/page.tsx
+  s_f47e83bd1733a2::t_9d448a88dc6b81 5,263-267
+app/salon/[code]/page.tsx
+  s_f47e83bd1733a2::t_9d448a88dc6b81 9-10,40-42,44,50
+app/api/salons/[code]/route.ts
+  s_f47e83bd1733a2::t_9d448a88dc6b81 3,13
+app/jeu.css
+  s_f47e83bd1733a2::t_9d448a88dc6b81 167-173
+app/actions.ts
+  s_f47e83bd1733a2::t_9d448a88dc6b81 16,163-168
+  s_f47e83bd1733a2::t_d58a6feb3eae16 169
+db/schema.ts
+  s_f47e83bd1733a2::t_db14dadbbe40fa 150-151
+.veebee/tickets/14-salon-tient-arrivees-et-departs.md
+  s_f47e83bd1733a2::t_fa4ded6fcf6869 6
+lib/jeu/presence.test.ts
+  s_f47e83bd1733a2::t_53de2edfed4c48 1-90
+db/migrations/meta/0009_snapshot.json
+  s_f47e83bd1733a2::t_db14dadbbe40fa 1-959
+app/page.tsx
+  s_f47e83bd1733a2::t_9d448a88dc6b81 14,40,43-55
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_db14dadbbe40fa 24
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_db14dadbbe40fa 67-73
+db/migrations/0009_colorful_kree.sql
+  s_f47e83bd1733a2::t_db14dadbbe40fa 1
+components/salon-attente.tsx
+  s_f47e83bd1733a2::t_9d448a88dc6b81 4,8-10,68-86,95-100
+  s_f47e83bd1733a2::t_f07efa3e65fada 53,55
+lib/jeu/presence.ts
+  s_f47e83bd1733a2::t_2aae6a3fe74a7a 1-72
+lib/jeu/salons.test.ts
+  s_f47e83bd1733a2::t_09ade2041c366e 19,36-37
+lib/jeu/salons.ts
+  s_f47e83bd1733a2::t_82544bfd843e9c 6-8,53,60,65,74-79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0c10c4231d7e6b61e254c0483bea25d68cc0fc38",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
