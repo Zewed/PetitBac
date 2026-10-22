@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { lancerDefi, lancerPartieLibre } from "@/app/actions";
+import { creerSalonAction, lancerDefi, lancerPartieLibre } from "@/app/actions";
+import { ChoixPrereglage } from "@/components/choix-prereglage";
+import { RejoindreSalon } from "@/components/rejoindre-salon";
 import { ChoisirPseudo } from "@/components/choisir-pseudo";
 import { Entete } from "@/components/entete";
 import { LegendePaliers } from "@/components/paliers";
@@ -11,7 +13,6 @@ import { jourAParis, jourEnToutesLettres, monDefi, NB_CATEGORIES_DEFI } from "@/
 import { positionAuDefi } from "@/lib/jeu/classement";
 import { dernierResultat, serie } from "@/lib/jeu/serie";
 import { records } from "@/lib/jeu/parties";
-import { ORDRE_PREREGLAGES, PREREGLAGES } from "@/lib/jeu/prereglages";
 import { joueurCourant } from "@/lib/session";
 
 export default function Accueil() {
@@ -27,10 +28,6 @@ export default function Accueil() {
   );
 }
 
-function duree(s: number) {
-  return s < 60 ? `${s} s` : s % 60 ? `${Math.floor(s / 60)} min ${s % 60}` : `${s / 60} min`;
-}
-
 async function Contenu() {
   const joueur = await joueurCourant();
   if (!joueur) return <ChoisirPseudo />;
@@ -44,30 +41,32 @@ async function Contenu() {
       <BlocDefi {...defi} />
       <Serie {...laSerie} numeroDuJour={defi.defi.numero} />
       {resultat && <DernierResultat resultat={resultat} aujourdHui={jourAParis(new Date())} position={position} />}
+      <section className="amis" aria-labelledby="amis-t">
+        <h2 id="amis-t" className="sec">
+          <span className="sec__hl">Entre amis</span>
+        </h2>
+        <div className="amis__cols">
+          <form className="creer" action={creerSalonAction}>
+            <h3>Créer un salon</h3>
+            <p className="sub">De 2 à 10 joueurs, invités par lien ou QR code.</p>
+            <ChoixPrereglage />
+            <button className="btn btn--wide" type="submit">
+              Créer le salon <span aria-hidden="true">→</span>
+            </button>
+          </form>
+          <div className="join-box">
+            <h3>Rejoindre un salon</h3>
+            <p className="sub">Ouvre le lien qu&apos;on t&apos;a envoyé, ou tape le code du salon.</p>
+            <RejoindreSalon />
+          </div>
+        </div>
+      </section>
       <section className="seul" aria-labelledby="seul-t">
         <h2 id="seul-t" className="sec">
           <span className="sec__hl">Seul</span>
         </h2>
         <form action={lancerPartieLibre} className="seul__form">
-          <fieldset className="presets">
-            <legend className="sr">Préréglage</legend>
-            {ORDRE_PREREGLAGES.map((id) => {
-              const p = PREREGLAGES[id];
-              const record = meilleurs[id];
-              return (
-                <label key={id} className="preset">
-                  <input type="radio" name="prereglage" value={id} defaultChecked={id === "classique"} />
-                  {id === "classique" && <span className="preset__tag">par défaut</span>}
-                  <span className="preset__n">{p.nom}</span>
-                  <span className="preset__d">{p.nbCategories} catégories</span>
-                  <span className="preset__d">
-                    {duree(p.dureeS)} · {p.nbManches} manches
-                  </span>
-                  {record !== undefined && <span className="preset__rec">Record {record} pts</span>}
-                </label>
-              );
-            })}
-          </fieldset>
+          <ChoixPrereglage meilleurs={meilleurs} />
           <button className="libre" type="submit">
             <span className="libre__t">
               Partie libre <span aria-hidden="true">→</span>

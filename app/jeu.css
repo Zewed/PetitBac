@@ -69,3 +69,26 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 .partage .btn{margin-top:0}
 .partage__msg{font-weight:700;color:var(--green)}
 .partage__texte{width:100%;padding:12px;border:0;background:var(--wash);font-family:var(--sans);font-size:16px;resize:none}
+
+/* le Salon d'attente : le code en très grand, le QR à côté, les présents en pastilles */
+.attente{display:grid;gap:30px;padding-top:6px;padding-bottom:56px}
+.attente > *{min-width:0}
+.attente__p{font-size:16px;color:var(--ink-2);margin-top:14px}
+.invite__cols{display:grid;gap:24px}
+.invite__code{display:grid;gap:10px;justify-items:start}
+.invite__c{font-size:64px;font-weight:800;letter-spacing:.06em;line-height:1;font-variant-numeric:tabular-nums}
+.invite__lien{max-width:100%;font-size:15px;color:var(--blue);overflow-wrap:anywhere;user-select:all}
+.invite__qr{width:200px;max-width:100%;aspect-ratio:1;padding:10px;position:relative;isolation:isolate}
+.invite__qr::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--y);transform:skewX(var(--skew)) rotate(-1.5deg)}
+.invite__qr svg{width:100%;height:100%;display:block}
+.chips--salon{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+.chip__r{font-size:12px;font-weight:700;color:var(--ink-2)}
+.amis .presets{grid-template-columns:repeat(3,minmax(0,1fr))}
+.join__err{margin-top:10px}
+@media (max-width:560px){.amis .presets{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:900px){
+  .attente{max-width:960px;margin:0 auto}
+  .invite__cols{grid-template-columns:minmax(0,1fr) 240px;align-items:center}
+  .invite__c{font-size:96px}
+  .invite__qr{width:240px}
+}

@@ -3,6 +3,7 @@ id: 08
 title: L'Hôte crée un Salon et ses amis le rejoignent par lien ou QR code
 milestone: null
 depends_on: [01]
+status: done
 design: .aeom/direction/index.html
 tracker: null            # filled after the push: { tool, id, url }
 ---

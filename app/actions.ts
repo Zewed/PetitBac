@@ -10,6 +10,7 @@ import { jugerManche } from "@/lib/jeu/jugement";
 import { enregistrerReponses, terminerManche, type Saisies } from "@/lib/jeu/manches";
 import { commencerPartieLibre, mancheSuivante } from "@/lib/jeu/parties";
 import { estPrereglage } from "@/lib/jeu/prereglages";
+import { creerSalon, rejoindreSalon, type ResultatRejoindre } from "@/lib/jeu/salons";
 import { joueurCourant, retenirJoueur } from "@/lib/session";
 
 export type EtatPseudo = { erreur?: string; saisie?: string };
@@ -68,4 +69,33 @@ export async function relancerJugement(id: string) {
   if (!joueur) redirect("/");
   await jugerManche(await obtenirDb(), obtenirJuge(), id, joueur.id);
   refresh();
+}
+
+export async function creerSalonAction(form: FormData) {
+  const joueur = await joueurCourant();
+  if (!joueur) redirect("/");
+  const choix = form.get("prereglage");
+  const salon = await creerSalon(await obtenirDb(), joueur.id, estPrereglage(choix) ? choix : "classique");
+  redirect(`/salon/${salon.code}`);
+}
+
+/** Entrer dans un Salon dont on a ouvert le lien. */
+export async function rejoindreAction(code: string): Promise<ResultatRejoindre | undefined> {
+  const joueur = await joueurCourant();
+  if (!joueur) return { ok: false, erreur: "Choisis d'abord un pseudo." };
+  const resultat = await rejoindreSalon(await obtenirDb(), code, joueur.id);
+  if (resultat.ok) refresh();
+  return resultat;
+}
+
+export type EtatRejoindre = { erreur?: string; saisie?: string };
+
+/** « Rejoindre » depuis l'accueil, avec le code ou le lien tapé. */
+export async function rejoindreParCodeAction(_avant: EtatRejoindre, form: FormData): Promise<EtatRejoindre> {
+  const saisie = String(form.get("code") ?? "");
+  const joueur = await joueurCourant();
+  if (!joueur) redirect("/");
+  const resultat = await rejoindreSalon(await obtenirDb(), saisie, joueur.id);
+  if (!resultat.ok) return { erreur: resultat.erreur, saisie };
+  redirect(`/salon/${resultat.code}`);
 }

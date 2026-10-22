@@ -121,3 +121,28 @@ export const couples = pgTable(
   },
   (t) => [primaryKey({ columns: [t.categorie, t.lettre] })],
 );
+
+/** Un Salon : le lieu privé d'une Partie multi, de 2 à 10 Joueurs, rejoint par lien ou QR code. */
+export const salons = pgTable("salons", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  code: text("code").notNull().unique(),
+  hoteId: uuid("hote_id")
+    .notNull()
+    .references(() => joueurs.id),
+  prereglage: text("prereglage").notNull(),
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),
+});
+
+export const salonJoueurs = pgTable(
+  "salon_joueurs",
+  {
+    salonId: uuid("salon_id")
+      .notNull()
+      .references(() => salons.id),
+    joueurId: uuid("joueur_id")
+      .notNull()
+      .references(() => joueurs.id),
+    rejointLe: timestamp("rejoint_le", { withTimezone: true }).notNull().default(sql`now()`),
+  },
+  (t) => [primaryKey({ columns: [t.salonId, t.joueurId] })],
+);
