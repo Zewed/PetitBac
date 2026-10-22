@@ -263,3 +263,7 @@ input.nombre{width:96px}
 .signaler__liste li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 14px;min-height:44px;border-bottom:1px solid color-mix(in srgb,var(--ink) 12%,transparent)}
 .signaler__rep{min-width:0;font-size:15px;overflow-wrap:anywhere}
 .signaler__fait{font-size:14px;font-weight:700;color:var(--green)}
+
+/* ---------- hors ligne ---------- */
+.hors-ligne{position:fixed;left:0;right:0;bottom:0;z-index:50;margin:0;padding:14px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--ink);color:#fff;font-size:15px;line-height:1.4;text-align:center}
+.hors-ligne b{color:var(--y)}
