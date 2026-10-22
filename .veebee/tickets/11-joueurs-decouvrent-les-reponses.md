@@ -3,6 +3,7 @@ id: 11
 title: Les Joueurs découvrent les Réponses de chacun et réagissent en emoji
 milestone: null
 depends_on: [09]
+status: done
 design: null
 tracker: null            # filled after the push: { tool, id, url }
 ---

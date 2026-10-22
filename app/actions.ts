@@ -4,6 +4,7 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { obtenirDb } from "@/db/client";
 import { commencerDefi } from "@/lib/jeu/defi";
+import { reagir } from "@/lib/jeu/decouverte";
 import { choisirPseudo } from "@/lib/jeu/joueurs";
 import { obtenirJuge } from "@/lib/jeu/juge";
 import { jugerManche } from "@/lib/jeu/jugement";
@@ -133,4 +134,12 @@ export async function direStopAction(id: string, saisies: Saisies) {
   const resultat = await direStop(await obtenirDb(), id, joueur.id, saisies);
   if (resultat.ok) refresh();
   return resultat;
+}
+
+/** Pose ou retire une réaction emoji sur la Réponse d'un autre. */
+export async function reagirAction(code: string, reponseId: string, emoji: string) {
+  const joueur = await joueurCourant();
+  if (!joueur) return;
+  const resultat = await reagir(await obtenirDb(), code, reponseId, joueur.id, emoji);
+  if (resultat.ok) refresh();
 }

@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { lancerPartieLibre, mancheSuivanteAction, mancheSuivanteSalonAction, relancerJugement } from "@/app/actions";
+import { Decouverte } from "@/components/decouverte";
 import { SuiviSalon } from "@/components/suivi-salon";
 import { GrilleEnCours } from "@/components/grille-en-cours";
 import { CLASSE_PALIER, LegendePaliers } from "@/components/paliers";
 import { obtenirDb } from "@/db/client";
 import { lireManche, type Manche } from "@/lib/jeu/manches";
+import { decouverte } from "@/lib/jeu/decouverte";
 import { etatPartieSalon, type EtatPartieSalon } from "@/lib/jeu/partie-salon";
 import { lirePartie, type Partie } from "@/lib/jeu/parties";
 import { joueurCourant } from "@/lib/session";
@@ -66,10 +68,21 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
     );
   }
   const partie = manche.partieId && !manche.salonCode ? await lirePartie(db, manche.partieId, joueur.id) : undefined;
-  return <Resultat manche={manche} partie={partie} salon={salon} />;
+  const reponsesDeTous = manche.salonCode ? await decouverte(db, manche.salonCode, joueur.id) : null;
+  return <Resultat manche={manche} partie={partie} salon={salon} reponsesDeTous={reponsesDeTous} />;
 }
 
-function Resultat({ manche, partie, salon }: { manche: Manche; partie?: Partie; salon?: EtatPartieSalon }) {
+function Resultat({
+  manche,
+  partie,
+  salon,
+  reponsesDeTous,
+}: {
+  manche: Manche;
+  partie?: Partie;
+  salon?: EtatPartieSalon;
+  reponsesDeTous?: Awaited<ReturnType<typeof decouverte>>;
+}) {
   const derniere = !manche.partie || manche.partie.numero >= manche.partie.nbManches;
   const defi = manche.defiNumero !== null;
   return (
@@ -151,6 +164,8 @@ function Resultat({ manche, partie, salon }: { manche: Manche; partie?: Partie; 
         </ol>
 
         {manche.etat === "jugee" && partie?.etat === "terminee" && <FinDePartie partie={partie} />}
+
+        {salon && manche.salonCode && reponsesDeTous && <Decouverte code={manche.salonCode} categories={reponsesDeTous.categories} />}
 
         {salon && manche.salonCode && <ApresMancheSalon code={manche.salonCode} mancheId={manche.id} salon={salon} />}
 

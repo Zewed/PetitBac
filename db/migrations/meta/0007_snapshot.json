@@ -1,0 +1,799 @@
+{
+  "id": "a2b9a27f-573b-4625-8714-f547a872379b",
+  "prevId": "cfadf354-f71a-480a-833a-59ab5b9c09d0",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.cotes": {
+      "name": "cotes",
+      "schema": "",
+      "columns": {
+        "categorie": {
+          "name": "categorie",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lettre": {
+          "name": "lettre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "forme_reference": {
+          "name": "forme_reference",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "part": {
+          "name": "part",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "cotes_categorie_lettre_forme_reference_pk": {
+          "name": "cotes_categorie_lettre_forme_reference_pk",
+          "columns": [
+            "categorie",
+            "lettre",
+            "forme_reference"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.couples": {
+      "name": "couples",
+      "schema": "",
+      "columns": {
+        "categorie": {
+          "name": "categorie",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lettre": {
+          "name": "lettre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "joues": {
+          "name": "joues",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recalcule_le": {
+          "name": "recalcule_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "couples_categorie_lettre_pk": {
+          "name": "couples_categorie_lettre_pk",
+          "columns": [
+            "categorie",
+            "lettre"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.defis": {
+      "name": "defis",
+      "schema": "",
+      "columns": {
+        "numero": {
+          "name": "numero",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lettre": {
+          "name": "lettre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categories": {
+          "name": "categories",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "defis_date_unique": {
+          "name": "defis_date_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "date"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.joueurs": {
+      "name": "joueurs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "pseudo": {
+          "name": "pseudo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cree_le": {
+          "name": "cree_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.manches": {
+      "name": "manches",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "joueur_id": {
+          "name": "joueur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "partie_id": {
+          "name": "partie_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "defi_numero": {
+          "name": "defi_numero",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "numero": {
+          "name": "numero",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "lettre": {
+          "name": "lettre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categories": {
+          "name": "categories",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commencee_le": {
+          "name": "commencee_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finit_le": {
+          "name": "finit_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "terminee_le": {
+          "name": "terminee_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "etat": {
+          "name": "etat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'en_cours'"
+        },
+        "total": {
+          "name": "total",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stop_par_id": {
+          "name": "stop_par_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "manches_joueur_id_joueurs_id_fk": {
+          "name": "manches_joueur_id_joueurs_id_fk",
+          "tableFrom": "manches",
+          "tableTo": "joueurs",
+          "columnsFrom": [
+            "joueur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "manches_partie_id_parties_id_fk": {
+          "name": "manches_partie_id_parties_id_fk",
+          "tableFrom": "manches",
+          "tableTo": "parties",
+          "columnsFrom": [
+            "partie_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "manches_defi_numero_defis_numero_fk": {
+          "name": "manches_defi_numero_defis_numero_fk",
+          "tableFrom": "manches",
+          "tableTo": "defis",
+          "columnsFrom": [
+            "defi_numero"
+          ],
+          "columnsTo": [
+            "numero"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "manches_stop_par_id_joueurs_id_fk": {
+          "name": "manches_stop_par_id_joueurs_id_fk",
+          "tableFrom": "manches",
+          "tableTo": "joueurs",
+          "columnsFrom": [
+            "stop_par_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "manches_joueur_id_defi_numero_unique": {
+          "name": "manches_joueur_id_defi_numero_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "joueur_id",
+            "defi_numero"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.parties": {
+      "name": "parties",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "joueur_id": {
+          "name": "joueur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prereglage": {
+          "name": "prereglage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "salon_id": {
+          "name": "salon_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nb_manches": {
+          "name": "nb_manches",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duree_s": {
+          "name": "duree_s",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categories": {
+          "name": "categories",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "etat": {
+          "name": "etat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'en_cours'"
+        },
+        "total": {
+          "name": "total",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "cree_le": {
+          "name": "cree_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "terminee_le": {
+          "name": "terminee_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "parties_joueur_id_joueurs_id_fk": {
+          "name": "parties_joueur_id_joueurs_id_fk",
+          "tableFrom": "parties",
+          "tableTo": "joueurs",
+          "columnsFrom": [
+            "joueur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "parties_salon_id_salons_id_fk": {
+          "name": "parties_salon_id_salons_id_fk",
+          "tableFrom": "parties",
+          "tableTo": "salons",
+          "columnsFrom": [
+            "salon_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.reactions": {
+      "name": "reactions",
+      "schema": "",
+      "columns": {
+        "reponse_id": {
+          "name": "reponse_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "joueur_id": {
+          "name": "joueur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emoji": {
+          "name": "emoji",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "reactions_reponse_id_reponses_id_fk": {
+          "name": "reactions_reponse_id_reponses_id_fk",
+          "tableFrom": "reactions",
+          "tableTo": "reponses",
+          "columnsFrom": [
+            "reponse_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reactions_joueur_id_joueurs_id_fk": {
+          "name": "reactions_joueur_id_joueurs_id_fk",
+          "tableFrom": "reactions",
+          "tableTo": "joueurs",
+          "columnsFrom": [
+            "joueur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "reactions_reponse_id_joueur_id_emoji_pk": {
+          "name": "reactions_reponse_id_joueur_id_emoji_pk",
+          "columns": [
+            "reponse_id",
+            "joueur_id",
+            "emoji"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.reponses": {
+      "name": "reponses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "manche_id": {
+          "name": "manche_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categorie": {
+          "name": "categorie",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "saisie": {
+          "name": "saisie",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "valide": {
+          "name": "valide",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "forme_reference": {
+          "name": "forme_reference",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "palier": {
+          "name": "palier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "points": {
+          "name": "points",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "reponses_manche_id_manches_id_fk": {
+          "name": "reponses_manche_id_manches_id_fk",
+          "tableFrom": "reponses",
+          "tableTo": "manches",
+          "columnsFrom": [
+            "manche_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "reponses_manche_id_categorie_unique": {
+          "name": "reponses_manche_id_categorie_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "manche_id",
+            "categorie"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.reponses_jugees": {
+      "name": "reponses_jugees",
+      "schema": "",
+      "columns": {
+        "categorie": {
+          "name": "categorie",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lettre": {
+          "name": "lettre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cle": {
+          "name": "cle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "valide": {
+          "name": "valide",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "forme_reference": {
+          "name": "forme_reference",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "part_estimee": {
+          "name": "part_estimee",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "reponses_jugees_categorie_lettre_cle_pk": {
+          "name": "reponses_jugees_categorie_lettre_cle_pk",
+          "columns": [
+            "categorie",
+            "lettre",
+            "cle"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.salon_joueurs": {
+      "name": "salon_joueurs",
+      "schema": "",
+      "columns": {
+        "salon_id": {
+          "name": "salon_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "joueur_id": {
+          "name": "joueur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rejoint_le": {
+          "name": "rejoint_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "salon_joueurs_salon_id_salons_id_fk": {
+          "name": "salon_joueurs_salon_id_salons_id_fk",
+          "tableFrom": "salon_joueurs",
+          "tableTo": "salons",
+          "columnsFrom": [
+            "salon_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "salon_joueurs_joueur_id_joueurs_id_fk": {
+          "name": "salon_joueurs_joueur_id_joueurs_id_fk",
+          "tableFrom": "salon_joueurs",
+          "tableTo": "joueurs",
+          "columnsFrom": [
+            "joueur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "salon_joueurs_salon_id_joueur_id_pk": {
+          "name": "salon_joueurs_salon_id_joueur_id_pk",
+          "columns": [
+            "salon_id",
+            "joueur_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.salons": {
+      "name": "salons",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hote_id": {
+          "name": "hote_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prereglage": {
+          "name": "prereglage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cree_le": {
+          "name": "cree_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "salons_hote_id_joueurs_id_fk": {
+          "name": "salons_hote_id_joueurs_id_fk",
+          "tableFrom": "salons",
+          "tableTo": "joueurs",
+          "columnsFrom": [
+            "hote_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "salons_code_unique": {
+          "name": "salons_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

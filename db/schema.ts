@@ -150,3 +150,18 @@ export const salonJoueurs = pgTable(
   },
   (t) => [primaryKey({ columns: [t.salonId, t.joueurId] })],
 );
+
+/** Les réactions emoji posées sur la Réponse d'un autre pendant la découverte des points. */
+export const reactions = pgTable(
+  "reactions",
+  {
+    reponseId: uuid("reponse_id")
+      .notNull()
+      .references(() => reponses.id),
+    joueurId: uuid("joueur_id")
+      .notNull()
+      .references(() => joueurs.id),
+    emoji: text("emoji").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.reponseId, t.joueurId, t.emoji] })],
+);
