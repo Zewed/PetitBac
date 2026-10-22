@@ -50,6 +50,13 @@
       "when": 1792685914840,
       "tag": "0006_cultured_korvac",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792688390984,
+      "tag": "0007_square_xavin",
+      "breakpoints": true
     }
   ]
 }
