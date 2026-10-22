@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { obtenirDb } from "@/db/client";
+import { couperLaParole, ecrire, exclure, signaler } from "@/lib/jeu/chat";
 import { commencerDefi } from "@/lib/jeu/defi";
 import { contester, voter } from "@/lib/jeu/contestation";
 import { reagir } from "@/lib/jeu/decouverte";
@@ -166,4 +167,32 @@ export async function quitterSalonAction(code: string) {
   const joueur = await joueurCourant();
   if (joueur) await quitterSalon(await obtenirDb(), code, joueur.id);
   redirect("/");
+}
+
+export type ResultatChat = { ok: true; message?: string } | { ok: false; erreur: string };
+
+export async function ecrireAction(code: string, texte: string): Promise<ResultatChat> {
+  const joueur = await joueurCourant();
+  if (!joueur) return { ok: false, erreur: "Choisis d'abord un pseudo." };
+  return ecrire(await obtenirDb(), code, joueur.id, texte);
+}
+
+export async function signalerAction(code: string, messageId: string): Promise<ResultatChat> {
+  const joueur = await joueurCourant();
+  if (!joueur) return { ok: false, erreur: "Choisis d'abord un pseudo." };
+  return signaler(await obtenirDb(), code, messageId, joueur.id);
+}
+
+export async function couperLaParoleAction(code: string, poste: string, muet: boolean): Promise<ResultatChat> {
+  const joueur = await joueurCourant();
+  if (!joueur) return { ok: false, erreur: "Choisis d'abord un pseudo." };
+  return couperLaParole(await obtenirDb(), code, joueur.id, poste, muet);
+}
+
+export async function exclureAction(code: string, poste: string): Promise<ResultatChat> {
+  const joueur = await joueurCourant();
+  if (!joueur) return { ok: false, erreur: "Choisis d'abord un pseudo." };
+  const resultat = await exclure(await obtenirDb(), code, joueur.id, poste);
+  if (resultat.ok) refresh();
+  return resultat;
 }

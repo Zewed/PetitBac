@@ -149,8 +149,64 @@ export const salonJoueurs = pgTable(
     rejointLe: timestamp("rejoint_le", { withTimezone: true }).notNull().default(sql`now()`),
     /** La dernière fois que ce Joueur a relu le Salon : au-delà de quelques secondes, il est absent. */
     vuLe: timestamp("vu_le", { withTimezone: true }).notNull().default(sql`now()`),
+    /** Ce qui désigne le Joueur aux autres dans le Salon : jamais son identifiant, qui lui sert de session. */
+    poste: uuid("poste").notNull().defaultRandom(),
+    /** L'Hôte lui a coupé la parole dans le chat. */
+    muet: boolean("muet").notNull().default(false),
   },
   (t) => [primaryKey({ columns: [t.salonId, t.joueurId] })],
+);
+
+/** Les Joueurs que l'Hôte a exclus d'un Salon : ils ne peuvent plus y revenir. */
+export const salonExclus = pgTable(
+  "salon_exclus",
+  {
+    salonId: uuid("salon_id")
+      .notNull()
+      .references(() => salons.id),
+    joueurId: uuid("joueur_id")
+      .notNull()
+      .references(() => joueurs.id),
+  },
+  (t) => [primaryKey({ columns: [t.salonId, t.joueurId] })],
+);
+
+/** Les messages du chat d'un Salon, grossièretés déjà masquées. Effacés à la fin de chaque Partie. */
+export const messages = pgTable("messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  salonId: uuid("salon_id")
+    .notNull()
+    .references(() => salons.id),
+  joueurId: uuid("joueur_id")
+    .notNull()
+    .references(() => joueurs.id),
+  texte: text("texte").notNull(),
+  envoyeLe: timestamp("envoye_le", { withTimezone: true }).notNull().default(sql`now()`),
+});
+
+export type MessageDuContexte = { pseudo: string; texte: string; envoyeLe: string; signale: boolean };
+
+/**
+ * Un message signalé, recopié avec les messages autour : il survit à l'effacement du chat pour être traité dans /admin.
+ */
+export const signalementsMessages = pgTable(
+  "signalements_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** Le message d'origine, effacé à la fin de la Partie : pas de clé étrangère. */
+    messageId: uuid("message_id").notNull(),
+    salonCode: text("salon_code").notNull(),
+    auteurId: uuid("auteur_id")
+      .notNull()
+      .references(() => joueurs.id),
+    texte: text("texte").notNull(),
+    parJoueurId: uuid("par_joueur_id")
+      .notNull()
+      .references(() => joueurs.id),
+    contexte: jsonb("contexte").$type<MessageDuContexte[]>().notNull(),
+    creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),
+  },
+  (t) => [unique().on(t.messageId, t.parJoueurId)],
 );
 
 /** Les réactions emoji posées sur la Réponse d'un autre pendant la découverte des points. */

@@ -1,5 +1,5 @@
 import { and, asc, count, eq } from "drizzle-orm";
-import { joueurs, salonJoueurs, salons } from "@/db/schema";
+import { joueurs, salonExclus, salonJoueurs, salons } from "@/db/schema";
 import type { Db } from "@/db/types";
 import type { IdPrereglage } from "./prereglages";
 
@@ -39,6 +39,8 @@ export async function rejoindreSalon(db: Db, saisie: string, joueurId: string): 
   const code = codeDepuisSaisie(saisie);
   const [salon] = code ? await db.select().from(salons).where(eq(salons.code, code)) : [];
   if (!salon) return { ok: false, erreur: "Aucun salon avec ce code. Vérifie-le auprès de celui qui t'a invité." };
+  const [exclu] = await db.select().from(salonExclus).where(and(eq(salonExclus.salonId, salon.id), eq(salonExclus.joueurId, joueurId)));
+  if (exclu) return { ok: false, erreur: "L'hôte t'a exclu de ce salon." };
   const [deja] = await db.select().from(salonJoueurs).where(and(eq(salonJoueurs.salonId, salon.id), eq(salonJoueurs.joueurId, joueurId)));
   if (deja) return { ok: true, code };
   const [{ n }] = await db.select({ n: count() }).from(salonJoueurs).where(eq(salonJoueurs.salonId, salon.id));
@@ -50,7 +52,7 @@ export async function rejoindreSalon(db: Db, saisie: string, joueurId: string): 
 export type SalonVu = {
   code: string;
   prereglage: IdPrereglage;
-  joueurs: { pseudo: string; hote: boolean; moi: boolean; absent: boolean }[];
+  joueurs: { pseudo: string; poste: string; hote: boolean; moi: boolean; absent: boolean }[];
   /** L'Hôte est seul : il attend au moins un autre Joueur. */
   enAttente: boolean;
   jeSuisHote: boolean;
@@ -62,7 +64,7 @@ export async function lireSalon(db: Db, saisie: string, joueurId: string, mainte
   const [salon] = code ? await db.select().from(salons).where(eq(salons.code, code)) : [];
   if (!salon) return undefined;
   const presents = await db
-    .select({ joueurId: salonJoueurs.joueurId, pseudo: joueurs.pseudo, vuLe: salonJoueurs.vuLe })
+    .select({ joueurId: salonJoueurs.joueurId, pseudo: joueurs.pseudo, vuLe: salonJoueurs.vuLe, poste: salonJoueurs.poste })
     .from(salonJoueurs)
     .innerJoin(joueurs, eq(joueurs.id, salonJoueurs.joueurId))
     .where(eq(salonJoueurs.salonId, salon.id))
@@ -73,6 +75,7 @@ export async function lireSalon(db: Db, saisie: string, joueurId: string, mainte
     prereglage: salon.prereglage as IdPrereglage,
     joueurs: presents.map((p) => ({
       pseudo: p.pseudo,
+      poste: p.poste,
       hote: p.joueurId === salon.hoteId,
       moi: p.joueurId === joueurId,
       absent: p.vuLe.getTime() < maintenant.getTime() - ABSENT_APRES_S * 1000,

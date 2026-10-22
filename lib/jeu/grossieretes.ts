@@ -20,3 +20,27 @@ export function contientUneGrossierete(texte: string): boolean {
   const colle = mots.join("");
   return RACINES.some((r) => colle.includes(r));
 }
+
+function enClair(mot: string) {
+  return normaliser(mot).replace(/[013457@$]/g, (c) => LEET[c] ?? c).replace(/[^a-z]/g, "");
+}
+
+/** Le texte avec chaque mot grossier remplacé par des étoiles, le reste intact : « un gros connard » → « un gros ******* ». */
+export function masquerGrossieretes(texte: string): string {
+  const mots = [...texte.matchAll(/[\p{L}\p{N}@$]+/gu)];
+  const masques = new Set<number>();
+  mots.forEach((m, i) => {
+    const clair = enClair(m[0]);
+    if (MOTS.has(clair) || RACINES.some((r) => clair.includes(r))) masques.add(i);
+    const suivant = mots[i + 1];
+    if (suivant && MOTS.has(`${clair} ${enClair(suivant[0])}`)) masques.add(i).add(i + 1);
+  });
+  let sortie = "";
+  let fin = 0;
+  mots.forEach((m, i) => {
+    if (!masques.has(i)) return;
+    sortie += texte.slice(fin, m.index) + "*".repeat(m[0].length);
+    fin = m.index + m[0].length;
+  });
+  return sortie + texte.slice(fin);
+}
