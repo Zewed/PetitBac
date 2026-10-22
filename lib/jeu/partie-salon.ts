@@ -7,7 +7,7 @@ import type { Juge } from "./juge/types";
 import { jugerManche } from "./jugement";
 import { TRANSIT_S } from "./manches";
 import { categoriesPour, PREREGLAGES, type IdPrereglage } from "./prereglages";
-import { dureeStockeeS, lettrePour, lettresRestantes, nbManchesPour, objectifAtteint, reglagesDe, reglagesDuPrereglage, type Reglages } from "./reglages";
+import { categoriesDeLaManche, categoriesInitiales, dureeStockeeS, lettrePour, lettresRestantes, nbManchesPour, objectifAtteint, reglagesDe, reglagesDuPrereglage, type Reglages } from "./reglages";
 import { codeDepuisSaisie } from "./salons";
 
 type Options = { maintenant?: Date; aleatoire?: () => number; lettre?: string; reglages?: Reglages };
@@ -41,6 +41,7 @@ async function lancerManche(db: Db, partie: typeof parties.$inferSelect, numero:
   const reglages = reglagesDe(partie);
   const choisie = reglages.choixLettre === "hote" ? lettre : reglages.choixLettre === "dernier" ? partie.lettreSuivante : undefined;
   const tiree = lettrePour(reglages, dejaTirees, { lettre: choisie, aleatoire });
+  const categories = categoriesDeLaManche(reglages, partie.categories, numero, aleatoire);
   const finitLe = new Date(maintenant.getTime() + partie.dureeS * 1000);
   const presents = await membres(db, partie.salonId!);
   await db.insert(manches).values(
@@ -49,7 +50,7 @@ async function lancerManche(db: Db, partie: typeof parties.$inferSelect, numero:
       partieId: partie.id,
       numero,
       lettre: tiree,
-      categories: partie.categories,
+      categories,
       commenceeLe: maintenant,
       finitLe,
     })),
@@ -73,7 +74,7 @@ export async function lancerPartieSalon(db: Db, code: string, joueurId: string, 
       prereglage,
       nbManches: nbManchesPour(r),
       dureeS: dureeStockeeS(r),
-      categories: categoriesPour(prereglage, aleatoire),
+      categories: prereglage === "personnalise" ? categoriesInitiales(r, aleatoire) : categoriesPour(prereglage, aleatoire),
       reglages: prereglage === "personnalise" ? r : null,
     })
     .returning();

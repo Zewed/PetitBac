@@ -2,7 +2,7 @@ import { and, asc, eq } from "drizzle-orm";
 import { defis, manches } from "@/db/schema";
 import type { Db } from "@/db/types";
 import { tirerLettre } from "./lettres";
-import { PACK_CLASSIQUE } from "./packs";
+import { PACKS, tirerCategories } from "./packs";
 
 export const DUREE_DEFI_S = 180;
 export const NB_CATEGORIES_DEFI = 12;
@@ -31,7 +31,7 @@ export async function defiDuJour(db: Db, maintenant = new Date(), aleatoire: () 
   if (existant) return existant;
   const [premier] = await db.select().from(defis).orderBy(asc(defis.date)).limit(1);
   const numero = premier ? premier.numero + joursEntre(premier.date, date) : 1;
-  const categories = [...PACK_CLASSIQUE].sort(() => aleatoire() - 0.5).slice(0, NB_CATEGORIES_DEFI);
+  const categories = tirerCategories(PACKS.map((p) => p.id), NB_CATEGORIES_DEFI, aleatoire);
   await db.insert(defis).values({ numero, date, lettre: tirerLettre(aleatoire), categories }).onConflictDoNothing();
   const [defi] = await db.select().from(defis).where(eq(defis.date, date));
   return defi;

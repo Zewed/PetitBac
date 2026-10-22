@@ -2,14 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ALPHABET, LETTRES_EXCLUES_PAR_DEFAUT } from "@/lib/jeu/lettres";
-import { PREREGLAGES } from "@/lib/jeu/prereglages";
-import { DUREES_S, GRACE_MAX_S, GRACE_PAR_DEFAUT_S, lireReglages, MANCHES_MAX, MANCHES_MIN, OBJECTIF_MAX, OBJECTIF_MIN } from "@/lib/jeu/reglages";
+import { CATEGORIES_DE_BASE, PACKS } from "@/lib/jeu/packs";
+import { CATEGORIES_MAX, DUREES_S, GRACE_MAX_S, GRACE_PAR_DEFAUT_S, lireReglages, MANCHES_MAX, MANCHES_MIN, OBJECTIF_MAX, OBJECTIF_MIN } from "@/lib/jeu/reglages";
 
 function duree(s: number) {
   return s < 60 ? `${s} s` : s % 60 ? `${Math.floor(s / 60)} min ${s % 60}` : `${s / 60} min`;
 }
 
-const NB_CATEGORIES = PREREGLAGES.personnalise.nbCategories;
 
 /**
  * Les Réglages d'une Partie Personnalisée, dans le formulaire qui la lance. Ils sont vérifiés à chaque changement,
@@ -23,7 +22,12 @@ export function ReglagesPersonnalises({ salon }: { salon: boolean }) {
   const [stop, setStop] = useState(true);
   const [stopDes, setStopDes] = useState<"complete" | "cases">("complete");
   const [grace, setGrace] = useState(GRACE_PAR_DEFAUT_S);
+  const [modeCategories, setModeCategories] = useState<"main" | "packs" | "chaque_manche">("main");
+  const [choisies, setChoisies] = useState<string[]>(CATEGORIES_DE_BASE);
+  const [packs, setPacks] = useState<string[]>(["classique"]);
+  const [nbCategories, setNbCategories] = useState(8);
   const [erreur, setErreur] = useState<string | null>(null);
+  const nbDansLaGrille = modeCategories === "main" ? choisies.length : nbCategories;
 
   function verifier() {
     const form = racine.current?.closest("form");
@@ -71,6 +75,95 @@ export function ReglagesPersonnalises({ salon }: { salon: boolean }) {
             <input className="nombre" type="number" name="objectif" min={OBJECTIF_MIN} max={OBJECTIF_MAX} step={5} defaultValue={100} required />
             <small>points</small>
           </label>
+        )}
+      </fieldset>
+
+      <fieldset className="reglage">
+        <legend className="kick">Catégories · {nbDansLaGrille} par grille</legend>
+        <div className="reglage__choix">
+          <label className="option">
+            <input type="radio" name="categories_mode" value="main" checked={modeCategories === "main"} onChange={() => setModeCategories("main")} />
+            <span>Choisies à la main</span>
+          </label>
+          <label className="option">
+            <input type="radio" name="categories_mode" value="packs" checked={modeCategories === "packs"} onChange={() => setModeCategories("packs")} />
+            <span>Tirées au hasard dans des packs</span>
+          </label>
+          <label className="option">
+            <input
+              type="radio"
+              name="categories_mode"
+              value="chaque_manche"
+              checked={modeCategories === "chaque_manche"}
+              onChange={() => setModeCategories("chaque_manche")}
+            />
+            <span>Retirées au sort à chaque manche</span>
+          </label>
+        </div>
+        {modeCategories === "main" ? (
+          <div className="catalogue">
+            {PACKS.map((p) => {
+              const ici = p.categories.filter((c) => choisies.includes(c)).length;
+              return (
+                <details key={p.id} className="catalogue__pack" open={p.id === "classique"}>
+                  <summary>
+                    {p.nom} <small>{ici ? `${ici} choisie${ici > 1 ? "s" : ""}` : `${p.categories.length} catégories`}</small>
+                  </summary>
+                  <div className="catalogue__cats">
+                    {p.categories.map((c) => (
+                      <label key={c} className="cat-c">
+                        <input
+                          type="checkbox"
+                          name="categories"
+                          value={c}
+                          checked={choisies.includes(c)}
+                          onChange={() => setChoisies((avant) => (avant.includes(c) ? avant.filter((x) => x !== c) : [...avant, c]))}
+                        />
+                        <span>{c}</span>
+                      </label>
+                    ))}
+                  </div>
+                </details>
+              );
+            })}
+            <p className="reglage__aide">De 1 à {CATEGORIES_MAX} catégories.</p>
+          </div>
+        ) : (
+          <>
+            <div className="catalogue__packs">
+              {PACKS.map((p) => (
+                <label key={p.id} className="cat-c">
+                  <input
+                    type="checkbox"
+                    name="packs"
+                    value={p.id}
+                    checked={packs.includes(p.id)}
+                    onChange={() => setPacks((avant) => (avant.includes(p.id) ? avant.filter((x) => x !== p.id) : [...avant, p.id]))}
+                  />
+                  <span>
+                    {p.nom} <small>{p.categories.length}</small>
+                  </span>
+                </label>
+              ))}
+            </div>
+            <label className="reglage__val">
+              <span>Catégories par grille</span>
+              <input
+                className="nombre"
+                type="number"
+                name="nb_categories"
+                min={1}
+                max={CATEGORIES_MAX}
+                value={nbCategories}
+                onChange={(e) => setNbCategories(Number(e.target.value))}
+                required
+              />
+              <small>de 1 à {CATEGORIES_MAX}</small>
+            </label>
+            <p className="reglage__aide">
+              {modeCategories === "packs" ? "Tirées une fois, gardées pour toute la partie." : "Une nouvelle grille à chaque manche."}
+            </p>
+          </>
         )}
       </fieldset>
 
@@ -154,8 +247,8 @@ export function ReglagesPersonnalises({ salon }: { salon: boolean }) {
               {stopDes === "cases" && (
                 <label className="reglage__val">
                   <span>Cases remplies</span>
-                  <input className="nombre" type="number" name="stop_cases" min={1} max={NB_CATEGORIES} defaultValue={NB_CATEGORIES - 2} required />
-                  <small>sur {NB_CATEGORIES}</small>
+                  <input className="nombre" type="number" name="stop_cases" min={1} max={CATEGORIES_MAX} defaultValue={Math.max(1, nbDansLaGrille - 2)} required />
+                  <small>sur {nbDansLaGrille}</small>
                 </label>
               )}
               <label className="reglage__val">

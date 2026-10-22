@@ -59,7 +59,8 @@ export async function decouverte(db: Db, code: string, joueurId: string) {
   return {
     /** La Contestation est-elle activée dans les Réglages de la Partie ? */
     contestation: reglagesDe(m.partie).contestation,
-    categories: m.partie.categories.map((categorie) => ({
+    // Les Catégories de cette Manche : elles changent à chaque Manche quand on les retire au sort.
+    categories: m.grilles[0].categories.map((categorie) => ({
       categorie,
       reponses: lignes
         .filter((l) => l.reponse.categorie === categorie)

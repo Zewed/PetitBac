@@ -1,4 +1,5 @@
 import { ALPHABET, LETTRES_EXCLUES_PAR_DEFAUT } from "./lettres";
+import { CATALOGUE, CATEGORIES_DE_BASE, PACKS, tirerCategories } from "./packs";
 import { PREREGLAGES, type IdPrereglageFixe } from "./prereglages";
 
 /** Les Réglages avancés d'une Partie. Ils ne changent jamais le barème : un Palier rapporte toujours ses points. */
@@ -13,6 +14,11 @@ export type Reglages = {
   dureeS: number | null;
   stop: { actif: boolean; /** « complete », ou le nombre de cases remplies qui suffit. */ des: "complete" | number; graceS: number };
   contestation: boolean;
+  /**
+   * Les Catégories : choisies à la main, tirées au hasard dans les Packs cochés une fois pour la Partie,
+   * ou retirées au sort à chaque Manche.
+   */
+  categories: { mode: "main"; liste: string[] } | { mode: "packs" | "chaque_manche"; packs: string[]; nombre: number };
 };
 
 export const MANCHES_MIN = 1;
@@ -23,6 +29,8 @@ export const DUREE_MIN_S = 30;
 export const DUREE_MAX_S = 600;
 export const GRACE_MAX_S = 30;
 export const GRACE_PAR_DEFAUT_S = 10;
+export const CATEGORIES_MIN = 1;
+export const CATEGORIES_MAX = 20;
 /** Les durées proposées dans les Réglages, de 30 s à 10 min. */
 export const DUREES_S = [30, 45, 60, 90, 120, 180, 240, 300, 420, 600];
 /** Sans limite, une Manche reste ouverte une journée : c'est le STOP ou « J'ai fini » qui la termine. */
@@ -37,6 +45,8 @@ export function reglagesDuPrereglage(id: IdPrereglageFixe): Reglages {
     dureeS: p.dureeS,
     stop: { actif: true, des: "complete", graceS: GRACE_PAR_DEFAUT_S },
     contestation: true,
+    // Le Pack Classique sert par défaut ; un Préréglage tire les siennes avec categoriesPour (prereglages.ts).
+    categories: { mode: "main", liste: [...CATEGORIES_DE_BASE] },
   };
 }
 
@@ -86,15 +96,53 @@ export function lireReglages(form: FormData, { salon }: { salon: boolean }): Val
   if (salon && dureeS === null && !stopActif) {
     return { ok: false, erreur: "Sans limite de temps, il faut le STOP pour finir une manche." };
   }
+  const categories = lireCategories(form);
+  if (typeof categories === "string") return { ok: false, erreur: categories };
   return {
     ok: true,
-    reglages: { manches, lettres, choixLettre, dureeS, stop: { actif: stopActif, des, graceS }, contestation: salon && form.get("contestation") === "on" },
+    reglages: { manches, lettres, choixLettre, dureeS, stop: { actif: stopActif, des, graceS }, contestation: salon && form.get("contestation") === "on", categories },
   };
 }
 
+/** Les Catégories depuis le formulaire, ou ce qui ne va pas. Sans champ, les six de toujours. */
+function lireCategories(form: FormData): Reglages["categories"] | string {
+  const mode = String(form.get("categories_mode") ?? "main");
+  if (mode === "packs" || mode === "chaque_manche") {
+    const coches = new Set(form.getAll("packs").map(String));
+    const packs = PACKS.filter((p) => coches.has(p.id));
+    if (!packs.length) return "Coche au moins un pack.";
+    const nombre = entier(form.get("nb_categories"));
+    const disponibles = packs.reduce((n, p) => n + p.categories.length, 0);
+    if (!(Number.isInteger(nombre) && nombre >= CATEGORIES_MIN && nombre <= Math.min(CATEGORIES_MAX, disponibles))) {
+      return `Choisis de ${CATEGORIES_MIN} à ${Math.min(CATEGORIES_MAX, disponibles)} catégories pour ces packs.`;
+    }
+    return { mode, packs: packs.map((p) => p.id), nombre };
+  }
+  if (!form.has("categories_mode")) return { mode: "main", liste: [...CATEGORIES_DE_BASE] };
+  const cochees = new Set(form.getAll("categories").map(String));
+  const liste = CATALOGUE.filter((c) => cochees.has(c));
+  if (liste.length !== cochees.size || liste.length < CATEGORIES_MIN || liste.length > CATEGORIES_MAX) return "Choisis de 1 à 20 catégories.";
+  return { mode: "main", liste };
+}
+
+/** Les Catégories de la première Manche d'une Partie Personnalisée. */
+export function categoriesInitiales(reglages: Reglages, aleatoire: () => number = Math.random): string[] {
+  const c = reglages.categories;
+  return c.mode === "main" ? [...c.liste] : tirerCategories(c.packs, c.nombre, aleatoire);
+}
+
+/** Les Catégories d'une Manche : celles de la Partie, ou un nouveau tirage quand elles se retirent à chaque Manche. */
+export function categoriesDeLaManche(reglages: Reglages, dePartie: string[], numero: number, aleatoire: () => number = Math.random): string[] {
+  const c = reglages.categories;
+  return c.mode === "chaque_manche" && numero > 1 ? tirerCategories(c.packs, c.nombre, aleatoire) : dePartie;
+}
+
 /** Les Réglages d'une Partie : les siens si elle est Personnalisée, sinon ceux de son Préréglage. */
-export function reglagesDe(partie: { prereglage: string; reglages: Reglages | null }): Reglages {
-  return partie.reglages ?? reglagesDuPrereglage(partie.prereglage as IdPrereglageFixe);
+export function reglagesDe(partie: { prereglage: string; reglages: Reglages | null; categories?: string[] }): Reglages {
+  if (!partie.reglages) return reglagesDuPrereglage(partie.prereglage as IdPrereglageFixe);
+  // Les Parties Personnalisées d'avant le choix des Catégories gardaient celles de la Partie.
+  const stockes: Omit<Reglages, "categories"> & { categories?: Reglages["categories"] } = partie.reglages;
+  return { ...stockes, categories: stockes.categories ?? { mode: "main", liste: partie.categories ?? [...CATEGORIES_DE_BASE] } };
 }
 
 /** Le plafond de Manches : le nombre réglé, ou, pour « le premier à X points », une par Lettre cochée. */

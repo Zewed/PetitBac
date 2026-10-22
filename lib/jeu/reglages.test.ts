@@ -28,6 +28,7 @@ describe("Les Réglages d'une Partie Personnalisée", () => {
         dureeS: 120,
         stop: { actif: false, des: "complete", graceS: 10 },
         contestation: true,
+        categories: { mode: "main", liste: ["Prénom", "Pays", "Animal", "Métier", "Fruit ou légume", "Objet"] },
       },
     });
   });
