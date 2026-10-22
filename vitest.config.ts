@@ -8,6 +8,7 @@ export default defineConfig({
     // Chaque test démarre sa base Postgres embarquée (PGlite), ce qui prend une à deux secondes.
     testTimeout: 30_000,
     include: ["**/*.test.ts"],
-    exclude: ["node_modules/**", ".next/**"],
+    // .claude/ peut contenir les worktrees d'autres sessions, avec leurs propres node_modules.
+    exclude: ["**/node_modules/**", ".next/**", ".claude/**"],
   },
 });

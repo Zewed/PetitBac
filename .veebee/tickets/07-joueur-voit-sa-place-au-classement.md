@@ -3,6 +3,7 @@ id: 07
 title: Le Joueur voit sa place au classement du Défi du jour
 milestone: null
 depends_on: [05]
+status: done
 design: .aeom/direction/index.html
 tracker: null            # filled after the push: { tool, id, url }
 ---
