@@ -8,6 +8,13 @@
       "when": 1792676258807,
       "tag": "0000_marvelous_tinkerer",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792678423236,
+      "tag": "0001_modern_shockwave",
+      "breakpoints": true
     }
   ]
 }

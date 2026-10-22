@@ -3,6 +3,7 @@ id: 03
 title: Le Joueur enchaîne les Manches d'une Partie libre avec un Préréglage
 milestone: null
 depends_on: [01]
+status: done
 design: .aeom/direction/index.html
 tracker: null            # filled after the push: { tool, id, url }
 ---

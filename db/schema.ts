@@ -18,6 +18,23 @@ export const joueurs = pgTable("joueurs", {
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),
 });
 
+export type EtatPartie = "en_cours" | "terminee";
+
+export const parties = pgTable("parties", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  joueurId: uuid("joueur_id")
+    .notNull()
+    .references(() => joueurs.id),
+  prereglage: text("prereglage").notNull(),
+  nbManches: integer("nb_manches").notNull(),
+  dureeS: integer("duree_s").notNull(),
+  categories: jsonb("categories").$type<string[]>().notNull(),
+  etat: text("etat").$type<EtatPartie>().notNull().default("en_cours"),
+  total: integer("total").notNull().default(0),
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),
+  termineeLe: timestamp("terminee_le", { withTimezone: true }),
+});
+
 export type EtatManche = "en_cours" | "a_juger" | "jugee" | "jugement_echoue";
 
 export const manches = pgTable("manches", {
@@ -25,6 +42,8 @@ export const manches = pgTable("manches", {
   joueurId: uuid("joueur_id")
     .notNull()
     .references(() => joueurs.id),
+  partieId: uuid("partie_id").references(() => parties.id),
+  numero: integer("numero").notNull().default(1),
   lettre: text("lettre").notNull(),
   categories: jsonb("categories").$type<string[]>().notNull(),
   commenceeLe: timestamp("commencee_le", { withTimezone: true }).notNull(),

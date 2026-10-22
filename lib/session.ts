@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { obtenirDb } from "@/db/client";
 import { trouverJoueur, type Joueur } from "@/lib/jeu/joueurs";
 
@@ -9,6 +10,8 @@ const COOKIE = "pb_joueur";
 export async function joueurCourant(): Promise<Joueur | undefined> {
   const id = (await cookies()).get(COOKIE)?.value;
   if (!id) return undefined;
+  // La base lit l'heure : on reste au moment de la requête, jamais dans un pré-rendu.
+  await connection();
   return trouverJoueur(await obtenirDb(), id);
 }
 

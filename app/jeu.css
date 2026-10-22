@@ -47,3 +47,18 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
   .ligne{--lab:170px;min-height:72px;padding:0 28px 0 32px}
   .res__actions{grid-template-columns:1fr 1fr}
 }
+
+/* la Partie libre : les Préréglages au-dessus du gros bloc qu'on tape */
+.seul__form{display:grid;gap:6px}
+.seul .presets{grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 18px}
+.preset__rec{display:block;margin-top:6px;font-family:var(--hand);font-weight:700;font-size:16px;color:var(--blue);white-space:nowrap}
+@media (max-width:560px){.seul .presets{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.res__partie{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;font-size:17px;color:var(--ink-2)}
+.res__partie b{color:var(--ink);font-weight:800}
+.fin{display:grid;gap:12px;padding:26px 24px;position:relative;isolation:isolate}
+.fin::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,var(--y2),var(--y) 50px,var(--y) calc(100% - 50px),var(--y2));transform:skewX(var(--skew-tall)) rotate(-.6deg)}
+.fin__k{font-size:13px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.fin__pts{font-size:72px;font-weight:800;letter-spacing:-.045em;line-height:.9;font-variant-numeric:tabular-nums}
+.fin__pts small{font-size:22px;letter-spacing:0;margin-left:6px}
+.fin__rec{font-family:var(--hand);font-weight:700;font-size:22px;color:var(--blue)}

@@ -12,6 +12,8 @@ type Props = {
   finitLe: string;
   maintenantServeur: string;
   dureeS: number;
+  titre: string;
+  etiquette: string;
 };
 
 function formater(s: number) {
@@ -19,7 +21,7 @@ function formater(s: number) {
 }
 
 /** La Grille d'une Manche : le chrono suit l'heure de fin donnée par le serveur, pas l'horloge du téléphone. */
-export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, maintenantServeur, dureeS }: Props) {
+export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, maintenantServeur, dureeS, titre, etiquette }: Props) {
   const [valeurs, setValeurs] = useState<Record<string, string>>(() =>
     Object.fromEntries(categories.map((c) => [c, saisies[c] ?? ""])),
   );
@@ -77,7 +79,7 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
             <span aria-hidden="true">←</span> Quitter
           </Link>
           <p className="salon">
-            <b>Partie libre</b>
+            <b>{titre}</b>
           </p>
         </div>
       </header>
@@ -93,7 +95,7 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
             </span>
           </div>
           <div className="clock">
-            <p className="clock__round">Partie libre</p>
+            <p className="clock__round">{etiquette}</p>
             <p className="clock__t" aria-live="off">
               {formater(resteS)}
             </p>
