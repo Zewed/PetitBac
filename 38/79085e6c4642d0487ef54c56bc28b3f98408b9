@@ -1,0 +1,46 @@
+lib/jeu/decouverte.ts
+  s_f47e83bd1733a2::t_9b26d1674e0103 1-103
+lib/jeu/decouverte.test.ts
+  s_f47e83bd1733a2::t_0685b0e471031a 1-5,7-92
+  s_f47e83bd1733a2::t_49e32c48986f31 6
+app/actions.ts
+  s_f47e83bd1733a2::t_c7bb395f6a00da 7,138-144
+  s_f47e83bd1733a2::t_12c122ecbe1969 145
+app/manche/[id]/page.tsx
+  s_f47e83bd1733a2::t_c7bb395f6a00da 6,12,71-72,75-85,168
+  s_f47e83bd1733a2::t_7f25c689f04f21 169
+app/jeu.css
+  s_f47e83bd1733a2::t_c7bb395f6a00da 118-136
+lib/jeu/partie-salon.ts
+  s_f47e83bd1733a2::t_c7bb395f6a00da 4,98,133
+db/migrations/0007_square_xavin.sql
+  s_f47e83bd1733a2::t_0685b0e471031a 1-9
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_0685b0e471031a 53-59
+components/decouverte.tsx
+  s_f47e83bd1733a2::t_c7bb395f6a00da 1-60
+db/migrations/meta/0007_snapshot.json
+  s_f47e83bd1733a2::t_0685b0e471031a 1-799
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_02c4cacf11c396 21
+db/schema.ts
+  s_f47e83bd1733a2::t_f069488cc9e3c3 153-167
+.veebee/tickets/11-joueurs-decouvrent-les-reponses.md
+  s_f47e83bd1733a2::t_4c3d174d2b02dd 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3879085e6c4642d0487ef54c56bc28b3f98408b9",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
