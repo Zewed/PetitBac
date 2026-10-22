@@ -3,6 +3,7 @@ id: 01
 title: Le Joueur choisit un pseudo et joue une Manche seul, jugée et notée par Palier
 milestone: null
 depends_on: []
+status: done
 design:
   - .aeom/direction/index.html
   - .aeom/direction/manche.html

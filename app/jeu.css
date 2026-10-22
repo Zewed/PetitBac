@@ -1,0 +1,49 @@
+/* Ce que la maquette ne dessinait pas encore : le pseudo, la Partie libre seule, les points d'une Manche. */
+
+.acc--solo{max-width:720px;margin:0 auto}
+@media (min-width:900px){.acc--solo{grid-template-columns:minmax(0,1fr);row-gap:40px}.acc--solo > *{grid-column:1/-1;grid-row:auto}}
+
+.pseudo{display:grid;gap:18px;padding-top:12px}
+.pseudo__t{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.pseudo__p{font-size:17px;color:var(--ink-2)}
+.pseudo__form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px}
+.pseudo__form .field input{font-family:var(--hand);font-weight:700;font-size:24px;color:var(--blue)}
+.pseudo__err{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--red)}
+.pseudo__err::before{content:"";width:11px;height:15px;background:var(--red);transform:skewX(var(--skew));flex:none}
+@media (max-width:480px){.pseudo__form{grid-template-columns:1fr}}
+
+button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;color:inherit;font:inherit}
+
+.fini{padding:6px 6px 28px}
+.fini .btn{width:100%}
+.fini__hint{margin-top:9px;font-size:14px;color:var(--ink-2);text-align:center}
+
+/* le résultat : chaque Réponse marquée du fluo de son Palier */
+.res{display:grid;gap:26px;padding-top:8px;padding-bottom:56px}
+.res__head{display:flex;align-items:center;gap:16px}
+.res__head h1{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.res__total{display:flex;align-items:baseline;gap:8px}
+.res__pts{font-size:88px;font-weight:800;letter-spacing:-.045em;line-height:.9;font-variant-numeric:tabular-nums}
+.res__pts small{font-size:24px;letter-spacing:0;margin-left:6px}
+.lignes{display:grid;gap:10px}
+.ligne{--lab:106px;position:relative;isolation:isolate;display:grid;grid-template-columns:var(--lab) minmax(0,1fr) auto;align-items:center;gap:10px;min-height:66px;padding:0 18px 0 24px}
+.ligne::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--c,var(--wash));transform:skewX(var(--skew)) rotate(var(--rot,0deg))}
+.ligne:nth-child(odd){--rot:-.5deg}
+.ligne:nth-child(even){--rot:.45deg}
+.ligne__rep{min-width:0;font-family:var(--hand);font-weight:600;font-size:26px;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ligne__pal{display:grid;justify-items:end;line-height:1.05;white-space:nowrap}
+.ligne__pal b{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
+.ligne__pal span{font-size:13px;font-weight:700}
+.ligne.is-refus .ligne__rep{color:var(--ink-2);text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:4px}
+.ligne.is-refus .ligne__pal span{color:var(--red)}
+.ligne.is-vide .ligne__rep{color:var(--ink-2);font-family:var(--sans);font-size:16px;font-weight:600}
+.res__actions{display:grid;gap:14px}
+.panne{display:grid;gap:14px;padding:24px 22px;position:relative;isolation:isolate}
+.panne::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--wash);transform:skewX(var(--skew-tall))}
+.panne__t{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800;color:var(--red)}
+.panne__t::before{content:"";width:12px;height:18px;background:var(--red);transform:skewX(var(--skew));flex:none}
+@media (min-width:900px){
+  .res{max-width:860px;margin:0 auto}
+  .ligne{--lab:170px;min-height:72px;padding:0 28px 0 32px}
+  .res__actions{grid-template-columns:1fr 1fr}
+}
