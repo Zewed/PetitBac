@@ -1,0 +1,56 @@
+app/jeu.css
+  s_f47e83bd1733a2::t_46ab1d49fd0142 256
+  s_f47e83bd1733a2::t_d525285dfc9b26 199-200
+  s_f47e83bd1733a2::t_68529721aaf1ef 249-255
+components/choix-prereglage.tsx
+  s_f47e83bd1733a2::t_68529721aaf1ef 6,20,25-26,28,55-62
+  s_f47e83bd1733a2::t_a52272b358c894 53
+lib/jeu/regles.test.ts
+  s_f47e83bd1733a2::t_6e9d026d54106b 1-65
+db/schema.ts
+  s_f47e83bd1733a2::t_aebb48c6e6475f 262-274
+app/actions.ts
+  s_f47e83bd1733a2::t_68529721aaf1ef 17,39-44,235-248
+  s_f47e83bd1733a2::t_0a927260acaa3d 249
+.veebee/tickets/18-joueur-enregistre-mes-regles.md
+  s_f47e83bd1733a2::t_a52272b358c894 8
+app/page.tsx
+  s_f47e83bd1733a2::t_46ab1d49fd0142 18,38,86
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_aebb48c6e6475f 88-94
+lib/jeu/regles.ts
+  s_f47e83bd1733a2::t_6e9d026d54106b 1-54
+db/migrations/meta/0012_snapshot.json
+  s_f47e83bd1733a2::t_aebb48c6e6475f 1-1281
+app/salon/[code]/page.tsx
+  s_f47e83bd1733a2::t_46ab1d49fd0142 10,64-65
+.veebee/autopilot/blocked.json
+  s_f47e83bd1733a2::t_902fb4b77ecec4 1-7
+db/migrations/0012_nice_gunslinger.sql
+  s_f47e83bd1733a2::t_aebb48c6e6475f 1-10
+components/salon-attente.tsx
+  s_f47e83bd1733a2::t_46ab1d49fd0142 9,11,92
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_aebb48c6e6475f 34
+  s_f47e83bd1733a2::t_a52272b358c894 39-40
+  s_f47e83bd1733a2::t_902fb4b77ecec4 4-8
+components/reglages-personnalises.tsx
+  s_f47e83bd1733a2::t_d525285dfc9b26 3,50-55,292
+  s_f47e83bd1733a2::t_68529721aaf1ef 4,31,284-291,293-301
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "81f8f21ab2a3d9f5c8e770d5fed916df8b0462c0",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
