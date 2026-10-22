@@ -1,0 +1,40 @@
+lib/jeu/limites.test.ts
+  s_f47e83bd1733a2::t_1a75c912855303 1-43
+lib/jeu/limites.ts
+  s_f47e83bd1733a2::t_1a75c912855303 1-55
+app/manche/[id]/page.tsx
+  s_f47e83bd1733a2::t_5cd359d860433d 14,93-94,104,112-113,164-165
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_1a75c912855303 36
+  s_f47e83bd1733a2::t_87030630de60b4 41
+db/migrations/meta/0014_snapshot.json
+  s_f47e83bd1733a2::t_1a75c912855303 1-1407
+db/schema.ts
+  s_f47e83bd1733a2::t_1a75c912855303 294-304
+app/actions.ts
+  s_f47e83bd1733a2::t_5cd359d860433d 4,20,93-110,116,126,134-137
+db/migrations/0014_outgoing_marvex.sql
+  s_f47e83bd1733a2::t_1a75c912855303 1-6
+app/page.tsx
+  s_f47e83bd1733a2::t_5cd359d860433d 19,44,72-76
+.veebee/tickets/26-limites-anti-abus.md
+  s_f47e83bd1733a2::t_87030630de60b4 8
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_1a75c912855303 102-108
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "248a4ffea40ebc6796aee13577d1120a5a40a4c9",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
