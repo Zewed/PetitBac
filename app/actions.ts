@@ -7,9 +7,10 @@ import { commencerDefi } from "@/lib/jeu/defi";
 import { choisirPseudo } from "@/lib/jeu/joueurs";
 import { obtenirJuge } from "@/lib/jeu/juge";
 import { jugerManche } from "@/lib/jeu/jugement";
-import { enregistrerReponses, terminerManche, type Saisies } from "@/lib/jeu/manches";
+import { enregistrerReponses, lireManche, terminerManche, type Saisies } from "@/lib/jeu/manches";
 import { commencerPartieLibre, mancheSuivante } from "@/lib/jeu/parties";
 import { estPrereglage } from "@/lib/jeu/prereglages";
+import { cloturerManche, lancerPartieSalon, mancheSuivanteSalon } from "@/lib/jeu/partie-salon";
 import { creerSalon, rejoindreSalon, type ResultatRejoindre } from "@/lib/jeu/salons";
 import { joueurCourant, retenirJoueur } from "@/lib/session";
 
@@ -61,6 +62,9 @@ export async function terminerAction(id: string, saisies: Saisies) {
   const db = await obtenirDb();
   await terminerManche(db, id, joueur.id, saisies);
   await jugerManche(db, obtenirJuge(), id, joueur.id);
+  // Entre amis, le chrono à 0:00 ferme aussi les Grilles des autres, même s'ils sont partis.
+  const manche = await lireManche(db, id, joueur.id);
+  if (manche?.salonCode) await cloturerManche(db, obtenirJuge(), manche.salonCode);
   refresh();
 }
 
@@ -98,4 +102,25 @@ export async function rejoindreParCodeAction(_avant: EtatRejoindre, form: FormDa
   const resultat = await rejoindreSalon(await obtenirDb(), saisie, joueur.id);
   if (!resultat.ok) return { erreur: resultat.erreur, saisie };
   redirect(`/salon/${resultat.code}`);
+}
+
+export async function lancerPartieSalonAction(code: string, form: FormData) {
+  const joueur = await joueurCourant();
+  if (!joueur) redirect("/");
+  const choix = form.get("prereglage");
+  const resultat = await lancerPartieSalon(await obtenirDb(), code, joueur.id, estPrereglage(choix) ? choix : "classique");
+  if (!resultat.ok) return;
+  refresh();
+}
+
+export async function mancheSuivanteSalonAction(code: string) {
+  const joueur = await joueurCourant();
+  if (!joueur) redirect("/");
+  await mancheSuivanteSalon(await obtenirDb(), code, joueur.id);
+  refresh();
+}
+
+/** Ferme la Manche du Salon une fois l'heure passée ; sans effet avant. */
+export async function cloturerAction(code: string) {
+  await cloturerManche(await obtenirDb(), obtenirJuge(), code);
 }

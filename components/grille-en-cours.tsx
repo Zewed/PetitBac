@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { enregistrerAction, terminerAction } from "@/app/actions";
+import { SuiviSalon } from "@/components/suivi-salon";
 
 type Props = {
   id: string;
@@ -14,6 +15,8 @@ type Props = {
   dureeS: number;
   titre: string;
   etiquette: string;
+  /** Entre amis : le Salon, et le classement avant cette Manche. Pas de « J'ai fini » : la Manche s'arrête pour tous à la fin du chrono. */
+  salon?: { code: string; titreScores: string; scores: { pseudo: string; total: number; moi: boolean }[] };
 };
 
 function formater(s: number) {
@@ -21,7 +24,7 @@ function formater(s: number) {
 }
 
 /** La Grille d'une Manche : le chrono suit l'heure de fin donnée par le serveur, pas l'horloge du téléphone. */
-export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, maintenantServeur, dureeS, titre, etiquette }: Props) {
+export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, maintenantServeur, dureeS, titre, etiquette, salon }: Props) {
   const [valeurs, setValeurs] = useState<Record<string, string>>(() =>
     Object.fromEntries(categories.map((c) => [c, saisies[c] ?? ""])),
   );
@@ -106,6 +109,26 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
           </div>
         </section>
 
+        {salon && (
+          <section className="players" aria-labelledby="pl-t">
+            <SuiviSalon code={salon.code} mancheId={id} />
+            <h2 id="pl-t" className="kick">
+              {salon.titreScores}
+            </h2>
+            <ol className="chips">
+              {salon.scores.map((j) => (
+                <li key={j.pseudo + (j.moi ? "*" : "")} className={`chip ${j.moi ? "is-me" : ""}`}>
+                  <span className="chip__n">{j.pseudo}</span>
+                  <span className="chip__p">
+                    {j.total}
+                    {j.moi && <small>toi</small>}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
         <section className="grille" aria-labelledby="grille-t">
           <div className="grille__head">
             <h1 id="grille-t">Ta grille en {lettre}</h1>
@@ -148,12 +171,18 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
           </div>
         </section>
 
-        <div className="fini stop">
-          <button className="btn btn--xl" type="button" onClick={terminer} disabled={ferme}>
-            {ferme ? "Le Juge corrige ta grille…" : "J'ai fini"}
-          </button>
-          <p className="fini__hint">{ferme ? "Tes points arrivent." : "La vitesse ne rapporte aucun point : prends ton temps."}</p>
-        </div>
+        {salon ? (
+          <p className="fini__hint fini__hint--salon">
+            {ferme ? "Le Juge corrige les grilles de tout le monde…" : "La manche s'arrête pour tout le monde à la fin du chrono."}
+          </p>
+        ) : (
+          <div className="fini stop">
+            <button className="btn btn--xl" type="button" onClick={terminer} disabled={ferme}>
+              {ferme ? "Le Juge corrige ta grille…" : "J'ai fini"}
+            </button>
+            <p className="fini__hint">{ferme ? "Tes points arrivent." : "La vitesse ne rapporte aucun point : prends ton temps."}</p>
+          </div>
+        )}
       </main>
     </>
   );

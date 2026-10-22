@@ -3,6 +3,7 @@ id: 09
 title: Le Salon joue une Partie ensemble, Manche après Manche
 milestone: null
 depends_on: [03, 08]
+status: done
 design: .aeom/direction/manche.html
 tracker: null            # filled after the push: { tool, id, url }
 ---
