@@ -106,3 +106,12 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 .classement__n{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .classement li.is-me .classement__n{font-family:var(--hand);color:var(--blue)}
 .classement__p{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+
+/* le STOP entre amis : il s'allume quand la grille est pleine */
+.stop__btn:enabled{cursor:pointer}
+.stop__btn:enabled .stop__n{color:#fff}
+.stop__btn:focus-visible{outline:none}
+.stop__btn:focus-visible::before{box-shadow:var(--ring)}
+.stop__annonce{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:12px 18px;position:relative;isolation:isolate;font-size:17px;color:#fff}
+.stop__annonce::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--red);transform:skewX(var(--skew))}
+.stop__annonce b{font-weight:800}

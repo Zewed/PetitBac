@@ -58,6 +58,7 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
                 code: manche.salonCode,
                 titreScores: salon.manche.numero > 1 ? `Scores après la manche ${salon.manche.numero - 1}` : "Les joueurs",
                 scores: salon.classement,
+                stopPar: salon.manche.stopPar,
               }
             : undefined
         }

@@ -12,6 +12,7 @@ import { commencerPartieLibre, mancheSuivante } from "@/lib/jeu/parties";
 import { estPrereglage } from "@/lib/jeu/prereglages";
 import { cloturerManche, lancerPartieSalon, mancheSuivanteSalon } from "@/lib/jeu/partie-salon";
 import { creerSalon, rejoindreSalon, type ResultatRejoindre } from "@/lib/jeu/salons";
+import { direStop } from "@/lib/jeu/stop";
 import { joueurCourant, retenirJoueur } from "@/lib/session";
 
 export type EtatPseudo = { erreur?: string; saisie?: string };
@@ -123,4 +124,13 @@ export async function mancheSuivanteSalonAction(code: string) {
 /** Ferme la Manche du Salon une fois l'heure passée ; sans effet avant. */
 export async function cloturerAction(code: string) {
   await cloturerManche(await obtenirDb(), obtenirJuge(), code);
+}
+
+/** Entre amis, Grille complète : STOP. Les autres n'ont plus que le Temps de grâce. */
+export async function direStopAction(id: string, saisies: Saisies) {
+  const joueur = await joueurCourant();
+  if (!joueur) return { ok: false as const, erreur: "Choisis d'abord un pseudo." };
+  const resultat = await direStop(await obtenirDb(), id, joueur.id, saisies);
+  if (resultat.ok) refresh();
+  return resultat;
 }

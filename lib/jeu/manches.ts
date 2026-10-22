@@ -38,7 +38,8 @@ export async function lireManche(db: Db, id: string, joueurId: string, maintenan
     partieId: manche.partieId,
     defiNumero: manche.defiNumero,
     salonCode: salon?.code ?? null,
-    dureeS: Math.round((manche.finitLe.getTime() - manche.commenceeLe.getTime()) / 1000),
+    // La durée du chrono vient de la Partie : un STOP raccourcit l'heure de fin, pas la durée affichée.
+    dureeS: partie?.dureeS ?? Math.round((manche.finitLe.getTime() - manche.commenceeLe.getTime()) / 1000),
     lettre: manche.lettre,
     categories: manche.categories,
     finitLe: manche.finitLe,

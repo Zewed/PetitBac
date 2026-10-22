@@ -64,6 +64,8 @@ export const manches = pgTable(
   termineeLe: timestamp("terminee_le", { withTimezone: true }),
   etat: text("etat").$type<EtatManche>().notNull().default("en_cours"),
   total: integer("total"),
+  /** Entre amis : le Joueur qui a dit STOP pendant cette Manche. */
+  stopParId: uuid("stop_par_id").references(() => joueurs.id),
 },
   // Un seul essai par Joueur et par Défi.
   (t) => [unique().on(t.joueurId, t.defiNumero)],

@@ -94,7 +94,7 @@ export async function mancheSuivanteSalon(db: Db, code: string, joueurId: string
 
 export type EtatPartieSalon = {
   partie: { id: string; nom: string; nbManches: number; etat: "en_cours" | "terminee" };
-  manche: { numero: number; nbManches: number; close: boolean; finitLe: string };
+  manche: { numero: number; nbManches: number; close: boolean; finitLe: string; stopPar: string | null };
   maMancheId: string | null;
   classement: { pseudo: string; total: number; moi: boolean }[];
   jeSuisHote: boolean;
@@ -119,6 +119,8 @@ export async function etatPartieSalon(db: Db, code: string, joueurId: string, ma
     parJoueur.set(l.joueurId, c);
   }
   const ma = grilles.find((g) => g.joueurId === joueurId);
+  const stopParId = grilles.find((g) => g.stopParId)?.stopParId;
+  const [stoppeur] = stopParId ? await db.select({ pseudo: joueurs.pseudo }).from(joueurs).where(eq(joueurs.id, stopParId)) : [];
   return {
     partie: { id: partie.id, nom: PREREGLAGES[partie.prereglage as IdPrereglage].nom, nbManches: partie.nbManches, etat: partie.etat },
     manche: {
@@ -126,6 +128,7 @@ export async function etatPartieSalon(db: Db, code: string, joueurId: string, ma
       nbManches: partie.nbManches,
       close: grilles.length > 0 && grilles.every((g) => g.etat === "jugee"),
       finitLe: (grilles[0]?.finitLe ?? maintenant).toISOString(),
+      stopPar: stoppeur?.pseudo ?? null,
     },
     maMancheId: ma?.id ?? null,
     classement: [...parJoueur.values()].sort((a, b) => b.total - a.total || a.pseudo.localeCompare(b.pseudo)),

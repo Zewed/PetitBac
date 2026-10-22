@@ -13,7 +13,9 @@ async function reponseJugee(lettre: string, categorie: string, saisie: string, j
 
 describe("Le Juge range les variantes d'une Réponse sous une seule Forme de référence", () => {
   it("« les Chacals », « Chacal » et « chacal » donnent la même Réponse, avec le même Palier", async () => {
-    const formes = await Promise.all(["les Chacals", "Chacal", "chacal"].map((s) => reponseJugee("C", "Animal", s)));
+    const base = await unJoueur();
+    const formes = [];
+    for (const s of ["les Chacals", "Chacal", "chacal"]) formes.push(await reponseJugee("C", "Animal", s, new FakeJuge(), base));
     for (const r of formes) expect(r).toMatchObject({ valide: true, formeReference: "chacal" });
     expect(new Set(formes.map((r) => r.palier)).size).toBe(1);
   });
