@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Shantell_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { AppInstallable } from "@/components/app-installable";
+import { FiltresStabilo, Lavis } from "@/components/stabilo";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({ variable: "--font-bricolage", subsets: ["latin"], axes: ["opsz", "wdth"] });
@@ -19,6 +20,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${bricolage.variable} ${shantell.variable}`}>
       <body>
+        {/* le trait de stabilo et les lavis du fond, partout (tickets 31 et 32) */}
+        <FiltresStabilo />
+        <Lavis />
         {children}
         <AppInstallable />
         {/* Mesure d'audience sans cookies, donc sans bandeau. */}

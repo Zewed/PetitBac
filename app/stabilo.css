@@ -1,0 +1,45 @@
+/* Le vrai trait de stabilo dans toute l'app (ticket 32), sur le modèle de l'accueil « griffon » (ticket 31).
+   Les surligneurs du kit (Paliers, titres surlignés, ta puce, la grande Lettre, le chrono, les choix cochés, le podium)
+   prennent le trait : encre plus foncée au départ, qui s'éclaircit et sèche vers la fin, stries du feutre, bords chargés
+   et tremblés, translucide. Les filtres #stabilo-a/b/c sont dans le layout (components/stabilo.tsx) ; le texte, les boutons
+   et les champs restent nets et en aplat. Généré à partir de la maquette .aeom/direction/accueil-griffon/. */
+
+
+.mark__hl::before,
+.sec__hl::before,
+.chip.is-me::before,
+.classement li.is-me::before,
+.marche--1::before,
+.fin::before,
+.invite__qr::before,
+.chat__m.is-me::before,
+.preset:has(input:checked)::before,
+.row.is-focus::before,
+.row:focus-within::before,
+.lettre-c:has(input:checked)::before,
+.cat-c:has(input:checked)::before,
+.letter__ink i,
+.timebar__ink{
+  --f:var(--y);--f2:var(--y2);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--f2) 62%,transparent),color-mix(in srgb,var(--f2) 0%,transparent) 6px calc(100% - 6px),color-mix(in srgb,var(--f2) 62%,transparent)),linear-gradient(var(--sa1,179.3deg),transparent var(--s1,-80px),color-mix(in srgb,var(--f2) 36%,transparent) var(--s1,-80px) calc(var(--s1,-80px) + 7px),transparent calc(var(--s1,-80px) + 7px)),linear-gradient(var(--sa2,180.7deg),transparent var(--s2,-80px),color-mix(in srgb,var(--f2) 32%,transparent) var(--s2,-80px) calc(var(--s2,-80px) + 6px),transparent calc(var(--s2,-80px) + 6px)),linear-gradient(90deg,color-mix(in srgb,var(--f2) var(--e0,100%),transparent) 0,color-mix(in srgb,var(--f2) var(--e1,94%),transparent) 12px,color-mix(in srgb,var(--f) var(--e2,90%),transparent) 44px,color-mix(in srgb,var(--f) var(--e3,82%),transparent) var(--x3,34%),color-mix(in srgb,var(--f) var(--e4,87%),transparent) var(--x4,50%),color-mix(in srgb,var(--f) var(--e5,72%),transparent) var(--x5,68%),color-mix(in srgb,var(--f) var(--e6,78%),transparent) var(--x6,83%),color-mix(in srgb,var(--f) var(--e7,46%),transparent) 100%);
+  filter:url(#stabilo-a);
+}
+
+.ligne[class*="t-"]::before,
+.dec[class*="t-"]::before,
+.rare::before,
+.tier::before{
+  --f:var(--c,var(--y));--f2:var(--c2,var(--y2));
+  background:linear-gradient(180deg,color-mix(in srgb,var(--f2) 62%,transparent),color-mix(in srgb,var(--f2) 0%,transparent) 6px calc(100% - 6px),color-mix(in srgb,var(--f2) 62%,transparent)),linear-gradient(var(--sa1,179.3deg),transparent var(--s1,-80px),color-mix(in srgb,var(--f2) 36%,transparent) var(--s1,-80px) calc(var(--s1,-80px) + 7px),transparent calc(var(--s1,-80px) + 7px)),linear-gradient(var(--sa2,180.7deg),transparent var(--s2,-80px),color-mix(in srgb,var(--f2) 32%,transparent) var(--s2,-80px) calc(var(--s2,-80px) + 6px),transparent calc(var(--s2,-80px) + 6px)),linear-gradient(90deg,color-mix(in srgb,var(--f2) var(--e0,100%),transparent) 0,color-mix(in srgb,var(--f2) var(--e1,94%),transparent) 12px,color-mix(in srgb,var(--f) var(--e2,90%),transparent) 44px,color-mix(in srgb,var(--f) var(--e3,82%),transparent) var(--x3,34%),color-mix(in srgb,var(--f) var(--e4,87%),transparent) var(--x4,50%),color-mix(in srgb,var(--f) var(--e5,72%),transparent) var(--x5,68%),color-mix(in srgb,var(--f) var(--e6,78%),transparent) var(--x6,83%),color-mix(in srgb,var(--f) var(--e7,46%),transparent) 100%);
+  filter:url(#stabilo-b);
+}
+
+/* chaque trait a son dosage : on alterne trois réglages d'encre et trois filtres */
+.ligne:nth-child(3n+2)::before,.dec:nth-child(3n+2)::before,.chip:nth-child(3n+2)::before{filter:url(#stabilo-c);--e3:90%;--e4:76%;--e5:86%;--e6:80%;--e7:58%;--x3:40%;--x4:55%;--x5:66%;--x6:86%}
+.ligne:nth-child(3n)::before,.dec:nth-child(3n)::before,.chip:nth-child(3n)::before{filter:url(#stabilo-a);--e3:88%;--e4:80%;--e5:82%;--e6:64%;--e7:50%;--x3:28%;--x4:48%;--x5:64%;--x6:84%}
+.sec__hl::before,.fin::before{--s1:50%}
+.letter__ink i:last-child{filter:url(#stabilo-c);--e7:60%}
+/* le fond : les lavis de l'accueil, plus pâles sur les autres pages pour ne pas gêner la lecture */
+body:not(:has(.p-acc)) .lavis i{opacity:.2}
+body:not(:has(.p-acc)) .top{background:color-mix(in srgb,var(--paper) 88%,transparent)}
+
