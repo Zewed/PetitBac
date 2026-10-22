@@ -18,14 +18,21 @@ export function ChoixPrereglage({
   defaut = "classique",
   reglages,
   regles = [],
+  onChoix,
 }: {
   meilleurs?: Partial<Record<IdPrereglage, number>>;
   defaut?: IdPrereglage;
   reglages?: "solo" | "salon";
   /** « Mes règles » du Joueur, en cartes après les Préréglages ; rien quand il n'en a pas. */
   regles?: RegleVue[];
+  /** Prévenu à chaque choix, pour l'afficher ailleurs (la tuile Créer un salon de l'accueil). */
+  onChoix?: (choix: string) => void;
 }) {
-  const [choix, setChoix] = useState<string>(defaut);
+  const [choix, setChoixLocal] = useState<string>(defaut);
+  const setChoix = (c: string) => {
+    setChoixLocal(c);
+    onChoix?.(c);
+  };
   return (
     <>
       <fieldset className="presets">
