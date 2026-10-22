@@ -4,7 +4,7 @@ import type { Db } from "@/db/types";
 import type { Decision, Juge } from "./juge/types";
 import { lireManche } from "./manches";
 import { palierPourPart } from "./paliers";
-import { normaliser } from "./texte";
+import { normaliser, sansArticle } from "./texte";
 
 /**
  * Juge les Réponses d'une Manche terminée et compte ses points.
@@ -22,7 +22,7 @@ export async function jugerManche(db: Db, juge: Juge, id: string, joueurId: stri
   const decisions = new Map<string, Decision>();
   const cle = (categorie: string, c: string) => `${categorie}\u0000${c}`;
   for (const r of remplies) {
-    if (!r.cle.startsWith(lettre.toLowerCase())) decisions.set(cle(r.categorie, r.cle), { valide: false, formeReference: null, partEstimee: null });
+    if (!sansArticle(r.cle).startsWith(lettre.toLowerCase())) decisions.set(cle(r.categorie, r.cle), { valide: false, formeReference: null, partEstimee: null });
   }
   const aChercher = remplies.filter((r) => !decisions.has(cle(r.categorie, r.cle)));
   if (aChercher.length > 0) {

@@ -1,11 +1,10 @@
 import { describe, expect, it } from "vitest";
-import type { Db } from "@/db/types";
 import { FakeJuge } from "./juge/fake-juge";
 import { JugeIndisponible, type Decision, type Juge, type ReponseAJuger } from "./juge/types";
 import { jugerManche } from "./jugement";
-import { commencerPartieLibre, lireManche, terminerManche, type Saisies } from "./manches";
+import { commencerPartieLibre, lireManche, terminerManche } from "./manches";
 import { PALIERS, palierPourPart } from "./paliers";
-import { T0, plus, unJoueur } from "./test-outils";
+import { T0, plus, uneMancheEn } from "./test-outils";
 
 /** Un Juge de test : il connaît quelques Réponses et compte ses appels. */
 class JugeDeTest implements Juge {
@@ -15,15 +14,6 @@ class JugeDeTest implements Juge {
     this.appels.push(reponses);
     return reponses.map((r) => this.connues[r.saisie] ?? { valide: false, formeReference: null, partEstimee: null });
   }
-}
-
-async function uneMancheEn(lettre: string, saisies: Saisies, db?: Db) {
-  const base = await unJoueur();
-  const aleatoire = () => (["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "L", "M", "N", "O", "P", "R", "S", "T", "U", "V"].indexOf(lettre) + 0.5) / 20;
-  const manche = await commencerPartieLibre(db ?? base.db, base.joueur.id, { maintenant: T0, aleatoire });
-  expect(manche.lettre).toBe(lettre);
-  await terminerManche(db ?? base.db, manche.id, base.joueur.id, saisies, plus(40));
-  return { db: db ?? base.db, joueur: base.joueur, id: manche.id };
 }
 
 describe("Le Juge valide ou refuse chaque Réponse", () => {

@@ -3,6 +3,7 @@ id: 02
 title: Le Juge range les variantes d'une Réponse sous une seule Forme de référence
 milestone: null
 depends_on: [01]
+status: done
 design: null
 tracker: null            # filled after the push: { tool, id, url }
 ---
