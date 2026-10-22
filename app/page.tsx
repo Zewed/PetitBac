@@ -11,6 +11,7 @@ import { DernierResultat } from "@/components/dernier-resultat";
 import { Serie } from "@/components/serie";
 import { jourAParis, jourEnToutesLettres, monDefi, NB_CATEGORIES_DEFI } from "@/lib/jeu/defi";
 import { positionAuDefi } from "@/lib/jeu/classement";
+import { partieEnCoursDuJoueur } from "@/lib/jeu/presence";
 import { dernierResultat, serie } from "@/lib/jeu/serie";
 import { records } from "@/lib/jeu/parties";
 import { joueurCourant } from "@/lib/session";
@@ -36,8 +37,22 @@ async function Contenu() {
   const defi = await monDefi(db, joueur.id);
   const [laSerie, resultat] = await Promise.all([serie(db, joueur.id), dernierResultat(db, joueur.id)]);
   const position = resultat ? await positionAuDefi(db, joueur.id, resultat.numero) : null;
+  const enCours = await partieEnCoursDuJoueur(db, joueur.id);
   return (
     <>
+      {enCours && (
+        <Link className="resume" href={`/salon/${enCours.code}`}>
+          <span className="resume__txt">
+            <span className="resume__a">Partie en cours</span>
+            <span className="resume__b">
+              Salon {enCours.code} de {enCours.hote} · manche {enCours.numero}/{enCours.nbManches}
+            </span>
+          </span>
+          <span className="resume__go">
+            Reprendre <span aria-hidden="true">→</span>
+          </span>
+        </Link>
+      )}
       <BlocDefi {...defi} />
       <Serie {...laSerie} numeroDuJour={defi.defi.numero} />
       {resultat && <DernierResultat resultat={resultat} aujourdHui={jourAParis(new Date())} position={position} />}

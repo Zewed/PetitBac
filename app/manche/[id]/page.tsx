@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { lancerPartieLibre, mancheSuivanteAction, mancheSuivanteSalonAction, relancerJugement } from "@/app/actions";
+import { lancerPartieLibre, mancheSuivanteAction, mancheSuivanteSalonAction, quitterSalonAction, relancerJugement } from "@/app/actions";
 import { Decouverte } from "@/components/decouverte";
 import { SuiviSalon } from "@/components/suivi-salon";
 import { GrilleEnCours } from "@/components/grille-en-cours";
@@ -260,9 +260,11 @@ function ApresMancheSalon({ code, mancheId, salon }: { code: string; mancheId: s
             L&apos;hôte lance la manche {salon.manche.numero + 1} quand tout le monde est prêt.
           </p>
         )}
-        <Link className="btn btn--ink btn--wide" href="/">
-          Quitter le salon
-        </Link>
+        <form action={quitterSalonAction.bind(null, code)}>
+          <button className="btn btn--ink btn--wide" type="submit">
+            Quitter le salon
+          </button>
+        </form>
       </div>
     </section>
   );

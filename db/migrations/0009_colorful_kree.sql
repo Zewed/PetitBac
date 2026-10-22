@@ -1,0 +1,1 @@
+ALTER TABLE "salon_joueurs" ADD COLUMN "vu_le" timestamp with time zone DEFAULT now() NOT NULL;

@@ -16,7 +16,7 @@ describe("L'Hôte crée un Salon", () => {
     const salon = await creerSalon(db, joueur.id, "classique");
     expect(salon.code).toMatch(/^[A-Z2-9]{6}$/);
     const vu = await lireSalon(db, salon.code, joueur.id);
-    expect(vu?.joueurs).toEqual([{ pseudo: "Juju", hote: true, moi: true }]);
+    expect(vu?.joueurs).toEqual([{ pseudo: "Juju", hote: true, moi: true, absent: false }]);
   });
 
   it("seul dans son Salon, l'Hôte voit qu'il attend au moins un autre Joueur", async () => {
@@ -33,8 +33,8 @@ describe("Un ami rejoint le Salon par le lien ou le code", () => {
     const lea = await nouveau(db, "Léa");
     expect(await rejoindreSalon(db, salon.code, lea.id)).toEqual({ ok: true, code: salon.code });
     expect((await lireSalon(db, salon.code, joueur.id))?.joueurs).toEqual([
-      { pseudo: "Juju", hote: true, moi: true },
-      { pseudo: "Léa", hote: false, moi: false },
+      { pseudo: "Juju", hote: true, moi: true, absent: false },
+      { pseudo: "Léa", hote: false, moi: false, absent: false },
     ]);
     expect((await lireSalon(db, salon.code, lea.id))?.enAttente).toBe(false);
   });

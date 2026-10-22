@@ -3,6 +3,9 @@ import { joueurs, salonJoueurs, salons } from "@/db/schema";
 import type { Db } from "@/db/types";
 import type { IdPrereglage } from "./prereglages";
 
+/** Sans relire le Salon depuis ce temps, un Joueur apparaît absent aux autres (presence.ts). */
+const ABSENT_APRES_S = 15;
+
 export const MAX_JOUEURS_SALON = 10;
 
 // Sans 0, O, 1, I ni L : un code qui se dicte et se tape sans se tromper.
@@ -47,19 +50,19 @@ export async function rejoindreSalon(db: Db, saisie: string, joueurId: string): 
 export type SalonVu = {
   code: string;
   prereglage: IdPrereglage;
-  joueurs: { pseudo: string; hote: boolean; moi: boolean }[];
+  joueurs: { pseudo: string; hote: boolean; moi: boolean; absent: boolean }[];
   /** L'Hôte est seul : il attend au moins un autre Joueur. */
   enAttente: boolean;
   jeSuisHote: boolean;
 };
 
 /** Le Salon tel que le voit un de ses Joueurs ; rien pour qui n'y est pas. */
-export async function lireSalon(db: Db, saisie: string, joueurId: string): Promise<SalonVu | undefined> {
+export async function lireSalon(db: Db, saisie: string, joueurId: string, maintenant = new Date()): Promise<SalonVu | undefined> {
   const code = codeDepuisSaisie(saisie);
   const [salon] = code ? await db.select().from(salons).where(eq(salons.code, code)) : [];
   if (!salon) return undefined;
   const presents = await db
-    .select({ joueurId: salonJoueurs.joueurId, pseudo: joueurs.pseudo })
+    .select({ joueurId: salonJoueurs.joueurId, pseudo: joueurs.pseudo, vuLe: salonJoueurs.vuLe })
     .from(salonJoueurs)
     .innerJoin(joueurs, eq(joueurs.id, salonJoueurs.joueurId))
     .where(eq(salonJoueurs.salonId, salon.id))
@@ -68,7 +71,12 @@ export async function lireSalon(db: Db, saisie: string, joueurId: string): Promi
   return {
     code: salon.code,
     prereglage: salon.prereglage as IdPrereglage,
-    joueurs: presents.map((p) => ({ pseudo: p.pseudo, hote: p.joueurId === salon.hoteId, moi: p.joueurId === joueurId })),
+    joueurs: presents.map((p) => ({
+      pseudo: p.pseudo,
+      hote: p.joueurId === salon.hoteId,
+      moi: p.joueurId === joueurId,
+      absent: p.vuLe.getTime() < maintenant.getTime() - ABSENT_APRES_S * 1000,
+    })),
     enAttente: presents.length < 2,
     jeSuisHote: salon.hoteId === joueurId,
   };

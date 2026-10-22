@@ -13,6 +13,7 @@ import { enregistrerReponses, lireManche, terminerManche, type Saisies } from "@
 import { commencerPartieLibre, mancheSuivante } from "@/lib/jeu/parties";
 import { estPrereglage } from "@/lib/jeu/prereglages";
 import { cloturerManche, lancerPartieSalon, mancheSuivanteSalon } from "@/lib/jeu/partie-salon";
+import { quitterSalon } from "@/lib/jeu/presence";
 import { creerSalon, rejoindreSalon, type ResultatRejoindre } from "@/lib/jeu/salons";
 import { direStop } from "@/lib/jeu/stop";
 import { joueurCourant, retenirJoueur } from "@/lib/session";
@@ -158,4 +159,11 @@ export async function voterAction(code: string, contestationId: string, pour: bo
   if (!joueur) return;
   const resultat = await voter(await obtenirDb(), code, contestationId, joueur.id, pour);
   if (resultat.ok) refresh();
+}
+
+/** Le Joueur quitte le Salon ; si c'était l'Hôte, un autre prend la relève. */
+export async function quitterSalonAction(code: string) {
+  const joueur = await joueurCourant();
+  if (joueur) await quitterSalon(await obtenirDb(), code, joueur.id);
+  redirect("/");
 }
