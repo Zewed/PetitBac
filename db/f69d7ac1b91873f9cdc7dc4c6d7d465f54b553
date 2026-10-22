@@ -1,0 +1,47 @@
+package.json
+  s_f47e83bd1733a2::t_c89ea09f9d2915 28
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_60b1deb4e92448 13
+  s_f47e83bd1733a2::t_0b9d0eefd65408 18
+app/api/cron/cotes/route.ts
+  s_f47e83bd1733a2::t_dd09717cffb07b 1-21
+lib/jeu/cotes.ts
+  s_f47e83bd1733a2::t_4e52bcba5b6c9a 1-64
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_6b9d95347af056 18-24
+db/migrations/0002_wide_blue_blade.sql
+  s_f47e83bd1733a2::t_6b9d95347af056 1-7
+db/client.ts
+  s_f47e83bd1733a2::t_6c7127605c65c0 7-9,16-17
+db/schema.ts
+  s_f47e83bd1733a2::t_6b9d95347af056 98-109
+db/migrations/meta/0002_snapshot.json
+  s_f47e83bd1733a2::t_6b9d95347af056 1-487
+lib/jeu/cotes.test.ts
+  s_f47e83bd1733a2::t_05f857c1d28f79 12,14
+  s_f47e83bd1733a2::t_6b9d95347af056 1-11,13,15-68
+lib/jeu/jugement.ts
+  s_f47e83bd1733a2::t_4e52bcba5b6c9a 4,84-87,93
+vercel.ts
+  s_f47e83bd1733a2::t_dd09717cffb07b 1-7
+pnpm-lock.yaml
+  s_f47e83bd1733a2::t_6f1ee82c07ac8f 45-47,1344-1350,2519-2524,2556-2559,2766-2769,2997-2999,3925-3937,5211-5214,5239-5242,5529-5530,5764-5765
+.veebee/tickets/04-paliers-recalcules-chaque-nuit.md
+  s_f47e83bd1733a2::t_d176ae8a8e9f24 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dbf69d7ac1b91873f9cdc7dc4c6d7d465f54b553",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
