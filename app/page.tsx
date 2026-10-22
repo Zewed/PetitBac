@@ -16,6 +16,7 @@ import { dernierResultat, serie } from "@/lib/jeu/serie";
 import { records } from "@/lib/jeu/parties";
 import { joueurCourant } from "@/lib/session";
 import { mesRegles } from "@/lib/jeu/regles";
+import { freine, MESSAGES_D_ATTENTE } from "@/lib/jeu/limites";
 
 export default function Accueil() {
   return (
@@ -40,6 +41,7 @@ async function Contenu() {
   const [laSerie, resultat] = await Promise.all([serie(db, joueur.id), dernierResultat(db, joueur.id)]);
   const position = resultat ? await positionAuDefi(db, joueur.id, resultat.numero) : null;
   const enCours = await partieEnCoursDuJoueur(db, joueur.id);
+  const salonsFreines = await freine(db, "salons", { joueurId: joueur.id });
   return (
     <>
       {enCours && (
@@ -67,6 +69,11 @@ async function Contenu() {
             <h3>Créer un salon</h3>
             <p className="sub">De 2 à 10 joueurs, invités par lien ou QR code.</p>
             <ChoixPrereglage />
+            {salonsFreines && (
+              <p className="pseudo__err" role="alert">
+                {MESSAGES_D_ATTENTE.salons}
+              </p>
+            )}
             <button className="btn btn--wide" type="submit">
               Créer le salon <span aria-hidden="true">→</span>
             </button>

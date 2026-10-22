@@ -1,6 +1,7 @@
 "use server";
 
 import { refresh } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { obtenirDb } from "@/db/client";
 import { couperLaParole, ecrire, exclure, signaler } from "@/lib/jeu/chat";
@@ -16,6 +17,7 @@ import { estPrereglage } from "@/lib/jeu/prereglages";
 import { lireReglages } from "@/lib/jeu/reglages";
 import { enregistrerRegle, regleDuJoueur } from "@/lib/jeu/regles";
 import { signalerDecision } from "@/lib/jeu/signalement";
+import { consommer } from "@/lib/jeu/limites";
 import { choisirLettreSuivante, cloturerManche, lancerPartieSalon, mancheSuivanteSalon } from "@/lib/jeu/partie-salon";
 import { quitterSalon } from "@/lib/jeu/presence";
 import { creerSalon, rejoindreSalon, type ResultatRejoindre } from "@/lib/jeu/salons";
@@ -88,12 +90,30 @@ export async function enregistrerAction(id: string, saisies: Saisies) {
 }
 
 /** « J'ai fini », ou le chrono à 0:00 : la Grille se ferme et part au Juge. */
+/** L'adresse IP de l'appareil, pour les limites anti-abus. */
+async function adresseIp() {
+  const h = await headers();
+  return h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || null;
+}
+
+/**
+ * Juge une Grille en solo ou au Défi, si l'appareil n'a pas envoyé trop de Réponses dans la minute ; sinon la Grille
+ * attend, et la page dit d'attendre. Entre amis, la Grille est jugée à la clôture de la Manche, pour tout le monde.
+ */
+async function jugerSiPermis(db: Awaited<ReturnType<typeof obtenirDb>>, id: string, joueurId: string) {
+  const manche = await lireManche(db, id, joueurId);
+  if (!manche || manche.salonCode) return jugerManche(db, obtenirJuge(), id, joueurId);
+  const remplies = manche.reponses.filter((r) => r.saisie.trim() !== "").length;
+  if (remplies > 0 && !(await consommer(db, "reponses", { joueurId, ip: await adresseIp() }, remplies))) return;
+  await jugerManche(db, obtenirJuge(), id, joueurId);
+}
+
 export async function terminerAction(id: string, saisies: Saisies) {
   const joueur = await joueurCourant();
   if (!joueur) redirect("/");
   const db = await obtenirDb();
   await terminerManche(db, id, joueur.id, saisies);
-  await jugerManche(db, obtenirJuge(), id, joueur.id);
+  await jugerSiPermis(db, id, joueur.id);
   // Entre amis, le chrono à 0:00 ferme aussi les Grilles des autres, même s'ils sont partis.
   const manche = await lireManche(db, id, joueur.id);
   if (manche?.salonCode) await cloturerManche(db, obtenirJuge(), manche.salonCode);
@@ -103,7 +123,7 @@ export async function terminerAction(id: string, saisies: Saisies) {
 export async function relancerJugement(id: string) {
   const joueur = await joueurCourant();
   if (!joueur) redirect("/");
-  await jugerManche(await obtenirDb(), obtenirJuge(), id, joueur.id);
+  await jugerSiPermis(await obtenirDb(), id, joueur.id);
   refresh();
 }
 
@@ -111,7 +131,10 @@ export async function creerSalonAction(form: FormData) {
   const joueur = await joueurCourant();
   if (!joueur) redirect("/");
   const choix = form.get("prereglage");
-  const salon = await creerSalon(await obtenirDb(), joueur.id, estPrereglage(choix) ? choix : "classique");
+  const db = await obtenirDb();
+  // Trop de Salons créés dans la minute : l'accueil dit d'attendre.
+  if (!(await consommer(db, "salons", { joueurId: joueur.id, ip: await adresseIp() }))) redirect("/");
+  const salon = await creerSalon(db, joueur.id, estPrereglage(choix) ? choix : "classique");
   redirect(`/salon/${salon.code}`);
 }
 
