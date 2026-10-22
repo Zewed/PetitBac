@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { lancerPartieSalonAction, quitterSalonAction } from "@/app/actions";
+import { ChatSalon } from "@/components/chat-salon";
 import { ChoixPrereglage } from "@/components/choix-prereglage";
 import { SuiviSalon, type SalonEnDirect } from "@/components/suivi-salon";
+import type { ChatVu } from "@/lib/jeu/chat";
 
-export function SalonAttente({ initial, lien, qr }: { initial: SalonEnDirect; lien: string; qr: string }) {
+export function SalonAttente({ initial, lien, qr, chat }: { initial: SalonEnDirect; lien: string; qr: string; chat: ChatVu }) {
   const [salon, setSalon] = useState<SalonEnDirect>(initial);
   const spectateur = salon.partie?.partie.etat === "en_cours" && !salon.partie.maMancheId ? salon.partie : null;
   const [copie, setCopie] = useState<string | null>(null);
@@ -92,6 +94,8 @@ export function SalonAttente({ initial, lien, qr }: { initial: SalonEnDirect; li
           </button>
         </form>
       )}
+
+      <ChatSalon code={initial.code} initial={chat} />
 
       <form action={quitterSalonAction.bind(null, initial.code)}>
         <button className="btn btn--ink btn--wide" type="submit">

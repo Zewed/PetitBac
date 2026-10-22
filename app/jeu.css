@@ -171,3 +171,26 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 .spectateur::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--wash);transform:skewX(var(--skew-tall))}
 .spectateur__t{font-size:20px;font-weight:800}
 .attente form + form{margin-top:0}
+
+/* ---------- chat du Salon : des bouts de papier passés au marqueur, le sien au fluo ---------- */
+.chat{display:grid;gap:12px;min-width:0}
+.chat__vide{font-size:16px;line-height:1.4;color:var(--ink-2);padding:14px 4px}
+.chat__liste{display:grid;gap:10px;max-height:340px;overflow-y:auto;overflow-x:hidden;padding:4px 6px 4px 2px;list-style:none;margin:0;overscroll-behavior:contain}
+.chat__m{position:relative;isolation:isolate;display:grid;gap:2px;padding:9px 16px 10px;min-width:0;justify-self:start;max-width:min(100%,520px)}
+.chat__m::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--wash);transform:skewX(var(--skew)) rotate(var(--rot,0deg))}
+.chat__m:nth-child(odd){--rot:-.4deg}
+.chat__m.is-me{justify-self:end}
+.chat__m.is-me::before{background:linear-gradient(90deg,var(--y2),var(--y) 24px,var(--y) calc(100% - 24px),var(--y2))}
+.chat__qui{font-size:13px;color:var(--ink-2)}
+.chat__qui b{font-family:var(--hand);font-weight:700;font-size:17px;color:var(--blue)}
+.chat__texte{font-size:16px;line-height:1.35;overflow-wrap:anywhere}
+.chat__actions{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:2px;font-size:13px}
+.chat__actions button{border:0;background:none;padding:6px 0;min-height:32px;font:inherit;font-weight:700;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.chat__actions button:hover{color:var(--ink)}
+.chat__actions .is-danger{color:var(--red)}
+.chat__fait{padding:6px 0;font-weight:700;color:var(--green)}
+.chat__confirme{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-weight:700}
+.chat__retour{font-size:13px;font-weight:700;color:var(--green)}
+.chat__form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px}
+.chat__form .btn{min-height:64px;padding:0 22px}
+.chat__muet{font-weight:700;color:var(--red);padding:6px 4px}

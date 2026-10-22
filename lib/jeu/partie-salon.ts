@@ -1,6 +1,7 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { joueurs, manches, parties, salonJoueurs, salons } from "@/db/schema";
 import type { Db } from "@/db/types";
+import { viderChat } from "./chat";
 import { nombreDeReactions, nombreDeVotes } from "./decouverte";
 import type { Juge } from "./juge/types";
 import { jugerManche } from "./jugement";
@@ -77,6 +78,7 @@ export async function cloturerManche(db: Db, juge: Juge, code: string, maintenan
   const rejugees = (await mancheCourante(db, partie.id)).grilles;
   if (numero >= partie.nbManches && rejugees.every((g) => g.etat === "jugee")) {
     await db.update(parties).set({ etat: "terminee", termineeLe: maintenant }).where(eq(parties.id, partie.id));
+    await viderChat(db, salon.id);
   }
 }
 

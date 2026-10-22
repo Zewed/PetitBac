@@ -76,7 +76,7 @@ describe("Si l'Hôte s'en va", () => {
     const { db, code, juju, lea } = await unSalonEnJeu();
     await quitterSalon(db, code, juju.id);
     const vu = await lireSalon(db, code, lea.id);
-    expect(vu?.joueurs).toEqual([expect.objectContaining({ pseudo: "Léa", hote: true, moi: true })]);
+    expect(vu?.joueurs).toEqual([expect.objectContaining({ pseudo: "Léa", poste: expect.any(String), hote: true, moi: true })]);
     expect(vu?.jeSuisHote).toBe(true);
     expect(await lireSalon(db, code, juju.id)).toBeUndefined();
   });

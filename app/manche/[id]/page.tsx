@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { lancerPartieLibre, mancheSuivanteAction, mancheSuivanteSalonAction, quitterSalonAction, relancerJugement } from "@/app/actions";
+import { ChatSalon } from "@/components/chat-salon";
 import { Decouverte } from "@/components/decouverte";
 import { SuiviSalon } from "@/components/suivi-salon";
 import { GrilleEnCours } from "@/components/grille-en-cours";
 import { CLASSE_PALIER, LegendePaliers } from "@/components/paliers";
 import { obtenirDb } from "@/db/client";
+import { lireChat, type ChatVu } from "@/lib/jeu/chat";
 import { lireManche, type Manche } from "@/lib/jeu/manches";
 import { decouverte } from "@/lib/jeu/decouverte";
 import { finDePartie, type FinDePartie } from "@/lib/jeu/fin-partie";
@@ -71,7 +73,8 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
   const partie = manche.partieId && !manche.salonCode ? await lirePartie(db, manche.partieId, joueur.id) : undefined;
   const reponsesDeTous = manche.salonCode ? await decouverte(db, manche.salonCode, joueur.id) : null;
   const fin = manche.salonCode && salon?.partie.etat === "terminee" ? await finDePartie(db, manche.salonCode, joueur.id) : null;
-  return <Resultat manche={manche} partie={partie} salon={salon} reponsesDeTous={reponsesDeTous} fin={fin} />;
+  const chat = manche.salonCode ? await lireChat(db, manche.salonCode, joueur.id) : undefined;
+  return <Resultat manche={manche} partie={partie} salon={salon} reponsesDeTous={reponsesDeTous} fin={fin} chat={chat} />;
 }
 
 function Resultat({
@@ -80,12 +83,14 @@ function Resultat({
   salon,
   reponsesDeTous,
   fin,
+  chat,
 }: {
   manche: Manche;
   partie?: Partie;
   salon?: EtatPartieSalon;
   reponsesDeTous?: Awaited<ReturnType<typeof decouverte>>;
   fin?: FinDePartie | null;
+  chat?: ChatVu;
 }) {
   const derniere = !manche.partie || manche.partie.numero >= manche.partie.nbManches;
   const defi = manche.defiNumero !== null;
@@ -173,6 +178,8 @@ function Resultat({
         {salon && manche.salonCode && reponsesDeTous && <Decouverte code={manche.salonCode} categories={reponsesDeTous.categories} />}
 
         {salon && manche.salonCode && <ApresMancheSalon code={manche.salonCode} mancheId={manche.id} salon={salon} />}
+
+        {manche.salonCode && chat && <ChatSalon code={manche.salonCode} initial={chat} />}
 
         {manche.etat === "jugee" && <LegendePaliers />}
 

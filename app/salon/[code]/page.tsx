@@ -6,6 +6,7 @@ import { ChoisirPseudo } from "@/components/choisir-pseudo";
 import { EntrerDansLeSalon } from "@/components/entrer-dans-le-salon";
 import { SalonAttente } from "@/components/salon-attente";
 import { obtenirDb } from "@/db/client";
+import { estExclu, lireChat } from "@/lib/jeu/chat";
 import { etatPartieSalon } from "@/lib/jeu/partie-salon";
 import { marquerPresent } from "@/lib/jeu/presence";
 import { codeDepuisSaisie, lireSalon } from "@/lib/jeu/salons";
@@ -40,6 +41,17 @@ async function Ecran({ params }: { params: Promise<{ code: string }> }) {
   const db = await obtenirDb();
   await marquerPresent(db, code, joueur.id);
   const salon = await lireSalon(db, code, joueur.id);
+  if (!salon && (await estExclu(db, code, joueur.id))) {
+    return (
+      <section className="pseudo" role="alert">
+        <h1 className="pseudo__t">Tu as été exclu de ce salon</h1>
+        <p className="pseudo__p">L&apos;hôte t&apos;a exclu : tu ne peux plus y revenir. Crée ton propre salon depuis l&apos;accueil.</p>
+        <Link className="btn btn--ink" href="/">
+          Retour à l&apos;accueil
+        </Link>
+      </section>
+    );
+  }
   if (!salon) return <EntrerDansLeSalon code={code} />;
   const partie = (await etatPartieSalon(db, code, joueur.id)) ?? null;
   const entetes = await headers();
@@ -47,5 +59,6 @@ async function Ecran({ params }: { params: Promise<{ code: string }> }) {
   const protocole = entetes.get("x-forwarded-proto") ?? (hote.startsWith("localhost") ? "http" : "https");
   const lien = `${protocole}://${hote}/salon/${salon.code}`;
   const qr = await QRCode.toString(lien, { type: "svg", margin: 1, color: { dark: "#15161f", light: "#ffffff" } });
-  return <SalonAttente initial={{ ...salon, partie }} lien={lien} qr={qr} />;
+  const chat = (await lireChat(db, code, joueur.id))!;
+  return <SalonAttente initial={{ ...salon, partie }} lien={lien} qr={qr} chat={chat} />;
 }

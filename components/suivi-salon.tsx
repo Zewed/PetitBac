@@ -29,6 +29,12 @@ export function SuiviSalon({ code, mancheId, surSalon }: { code: string; mancheI
     const t = setInterval(async () => {
       try {
         const r = await fetch(`/api/salons/${code}`, { cache: "no-store" });
+        if (r.status === 404 && actif) {
+          // Exclu par l'Hôte, ou plus dans le Salon : la page du Salon dit pourquoi.
+          if (mancheId) router.push(`/salon/${code}`);
+          else router.refresh();
+          return;
+        }
         if (!r.ok || !actif) return;
         const salon: SalonEnDirect = await r.json();
         rappel.current?.(salon);

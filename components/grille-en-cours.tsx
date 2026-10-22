@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { direStopAction, enregistrerAction, terminerAction } from "@/app/actions";
+import { ChatFerme } from "@/components/chat-salon";
 import { SuiviSalon } from "@/components/suivi-salon";
 
 type Props = {
@@ -141,6 +142,8 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
             </ol>
           </section>
         )}
+
+        {salon && <ChatFerme />}
 
         <section className="grille" aria-labelledby="grille-t">
           <div className="grille__head">
