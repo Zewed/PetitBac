@@ -1,5 +1,5 @@
 import { and, eq, sql } from "drizzle-orm";
-import { manches, parties, reponses, type EtatManche } from "@/db/schema";
+import { manches, parties, reponses, salons, type EtatManche } from "@/db/schema";
 import type { Db } from "@/db/types";
 
 import { PREREGLAGES, type IdPrereglage } from "./prereglages";
@@ -17,6 +17,8 @@ export type Manche = {
   resteS: number;
   /** La Partie de cette Manche : son Préréglage, le numéro de la Manche et le total de la Partie. */
   partie: { id: string; prereglage: IdPrereglage; nom: string; numero: number; nbManches: number; dureeS: number; total: number; etat: "en_cours" | "terminee" } | null;
+  /** Le code du Salon quand la Manche est jouée entre amis. */
+  salonCode: string | null;
   /** Le numéro du Défi du jour quand la Manche en est un. */
   defiNumero: number | null;
   /** La durée du chrono, en secondes. */
@@ -29,11 +31,13 @@ export async function lireManche(db: Db, id: string, joueurId: string, maintenan
   if (!manche) return undefined;
   const lignes = await db.select().from(reponses).where(eq(reponses.mancheId, id));
   const [partie] = manche.partieId ? await db.select().from(parties).where(eq(parties.id, manche.partieId)) : [];
+  const [salon] = partie?.salonId ? await db.select({ code: salons.code }).from(salons).where(eq(salons.id, partie.salonId)) : [];
   const parCategorie = new Map(lignes.map((r) => [r.categorie, r]));
   return {
     id: manche.id,
     partieId: manche.partieId,
     defiNumero: manche.defiNumero,
+    salonCode: salon?.code ?? null,
     dureeS: Math.round((manche.finitLe.getTime() - manche.commenceeLe.getTime()) / 1000),
     lettre: manche.lettre,
     categories: manche.categories,

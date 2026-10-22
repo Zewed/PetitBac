@@ -1,36 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { lancerPartieSalonAction } from "@/app/actions";
+import { ChoixPrereglage } from "@/components/choix-prereglage";
+import { SuiviSalon, type SalonEnDirect } from "@/components/suivi-salon";
 import type { SalonVu } from "@/lib/jeu/salons";
 
-const RAFRAICHIR_MS = 1000;
-
-/**
- * La liste des présents suit le Salon en direct. En attendant Supabase Realtime (ticket 29),
- * on relit le Salon chaque seconde : c'est le seul endroit à changer pour brancher le vrai temps réel.
- */
-function useSalon(initial: SalonVu) {
-  const [salon, setSalon] = useState(initial);
-  useEffect(() => {
-    let actif = true;
-    const t = setInterval(async () => {
-      try {
-        const r = await fetch(`/api/salons/${initial.code}`, { cache: "no-store" });
-        if (r.ok && actif) setSalon(await r.json());
-      } catch {
-        // une coupure réseau passagère : on réessaie à la seconde suivante
-      }
-    }, RAFRAICHIR_MS);
-    return () => {
-      actif = false;
-      clearInterval(t);
-    };
-  }, [initial.code]);
-  return salon;
-}
-
 export function SalonAttente({ initial, lien, qr }: { initial: SalonVu; lien: string; qr: string }) {
-  const salon = useSalon(initial);
+  const [salon, setSalon] = useState<SalonVu | SalonEnDirect>(initial);
   const [copie, setCopie] = useState<string | null>(null);
 
   async function copier() {
@@ -44,6 +21,7 @@ export function SalonAttente({ initial, lien, qr }: { initial: SalonVu; lien: st
 
   return (
     <>
+      <SuiviSalon code={initial.code} surSalon={setSalon} />
       <section className="invite" aria-labelledby="invite-t">
         <h1 id="invite-t" className="sec">
           <span className="sec__hl">Ton salon</span>
@@ -82,10 +60,20 @@ export function SalonAttente({ initial, lien, qr }: { initial: SalonVu; lien: st
           {salon.enAttente
             ? "En attente d'au moins un autre joueur : envoie le lien ou montre le QR code."
             : salon.jeSuisHote
-              ? "Tout le monde est là ? La partie se lance bientôt d'ici."
+              ? "Tout le monde est là ? Choisis le préréglage et lance la partie."
               : "L'hôte lancera la partie quand tout le monde sera là."}
         </p>
       </section>
+
+      {salon.jeSuisHote && (
+        <form className="lancer" action={lancerPartieSalonAction.bind(null, initial.code)}>
+          <h2 className="kick">Préréglage de la partie</h2>
+          <ChoixPrereglage />
+          <button className="btn btn--xl btn--wide" type="submit" disabled={salon.enAttente}>
+            Lancer la partie <span aria-hidden="true">→</span>
+          </button>
+        </form>
+      )}
     </>
   );
 }

@@ -66,7 +66,8 @@ export async function jugerManche(db: Db, juge: Juge, id: string, joueurId: stri
       .onConflictDoUpdate({ target: [reponses.mancheId, reponses.categorie], set: valeurs });
   }
   await db.update(manches).set({ etat: "jugee", total }).where(eq(manches.id, id));
-  if (manche.partie) await compterPartie(db, manche.partie.id, manche.partie.numero === manche.partie.nbManches);
+  // Une Partie de Salon se compte Joueur par Joueur (partie-salon.ts) ; ici, seulement la Partie libre.
+  if (manche.partie && !manche.salonCode) await compterPartie(db, manche.partie.id, manche.partie.numero === manche.partie.nbManches);
 }
 
 /** Le total de la Partie suit ses Manches jugées ; après la dernière, la Partie est terminée. */

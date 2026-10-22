@@ -1,4 +1,5 @@
 import { obtenirDb } from "@/db/client";
+import { etatPartieSalon } from "@/lib/jeu/partie-salon";
 import { lireSalon } from "@/lib/jeu/salons";
 import { joueurCourant } from "@/lib/session";
 
@@ -6,7 +7,10 @@ import { joueurCourant } from "@/lib/session";
 export async function GET(_request: Request, { params }: RouteContext<"/api/salons/[code]">) {
   const joueur = await joueurCourant();
   if (!joueur) return new Response("Non autorisé", { status: 401 });
-  const salon = await lireSalon(await obtenirDb(), (await params).code, joueur.id);
+  const db = await obtenirDb();
+  const { code } = await params;
+  const salon = await lireSalon(db, code, joueur.id);
   if (!salon) return new Response("Introuvable", { status: 404 });
-  return Response.json(salon, { headers: { "Cache-Control": "no-store" } });
+  const partie = (await etatPartieSalon(db, code, joueur.id)) ?? null;
+  return Response.json({ ...salon, partie }, { headers: { "Cache-Control": "no-store" } });
 }

@@ -92,3 +92,17 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
   .invite__c{font-size:96px}
   .invite__qr{width:240px}
 }
+
+/* la Partie entre amis */
+.lancer{display:grid;gap:14px}
+.lancer .presets{grid-template-columns:repeat(3,minmax(0,1fr));margin:6px 0 4px}
+@media (max-width:560px){.lancer .presets{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fini__hint--salon{padding:6px 6px 28px;font-weight:700}
+.classement{display:grid;gap:8px}
+.classement li{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:52px;padding:0 18px;position:relative;isolation:isolate}
+.classement li::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--wash);transform:skewX(var(--skew))}
+.classement li.is-me::before{background:linear-gradient(90deg,var(--y2),var(--y) 30px,var(--y) calc(100% - 30px),var(--y2))}
+.classement__r{font-weight:800;color:var(--ink-2)}
+.classement__n{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.classement li.is-me .classement__n{font-family:var(--hand);color:var(--blue)}
+.classement__p{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}

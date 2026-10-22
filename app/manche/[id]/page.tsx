@@ -2,11 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { lancerPartieLibre, mancheSuivanteAction, relancerJugement } from "@/app/actions";
+import { lancerPartieLibre, mancheSuivanteAction, mancheSuivanteSalonAction, relancerJugement } from "@/app/actions";
+import { SuiviSalon } from "@/components/suivi-salon";
 import { GrilleEnCours } from "@/components/grille-en-cours";
 import { CLASSE_PALIER, LegendePaliers } from "@/components/paliers";
 import { obtenirDb } from "@/db/client";
 import { lireManche, type Manche } from "@/lib/jeu/manches";
+import { etatPartieSalon, type EtatPartieSalon } from "@/lib/jeu/partie-salon";
 import { lirePartie, type Partie } from "@/lib/jeu/parties";
 import { joueurCourant } from "@/lib/session";
 
@@ -27,6 +29,9 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
   const manche = await lireManche(await obtenirDb(), id, joueur.id, maintenant);
   if (!manche) notFound();
 
+  const db = await obtenirDb();
+  const salon = manche.salonCode ? await etatPartieSalon(db, manche.salonCode, joueur.id, maintenant) : undefined;
+
   if (manche.etat === "en_cours") {
     return (
       <GrilleEnCours
@@ -37,16 +42,33 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
         finitLe={manche.finitLe.toISOString()}
         maintenantServeur={maintenant.toISOString()}
         dureeS={manche.dureeS}
-        titre={manche.defiNumero ? `Défi du jour n°${manche.defiNumero}` : manche.partie ? `Partie libre · ${manche.partie.nom}` : "Partie libre"}
+        titre={
+          manche.defiNumero
+            ? `Défi du jour n°${manche.defiNumero}`
+            : manche.salonCode && manche.partie
+              ? `Salon ${manche.salonCode} · ${manche.partie.nom}`
+              : manche.partie
+                ? `Partie libre · ${manche.partie.nom}`
+                : "Partie libre"
+        }
         etiquette={manche.defiNumero ? `Défi n°${manche.defiNumero}` : manche.partie ? `Manche ${manche.partie.numero}/${manche.partie.nbManches}` : "Partie libre"}
+        salon={
+          manche.salonCode && salon
+            ? {
+                code: manche.salonCode,
+                titreScores: salon.manche.numero > 1 ? `Scores après la manche ${salon.manche.numero - 1}` : "Les joueurs",
+                scores: salon.classement,
+              }
+            : undefined
+        }
       />
     );
   }
-  const partie = manche.partieId ? await lirePartie(await obtenirDb(), manche.partieId, joueur.id) : undefined;
-  return <Resultat manche={manche} partie={partie} />;
+  const partie = manche.partieId && !manche.salonCode ? await lirePartie(db, manche.partieId, joueur.id) : undefined;
+  return <Resultat manche={manche} partie={partie} salon={salon} />;
 }
 
-function Resultat({ manche, partie }: { manche: Manche; partie?: Partie }) {
+function Resultat({ manche, partie, salon }: { manche: Manche; partie?: Partie; salon?: EtatPartieSalon }) {
   const derniere = !manche.partie || manche.partie.numero >= manche.partie.nbManches;
   const defi = manche.defiNumero !== null;
   return (
@@ -57,7 +79,14 @@ function Resultat({ manche, partie }: { manche: Manche; partie?: Partie }) {
             <span aria-hidden="true">←</span> Accueil
           </Link>
           <p className="salon">
-            <b>{defi ? `Défi du jour n°${manche.defiNumero}` : `Partie libre${partie ? ` · ${partie.nom}` : ""}`}</b> · lettre {manche.lettre}
+            <b>
+              {defi
+                ? `Défi du jour n°${manche.defiNumero}`
+                : salon
+                  ? `Salon ${manche.salonCode} · ${salon.partie.nom}`
+                  : `Partie libre${partie ? ` · ${partie.nom}` : ""}`}
+            </b>{" "}
+            · lettre {manche.lettre}
           </p>
         </div>
       </header>
@@ -122,8 +151,11 @@ function Resultat({ manche, partie }: { manche: Manche; partie?: Partie }) {
 
         {manche.etat === "jugee" && partie?.etat === "terminee" && <FinDePartie partie={partie} />}
 
+        {salon && manche.salonCode && <ApresMancheSalon code={manche.salonCode} mancheId={manche.id} salon={salon} />}
+
         {manche.etat === "jugee" && <LegendePaliers />}
 
+        {!salon && (
         <div className="res__actions">
           {defi ? null : manche.etat === "jugee" && !derniere && manche.partie ? (
             <form action={mancheSuivanteAction.bind(null, manche.partie.id)}>
@@ -143,6 +175,7 @@ function Resultat({ manche, partie }: { manche: Manche; partie?: Partie }) {
             {defi || derniere ? "Retour à l'accueil" : "Quitter la partie"}
           </Link>
         </div>
+        )}
       </main>
     </>
   );
@@ -161,6 +194,51 @@ function FinDePartie({ partie }: { partie: Partie }) {
       ) : (
         partie.record !== null && <p>Ton record en {partie.nom} : {partie.record} pts</p>
       )}
+    </section>
+  );
+}
+
+function ApresMancheSalon({ code, mancheId, salon }: { code: string; mancheId: string; salon: EtatPartieSalon }) {
+  const finie = salon.partie.etat === "terminee";
+  return (
+    <section className="res" aria-labelledby="cl-t">
+      <SuiviSalon code={code} mancheId={mancheId} />
+      <h2 id="cl-t" className="kick">
+        {finie ? "Partie terminée · classement final" : `Classement après la manche ${salon.manche.numero}/${salon.manche.nbManches}`}
+      </h2>
+      <ol className="classement">
+        {salon.classement.map((j, i) => (
+          <li key={j.pseudo + i} className={j.moi ? "is-me" : ""}>
+            <span className="classement__r">{i + 1}</span>
+            <span className="classement__n">{j.pseudo}</span>
+            <span className="classement__p">{j.total}</span>
+          </li>
+        ))}
+      </ol>
+      <div className="res__actions">
+        {finie ? (
+          <Link className="btn btn--wide" href={`/salon/${code}`}>
+            Retour au salon <span aria-hidden="true">→</span>
+          </Link>
+        ) : !salon.manche.close ? (
+          <p className="attente__p" role="status">
+            On attend la fin de la manche pour tout le monde…
+          </p>
+        ) : salon.jeSuisHote ? (
+          <form action={mancheSuivanteSalonAction.bind(null, code)}>
+            <button className="btn btn--wide" type="submit">
+              Manche suivante <span aria-hidden="true">→</span>
+            </button>
+          </form>
+        ) : (
+          <p className="attente__p" role="status">
+            L&apos;hôte lance la manche {salon.manche.numero + 1} quand tout le monde est prêt.
+          </p>
+        )}
+        <Link className="btn btn--ink btn--wide" href="/">
+          Quitter le salon
+        </Link>
+      </div>
     </section>
   );
 }

@@ -26,6 +26,8 @@ export const parties = pgTable("parties", {
     .notNull()
     .references(() => joueurs.id),
   prereglage: text("prereglage").notNull(),
+  /** Le Salon d'une Partie multi ; null pour une Partie libre. */
+  salonId: uuid("salon_id").references(() => salons.id),
   nbManches: integer("nb_manches").notNull(),
   dureeS: integer("duree_s").notNull(),
   categories: jsonb("categories").$type<string[]>().notNull(),
