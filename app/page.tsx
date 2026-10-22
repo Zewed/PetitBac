@@ -4,6 +4,7 @@ import { lancerDefi } from "@/app/actions";
 import { ChoisirPseudo } from "@/components/choisir-pseudo";
 import { Entete } from "@/components/entete";
 import { RejoindreSalon } from "@/components/rejoindre-salon";
+import { FiltresStabilo, Lavis } from "@/components/stabilo";
 import { TuileCreer, TuileSeul } from "@/components/tuiles-accueil";
 import { obtenirDb } from "@/db/client";
 import { monDefi } from "@/lib/jeu/defi";
@@ -20,7 +21,9 @@ import { joueurCourant } from "@/lib/session";
 export default function Accueil() {
   return (
     <div className="p-acc">
-      <Entete />
+      <FiltresStabilo />
+      <Lavis />
+      <Entete etoile />
       <main className="wrap">
         <Suspense fallback={null}>
           <Contenu />
@@ -70,6 +73,9 @@ async function Contenu() {
               <path fill="#fff" d="M196 60h22l-4 30h-22zM162 60h20l-3 20h-20z" />
             </svg>
           </div>
+          <svg className="gri gri--eclat" viewBox="0 0 50 50" aria-hidden="true">
+            <path d="M25 4v14M25 32v14M4 25h14M32 25h14M10 10l8 8M32 32l8 8M40 10l-8 8M18 32l-8 8" />
+          </svg>
           <RejoindreSalon />
         </section>
         <TuileSeul meilleurs={meilleurs} regles={regles} />
@@ -86,6 +92,9 @@ function TuileDefi({ defi, mancheId, etat, total }: Awaited<ReturnType<typeof mo
     <section className="tuile dj" aria-labelledby="dj-t">
       <span className={`dj__l ${fait ? "" : "dj__l--cachee"}`} role="img" aria-label={fait ? `Lettre ${defi.lettre}` : "Lettre cachée"}>
         {fait ? defi.lettre : "?"}
+      </span>
+      <span className="gri-bang" aria-hidden="true">
+        !
       </span>
       <p className="kick" aria-hidden="true">
         Défi du jour
