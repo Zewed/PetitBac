@@ -6,3 +6,10 @@ node_modules/
 .DS_Store
 *.tsbuildinfo
 .aeom/runs/
+/coverage
+/out/
+/build
+*.pem
+next-env.d.ts
+.pnpm-debug.log*
+.pglite/
