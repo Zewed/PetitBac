@@ -1,0 +1,63 @@
+components/grille-en-cours.tsx
+  s_f47e83bd1733a2::t_437e1965d7fb10 15-16,24,82,98
+app/actions.ts
+  s_f47e83bd1733a2::t_074838b7224728 9-11,25,28-29,33-38
+  s_f47e83bd1733a2::t_0122a4e7351e9a 39-40
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_ac9820574f6d44 11-17
+lib/jeu/parties.ts
+  s_f47e83bd1733a2::t_69d8b68b7d9730 1-99
+lib/jeu/test-outils.ts
+  s_f47e83bd1733a2::t_c88cefc8f8bd3e 5-6
+app/manche/[id]/page.tsx
+  s_f47e83bd1733a2::t_437e1965d7fb10 5,10,39-41,45-46,49-50,59,70-81,122-123,127-140,142,149-163
+  s_f47e83bd1733a2::t_301ce0793c6b07 164-165
+db/schema.ts
+  s_f47e83bd1733a2::t_ac9820574f6d44 21-37,45-46
+lib/jeu/prereglages.ts
+  s_f47e83bd1733a2::t_69d8b68b7d9730 1-27
+lib/jeu/parties.test.ts
+  s_f47e83bd1733a2::t_c88cefc8f8bd3e 1-105
+lib/session.ts
+  s_f47e83bd1733a2::t_b64c9fe3afd9cd 3,13-14
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_ac9820574f6d44 12-13
+db/migrations/meta/0001_snapshot.json
+  s_f47e83bd1733a2::t_ac9820574f6d44 1-442
+lib/jeu/juge/liste-fake.ts
+  s_f47e83bd1733a2::t_54e8c222158c03 74-132
+lib/jeu/manches.ts
+  s_f47e83bd1733a2::t_69d8b68b7d9730 2,5,9,18-19,27,31,49-60
+lib/jeu/jugement.test.ts
+  s_f47e83bd1733a2::t_c88cefc8f8bd3e 5-6
+lib/jeu/jugement.ts
+  s_f47e83bd1733a2::t_69d8b68b7d9730 1-2,68-80
+lib/jeu/packs.ts
+  s_f47e83bd1733a2::t_69d8b68b7d9730 1-5
+app/page.tsx
+  s_f47e83bd1733a2::t_074838b7224728 6-8,24-27,31,38-57,63-64
+db/migrations/0001_modern_shockwave.sql
+  s_f47e83bd1733a2::t_ac9820574f6d44 1-17
+lib/jeu/manches.test.ts
+  s_f47e83bd1733a2::t_c88cefc8f8bd3e 2-3
+app/jeu.css
+  s_f47e83bd1733a2::t_074838b7224728 50-64
+.veebee/tickets/03-joueur-enchaine-une-partie-libre.md
+  s_f47e83bd1733a2::t_67490b51a7d982 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "278fd824156f42ed5c411b544812f0a40746f24f",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
