@@ -259,3 +259,16 @@ export const votes = pgTable(
   },
   (t) => [primaryKey({ columns: [t.contestationId, t.joueurId] })],
 );
+
+/** « Mes règles » : des Réglages Personnalisés enregistrés sous un nom, pour relancer une Partie en un geste. */
+export const regles = pgTable("regles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  joueurId: uuid("joueur_id")
+    .notNull()
+    .references(() => joueurs.id),
+  nom: text("nom").notNull(),
+  reglages: jsonb("reglages").$type<Reglages>().notNull(),
+  /** Enregistrée depuis un Salon (avec STOP et Contestation) ou depuis une Partie libre. */
+  salon: boolean("salon").notNull(),
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),
+});

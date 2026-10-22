@@ -14,6 +14,7 @@ import { enregistrerReponses, lireManche, terminerManche, type Saisies } from "@
 import { commencerPartieLibre, lirePartie, mancheSuivante } from "@/lib/jeu/parties";
 import { estPrereglage } from "@/lib/jeu/prereglages";
 import { lireReglages } from "@/lib/jeu/reglages";
+import { enregistrerRegle, regleDuJoueur } from "@/lib/jeu/regles";
 import { choisirLettreSuivante, cloturerManche, lancerPartieSalon, mancheSuivanteSalon } from "@/lib/jeu/partie-salon";
 import { quitterSalon } from "@/lib/jeu/presence";
 import { creerSalon, rejoindreSalon, type ResultatRejoindre } from "@/lib/jeu/salons";
@@ -34,8 +35,13 @@ export async function choisirPseudoAction(_avant: EtatPseudo, form: FormData): P
 /** Le Préréglage choisi, et pour « Personnalisé » ses Réglages ; undefined quand les Réglages ne tiennent pas. */
 async function prereglageDuFormulaire(form: FormData, salon: boolean, joueurId: string) {
   const choix = form.get("prereglage");
-  const prereglage = estPrereglage(choix) ? choix : "classique";
   const lettre = String(form.get("lettre") ?? "") || undefined;
+  // « Mes règles » : une Partie Personnalisée avec les Réglages enregistrés.
+  if (typeof choix === "string" && choix.startsWith("regle:")) {
+    const reglages = await regleDuJoueur(await obtenirDb(), joueurId, choix.slice("regle:".length), { salon });
+    return reglages ? { prereglage: "personnalise" as const, reglages } : undefined;
+  }
+  const prereglage = estPrereglage(choix) ? choix : "classique";
   if (prereglage !== "personnalise") return { prereglage, lettre };
   // « Rejouer » reprend les Réglages de la Partie qu'on vient de finir.
   const depuis = String(form.get("depuis") ?? "");
@@ -225,4 +231,19 @@ export async function exclureAction(code: string, poste: string): Promise<Result
   const resultat = await exclure(await obtenirDb(), code, joueur.id, poste);
   if (resultat.ok) refresh();
   return resultat;
+}
+
+export type EtatRegle = { ok: boolean; message: string } | null;
+
+/** Enregistre les Réglages du formulaire dans « Mes règles », sous le nom saisi. */
+export async function enregistrerRegleAction(salon: boolean, _avant: EtatRegle, form: FormData): Promise<EtatRegle> {
+  const joueur = await joueurCourant();
+  if (!joueur) return { ok: false, message: "Choisis d'abord un pseudo." };
+  const lus = lireReglages(form, { salon });
+  if (!lus.ok) return { ok: false, message: lus.erreur };
+  const nom = String(form.get("nom_regle") ?? "");
+  const r = await enregistrerRegle(await obtenirDb(), joueur.id, nom, lus.reglages, { salon });
+  if (!r.ok) return { ok: false, message: r.erreur };
+  refresh();
+  return { ok: true, message: `« ${nom.trim()} » est dans Mes règles.` };
 }

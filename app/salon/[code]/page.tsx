@@ -7,6 +7,7 @@ import { EntrerDansLeSalon } from "@/components/entrer-dans-le-salon";
 import { SalonAttente } from "@/components/salon-attente";
 import { obtenirDb } from "@/db/client";
 import { estExclu, lireChat } from "@/lib/jeu/chat";
+import { mesRegles } from "@/lib/jeu/regles";
 import { etatPartieSalon } from "@/lib/jeu/partie-salon";
 import { marquerPresent } from "@/lib/jeu/presence";
 import { codeDepuisSaisie, lireSalon } from "@/lib/jeu/salons";
@@ -60,5 +61,6 @@ async function Ecran({ params }: { params: Promise<{ code: string }> }) {
   const lien = `${protocole}://${hote}/salon/${salon.code}`;
   const qr = await QRCode.toString(lien, { type: "svg", margin: 1, color: { dark: "#15161f", light: "#ffffff" } });
   const chat = (await lireChat(db, code, joueur.id))!;
-  return <SalonAttente initial={{ ...salon, partie }} lien={lien} qr={qr} chat={chat} />;
+  const regles = salon.jeSuisHote ? await mesRegles(db, joueur.id) : [];
+  return <SalonAttente initial={{ ...salon, partie }} lien={lien} qr={qr} chat={chat} regles={regles} />;
 }
