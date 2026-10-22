@@ -5,6 +5,8 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
     environment: "node",
+    // Chaque test démarre sa base Postgres embarquée (PGlite), ce qui prend une à deux secondes.
+    testTimeout: 30_000,
     include: ["**/*.test.ts"],
     exclude: ["node_modules/**", ".next/**"],
   },
