@@ -1,0 +1,39 @@
+app/jeu.css
+  s_f47e83bd1733a2::t_70dd518a180866 148-166
+app/manche/[id]/page.tsx
+  s_f47e83bd1733a2::t_70dd518a180866 13,73-74,82,88,227-232,242,246,270-314
+  s_f47e83bd1733a2::t_43414d693d1a28 112
+  s_f47e83bd1733a2::t_65923bf480be89 315-317
+lib/jeu/fin-partie.test.ts
+  s_f47e83bd1733a2::t_1a16b9b561ef40 1-82
+lib/jeu/fin-partie.ts
+  s_f47e83bd1733a2::t_1a16b9b561ef40 1-58
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_1a16b9b561ef40 23
+.veebee/tickets/13-partie-se-termine-sur-un-podium.md
+  s_e9e26ca2ac1909::t_1c0177a34be65a 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bf1472ffebe946ae5f7e70d36b4e9e575544a85e",
+  "prompts": {},
+  "sessions": {
+    "s_e9e26ca2ac1909": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ad9dff811377d74e3",
+        "model": "unknown"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    },
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
