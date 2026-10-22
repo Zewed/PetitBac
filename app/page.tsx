@@ -4,7 +4,6 @@ import { lancerDefi } from "@/app/actions";
 import { ChoisirPseudo } from "@/components/choisir-pseudo";
 import { Entete } from "@/components/entete";
 import { RejoindreSalon } from "@/components/rejoindre-salon";
-import { FiltresStabilo, Lavis } from "@/components/stabilo";
 import { TuileCreer, TuileSeul } from "@/components/tuiles-accueil";
 import { obtenirDb } from "@/db/client";
 import { monDefi } from "@/lib/jeu/defi";
@@ -21,8 +20,6 @@ import { joueurCourant } from "@/lib/session";
 export default function Accueil() {
   return (
     <div className="p-acc">
-      <FiltresStabilo />
-      <Lavis />
       <Entete etoile />
       <main className="wrap">
         <Suspense fallback={null}>
