@@ -1,0 +1,43 @@
+lib/jeu/defi.ts
+  s_f47e83bd1733a2::t_bfab9dab7952f7 1-69
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_46378a2f8102b5 25-31
+db/migrations/meta/0003_snapshot.json
+  s_f47e83bd1733a2::t_46378a2f8102b5 1-560
+app/manche/[id]/page.tsx
+  s_f47e83bd1733a2::t_14681c7acc09b3 39-41,51,60,128,143
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_46378a2f8102b5 14
+lib/jeu/manches.ts
+  s_f47e83bd1733a2::t_14681c7acc09b3 20-23,36-37
+db/schema.ts
+  s_f47e83bd1733a2::t_46378a2f8102b5 38-45,48-50,56,65-68
+lib/jeu/defi.test.ts
+  s_f47e83bd1733a2::t_46378a2f8102b5 1-83
+app/page.tsx
+  s_f47e83bd1733a2::t_14681c7acc09b3 2-3,8,33-35,38,78-136
+  s_f47e83bd1733a2::t_f4f548fa7ace84 137-138
+app/actions.ts
+  s_f47e83bd1733a2::t_14681c7acc09b3 6,34-38
+  s_f47e83bd1733a2::t_3932e13547e80c 39-41
+db/migrations/0003_marvelous_blackheart.sql
+  s_f47e83bd1733a2::t_46378a2f8102b5 1-11
+.veebee/tickets/05-joueur-fait-le-defi-du-jour.md
+  s_f47e83bd1733a2::t_6156b137612da5 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c905cbb8ea6d11dddd322530083e7a1cc8ae502b",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
