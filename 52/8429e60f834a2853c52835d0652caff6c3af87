@@ -1,0 +1,53 @@
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_b009131c37982d 22,27
+db/pglite.ts
+  s_f47e83bd1733a2::t_e0f68fa5c87eba 15-23,26-29
+db/migrations/0008_demonic_energizer.sql
+  s_f47e83bd1733a2::t_b009131c37982d 1-21
+db/schema.ts
+  s_f47e83bd1733a2::t_b009131c37982d 168-198
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_b009131c37982d 60-66
+lib/jeu/contestation.test.ts
+  s_f47e83bd1733a2::t_f283aba06b80df 1-103
+db/migrations/meta/0008_snapshot.json
+  s_f47e83bd1733a2::t_b009131c37982d 1-952
+.veebee/tickets/12-joueur-conteste-une-decision.md
+  s_c8af29a5af6da7::t_8095110a74d0c0 6
+app/actions.ts
+  s_f47e83bd1733a2::t_683b33a9785fd6 7,147-161
+app/jeu.css
+  s_f47e83bd1733a2::t_df622c30bcc58a 137-147
+components/decouverte.tsx
+  s_f47e83bd1733a2::t_b38e5535ea22ef 1,28,62-99
+lib/jeu/contestation.ts
+  s_f47e83bd1733a2::t_a925cdf0a4420b 1-89
+lib/jeu/decouverte.ts
+  s_f47e83bd1733a2::t_246dc2d095fac3 2,18,21,30,48-57,73-85,128-139
+lib/jeu/partie-salon.ts
+  s_f47e83bd1733a2::t_054f5cd16b1c19 4,98,134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "528429e60f834a2853c52835d0652caff6c3af87",
+  "prompts": {},
+  "sessions": {
+    "s_c8af29a5af6da7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b81b232c-25c9-4494-8e89-f80c50a7c0c1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    },
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
