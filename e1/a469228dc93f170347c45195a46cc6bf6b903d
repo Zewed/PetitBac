@@ -1,0 +1,87 @@
+lib/jeu/jugement.ts
+  s_f47e83bd1733a2::t_e0a56dbf4dcb14 8
+  s_f47e83bd1733a2::t_9e6746cd30d13a 74,80-81,84
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_02ea0384a27030 26
+  s_f47e83bd1733a2::t_16a2f8b1d2f5e0 31-35
+  s_f47e83bd1733a2::t_fa5fc6fb4869fb 36
+lib/jeu/personnalise.test.ts
+  s_f47e83bd1733a2::t_403f9e3ae4f782 145-147
+  s_f47e83bd1733a2::t_77e94c086680e5 1-144,148-179
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_964151c15bfd57 81-87
+db/migrations/meta/0011_snapshot.json
+  s_f47e83bd1733a2::t_964151c15bfd57 1-1216
+app/manche/[id]/page.tsx
+  s_f47e83bd1733a2::t_156dc66e2e7c6d 5-6,110,141,191-193,204-207,215,239-243,260,284-300,312-332
+  s_f47e83bd1733a2::t_f3efb04199a3b1 19-20,62-69,77-81
+  s_f47e83bd1733a2::t_a17452bc3882a4 333-335
+lib/jeu/prereglages.ts
+  s_f47e83bd1733a2::t_fa88042db3a2dd 3-4,10-11,14,26
+components/reglages-personnalises.tsx
+  s_f47e83bd1733a2::t_2580e2f826d4f8 1-190
+lib/jeu/reglages.ts
+  s_f47e83bd1733a2::t_fa88042db3a2dd 2,31
+  s_f47e83bd1733a2::t_f3efb04199a3b1 130-134
+  s_f47e83bd1733a2::t_3ddc56ce0d4e6b 94-129
+  s_f47e83bd1733a2::t_fa5fc6fb4869fb 1,3-30,32-93
+lib/jeu/reglages.test.ts
+  s_f47e83bd1733a2::t_fa5fc6fb4869fb 1-71
+app/jeu.css
+  s_f47e83bd1733a2::t_e3e2cd5fc79a6f 53,85,96,198-222
+  s_f47e83bd1733a2::t_0aa574637befed 223-225
+  s_f47e83bd1733a2::t_f3efb04199a3b1 194-197
+lib/jeu/partie-salon.ts
+  s_f47e83bd1733a2::t_ba28431963f6d7 43,51
+  s_f47e83bd1733a2::t_d31284425cfe7c 1,10,13,36-42,47-50,52-55,57,60,67,70-78,81,101-102,108-139,148,158-160,181,197-198,203-222
+db/schema.ts
+  s_f47e83bd1733a2::t_964151c15bfd57 14,35-38
+db/migrations/0011_tough_vindicator.sql
+  s_f47e83bd1733a2::t_964151c15bfd57 1-2
+lib/jeu/contestation.ts
+  s_f47e83bd1733a2::t_403f9e3ae4f782 7,19
+lib/jeu/decouverte.ts
+  s_f47e83bd1733a2::t_403f9e3ae4f782 5,60-61
+lib/jeu/stop.ts
+  s_f47e83bd1733a2::t_403f9e3ae4f782 5,7-8,12-16,25-26,30,33
+components/decouverte.tsx
+  s_f47e83bd1733a2::t_58006343362318 13,33
+  s_f47e83bd1733a2::t_8a546fab86fa93 5-10
+lib/jeu/parties.ts
+  s_f47e83bd1733a2::t_97009469a43c38 5,75-78,108-109
+  s_f47e83bd1733a2::t_9e6746cd30d13a 7,9-11,14-21,23,27,33,36-44,51-52,79-81,95-97,107,110,123
+components/salon-attente.tsx
+  s_f47e83bd1733a2::t_156dc66e2e7c6d 91
+components/choix-prereglage.tsx
+  s_f47e83bd1733a2::t_36f43e1ba1be9b 1-4,11-24,26-53
+lib/jeu/manches.ts
+  s_f47e83bd1733a2::t_e0a56dbf4dcb14 6,20-30,37-38,56,84
+app/actions.ts
+  s_f47e83bd1733a2::t_97009469a43c38 14,16-17,34-49,53-56,68,71-72,135-137,142-151,154
+app/page.tsx
+  s_f47e83bd1733a2::t_156dc66e2e7c6d 84
+components/choix-lettre.tsx
+  s_f47e83bd1733a2::t_156dc66e2e7c6d 1-24
+components/grille-en-cours.tsx
+  s_f47e83bd1733a2::t_62d2a91716b125 19-31,39,101-104,131-135,137-145,147-148,150-151,218-224,235,250-254
+  s_f47e83bd1733a2::t_f3efb04199a3b1 149
+  s_f47e83bd1733a2::t_3abd7c3fc2e57d 136
+.veebee/tickets/16-joueur-regle-une-partie-personnalisee.md
+  s_f47e83bd1733a2::t_16a2f8b1d2f5e0 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e1a469228dc93f170347c45195a46cc6bf6b903d",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
