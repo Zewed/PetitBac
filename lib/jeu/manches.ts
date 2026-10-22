@@ -17,6 +17,10 @@ export type Manche = {
   resteS: number;
   /** La Partie de cette Manche : son Préréglage, le numéro de la Manche et le total de la Partie. */
   partie: { id: string; prereglage: IdPrereglage; nom: string; numero: number; nbManches: number; dureeS: number; total: number; etat: "en_cours" | "terminee" } | null;
+  /** Le numéro du Défi du jour quand la Manche en est un. */
+  defiNumero: number | null;
+  /** La durée du chrono, en secondes. */
+  dureeS: number;
 };
 
 export async function lireManche(db: Db, id: string, joueurId: string, maintenant = new Date()): Promise<Manche | undefined> {
@@ -29,6 +33,8 @@ export async function lireManche(db: Db, id: string, joueurId: string, maintenan
   return {
     id: manche.id,
     partieId: manche.partieId,
+    defiNumero: manche.defiNumero,
+    dureeS: Math.round((manche.finitLe.getTime() - manche.commenceeLe.getTime()) / 1000),
     lettre: manche.lettre,
     categories: manche.categories,
     finitLe: manche.finitLe,

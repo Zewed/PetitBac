@@ -3,6 +3,7 @@ id: 05
 title: Le Joueur fait le Défi du jour
 milestone: null
 depends_on: [01]
+status: done
 design:
   - .aeom/direction/index.html
   - .aeom/direction/manche.html
