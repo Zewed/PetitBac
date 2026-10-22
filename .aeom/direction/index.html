@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petit Bac — Accueil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Shantell+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="p-acc">
+
+<header class="top">
+  <div class="wrap top__in">
+    <a class="mark" href="index.html">Petit <span class="mark__hl">Bac</span></a>
+    <a class="me" href="#" aria-label="Ton pseudo : Juju. Le changer"><span class="me__k">Ton pseudo</span><span class="me__n">Juju</span></a>
+  </div>
+</header>
+
+<main class="wrap acc">
+
+  <a class="resume" href="manche.html">
+    <span class="resume__txt">
+      <span class="resume__a">Partie en cours</span>
+      <span class="resume__b">Salon de Léa · manche 3/5</span>
+    </span>
+    <span class="resume__go">Reprendre <span aria-hidden="true">→</span></span>
+  </a>
+
+  <section class="defi" aria-labelledby="defi-t">
+    <div class="defi__ink" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="defi__head">
+      <div class="defi__titles">
+        <p class="kick">Jeudi 22 octobre</p>
+        <h1 id="defi-t" class="defi__t">Défi du jour <span class="defi__n">n°23</span></h1>
+      </div>
+      <div class="secret">
+        <span class="secret__q" aria-hidden="true">?</span>
+        <span class="secret__k">Lettre cachée</span>
+      </div>
+    </div>
+    <ul class="stats">
+      <li><b>12</b><span>catégories</span></li>
+      <li><b>3 min</b><span>de chrono</span></li>
+      <li><b>1</b><span>seul essai</span></li>
+    </ul>
+    <p class="defi__note">La lettre reste cachée jusqu’au départ. La même pour tout le monde.</p>
+    <a class="btn btn--xl btn--wide defi__go" href="#">Lancer le défi n°23 <span aria-hidden="true">→</span></a>
+    <p class="defi__mid">Nouveau défi à minuit, heure de Paris</p>
+  </section>
+
+  <section class="serie" aria-label="Ta série">
+    <svg class="tally" viewBox="0 0 118 60" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" aria-hidden="true">
+      <path d="M9 8c1 14-.8 29 .5 44"/><path d="M23 7c.6 15 .2 30-.4 45"/><path d="M37 8c-.5 14 .8 29 .3 44"/><path d="M51 7c.8 15-.4 30 .4 45"/>
+      <path d="M2 45C20 35 39 24 59 13"/>
+      <path d="M84 8c.6 14-.5 30 .3 44"/><path d="M99 7c-.4 15 .7 30 0 45"/>
+    </svg>
+    <div class="serie__txt">
+      <p class="serie__n">7 jours d’affilée</p>
+      <p class="serie__s">Fais le n°23 pour passer à 8.</p>
+    </div>
+  </section>
+
+  <section class="hier" aria-labelledby="hier-t">
+    <div class="hier__head">
+      <h2 id="hier-t">Hier · défi n°22</h2>
+      <span class="lettre" aria-label="Lettre M">M</span>
+      <span class="hier__date">mer. 21 oct.</span>
+    </div>
+    <div class="dabs" role="img" aria-label="Ton résultat : 12 cases, une par catégorie. 3 Rare, 3 Courant, 3 Très rare, 1 Banal, 1 Légendaire, 1 case vide">
+      <span class="dab t-rare"></span><span class="dab t-courant"></span><span class="dab t-trare"></span><span class="dab t-banal"></span><span class="dab t-legend"></span><span class="dab t-courant"></span>
+      <span class="dab t-trare"></span>
+      <span class="dab dab--x"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M4 4.5c4 3.5 8 7.5 12 11"/><path d="M15.5 4c-4 4-7.5 8-11.5 12"/></svg></span>
+      <span class="dab t-rare"></span><span class="dab t-courant"></span><span class="dab t-trare"></span><span class="dab t-rare"></span>
+    </div>
+    <div class="hier__score">
+      <p class="hier__pts">61<small>pts</small></p>
+      <p class="hier__rank">mieux que <b>82 %</b><br>des joueurs</p>
+    </div>
+    <a class="btn btn--ink btn--wide" href="#">Partager mon résultat</a>
+    <div class="tiers">
+      <p class="kick">Les paliers</p>
+      <ul>
+        <li class="tier t-banal">Banal <b>1</b></li>
+        <li class="tier t-courant">Courant <b>3</b></li>
+        <li class="tier t-rare">Rare <b>5</b></li>
+        <li class="tier t-trare">Très rare <b>8</b></li>
+        <li class="tier t-legend">Légendaire <b>12</b></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="amis" aria-labelledby="amis-t">
+    <h2 id="amis-t" class="sec"><span class="sec__hl">Entre amis</span></h2>
+    <div class="amis__cols">
+      <div class="creer">
+        <h3>Créer un salon</h3>
+        <p class="sub">De 2 à 10 joueurs, invités par lien ou QR code.</p>
+        <fieldset class="presets">
+          <legend class="sr">Préréglage</legend>
+          <label class="preset"><input type="radio" name="pre"><span class="preset__n">Express</span><span class="preset__d">4 catégories</span><span class="preset__d">45 s · 3 manches</span></label>
+          <label class="preset"><input type="radio" name="pre" checked><span class="preset__tag">par défaut</span><span class="preset__n">Classique</span><span class="preset__d">6 catégories</span><span class="preset__d">90 s · 5 manches</span></label>
+          <label class="preset"><input type="radio" name="pre"><span class="preset__n">Marathon</span><span class="preset__d">12 catégories</span><span class="preset__d">3 min · 10 manches</span></label>
+          <label class="preset"><input type="radio" name="pre"><span class="preset__n">Personnalisé</span><span class="preset__d">Tout à ta façon :</span><span class="preset__d">chrono, lettres, STOP</span></label>
+        </fieldset>
+        <a class="btn btn--wide" href="#">Créer le salon <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="join-box">
+        <h3>Rejoindre un salon</h3>
+        <p class="sub">Ouvre le lien qu’on t’a envoyé, ou tape le code du salon.</p>
+        <form class="join" action="#">
+          <div class="field"><input type="text" placeholder="Code ou lien" aria-label="Code ou lien du salon"></div>
+          <button class="btn btn--ink" type="button">Rejoindre</button>
+        </form>
+        <p class="join__or">Arrivé en cours de partie ? Tu regardes la manche, et tu joues dès la suivante.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seul" aria-labelledby="seul-t">
+    <h2 id="seul-t" class="sec"><span class="sec__hl">Seul</span></h2>
+    <a class="libre" href="#">
+      <span class="libre__t">Partie libre <span aria-hidden="true">→</span></span>
+      <span class="libre__p">Autant de manches que tu veux, avec les préréglages des salons. « J’ai fini » remplace le STOP.</span>
+      <span class="libre__best">Ton record en Classique <b>52 pts</b></span>
+    </a>
+  </section>
+
+  <footer class="foot">
+    <a class="ink-link" href="#">Créer un compte pour garder ta série</a>
+    <p>Sans compte, ta série reste sur cet appareil. Compte dès 15 ans, par e-mail ou Google.</p>
+  </footer>
+
+</main>
+</body>
+</html>

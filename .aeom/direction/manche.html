@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manche 3/5 · lettre C — Petit Bac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Shantell+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="p-game">
+
+<header class="top">
+  <div class="wrap top__in">
+    <a class="quit" href="index.html"><span aria-hidden="true">←</span> Quitter</a>
+    <p class="salon"><b>Salon de Léa</b> · Classique</p>
+  </div>
+</header>
+
+<main class="wrap game">
+
+  <section class="tirage" aria-label="Lettre et chrono">
+    <div class="letter" role="img" aria-label="Lettre C">
+      <span class="letter__ink" aria-hidden="true"><i></i><i></i></span>
+      <span class="letter__c" aria-hidden="true">C</span>
+    </div>
+    <div class="clock">
+      <p class="clock__round">Manche <b>3</b>/5</p>
+      <p class="clock__t">0:47</p>
+      <p class="clock__of">restantes sur 1:30</p>
+    </div>
+    <div class="timebar" role="img" aria-label="Chrono : 47 secondes restantes sur 90"><span class="timebar__ink"></span></div>
+  </section>
+
+  <section class="players" aria-labelledby="pl-t">
+    <h2 id="pl-t" class="kick">Scores après la manche 2</h2>
+    <ol class="chips">
+      <li class="chip"><span class="chip__n">Inès</span><span class="chip__p">38</span></li>
+      <li class="chip is-me"><span class="chip__n">Juju</span><span class="chip__p">34<small>toi</small></span></li>
+      <li class="chip"><span class="chip__n">Léa</span><span class="chip__p">29</span></li>
+      <li class="chip"><span class="chip__n">Hugo</span><span class="chip__p">21</span></li>
+      <li class="chip"><span class="chip__n">Mehdi</span><span class="chip__p">17</span></li>
+    </ol>
+  </section>
+
+  <p class="chat-off">
+    <svg viewBox="0 0 40 40" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6 9h28v17H18l-7 6v-6H6z" stroke="#15161f" stroke-width="3.2"/>
+      <path d="M4 35C14 24.5 25 14 36 4" stroke="#d8212d" stroke-width="4.4"/>
+    </svg>
+    <span><b>Chat fermé pendant la manche.</b> Il rouvre à la découverte des points.</span>
+  </p>
+
+  <section class="grille" aria-labelledby="grille-t">
+    <div class="grille__head">
+      <h1 id="grille-t">Ta grille en C</h1>
+      <p><b>4</b>/6 remplies</p>
+    </div>
+    <div class="rows">
+      <div class="row is-done"><label class="cat" for="c1">Prénom</label><input class="ans" id="c1" type="text" value="Camille" autocomplete="off"><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13.5l5 5.5L20.5 5"/></svg></div>
+      <div class="row is-done"><label class="cat" for="c2">Pays</label><input class="ans" id="c2" type="text" value="Cambodge" autocomplete="off"><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13.5l5 5.5L20.5 5"/></svg></div>
+      <div class="row is-done"><label class="cat" for="c3">Animal</label><input class="ans" id="c3" type="text" value="Chacal" autocomplete="off"><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13.5l5 5.5L20.5 5"/></svg></div>
+      <div class="row is-focus"><label class="cat" for="c4">Métier</label><input class="ans" id="c4" type="text" placeholder="C…" autocomplete="off"></div>
+      <div class="row is-done"><label class="cat" for="c5">Fruit ou légume</label><input class="ans" id="c5" type="text" value="Clémentine" autocomplete="off"><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13.5l5 5.5L20.5 5"/></svg></div>
+      <div class="row"><label class="cat" for="c6">Objet</label><input class="ans" id="c6" type="text" placeholder="C…" autocomplete="off"></div>
+    </div>
+  </section>
+
+
+  <div class="stop">
+    <button class="stop__btn" type="button" disabled aria-describedby="stop-h">
+      <span class="stop__fill" aria-hidden="true"></span>
+      <span class="stop__w">STOP</span>
+      <span class="stop__n"><b>4</b>/6</span>
+    </button>
+    <p class="stop__hint" id="stop-h">Encore 2 cases à remplir pour dire STOP.</p>
+  </div>
+
+</main>
+</body>
+</html>
