@@ -1,4 +1,4 @@
-import { reagirAction } from "@/app/actions";
+import { contesterAction, reagirAction, voterAction } from "@/app/actions";
 import { CLASSE_PALIER } from "@/components/paliers";
 import { EMOJIS, type ReponseDecouverte } from "@/lib/jeu/decouverte";
 
@@ -25,6 +25,7 @@ export function Decouverte({ code, categories }: Props) {
                   <span className="dec__pts">
                     <b>{r.points}</b> {vide ? "vide" : refus ? "refusée" : r.palier}
                   </span>
+                  {!vide && <Contestation code={code} r={r} />}
                   <span className="dec__reac">
                     {r.moi
                       ? r.reactions.map((x) => (
@@ -56,5 +57,43 @@ export function Decouverte({ code, categories }: Props) {
         </div>
       ))}
     </section>
+  );
+}
+
+/** Contester une décision du Juge, voter, et voir ce que le Salon a tranché. */
+function Contestation({ code, r }: { code: string; r: ReponseDecouverte }) {
+  const c = r.contestation;
+  if (!c) {
+    return (
+      <form className="dec__contester" action={contesterAction.bind(null, code, r.id)}>
+        <button className="lien-contester" type="submit">
+          {r.valide ? "Contester : pas valable ?" : "Contester : c'est valable !"}
+        </button>
+      </form>
+    );
+  }
+  if (c.etat !== "en_cours") {
+    return (
+      <p className="dec__contester dec__tranche">
+        {c.etat === "acceptee" ? `Le salon a tranché : ${r.valide ? "validée" : "refusée"}.` : "Pas de majorité : la décision du Juge reste."}
+      </p>
+    );
+  }
+  return (
+    <div className="dec__contester dec__vote" role="group" aria-label={`Vote sur la réponse de ${r.pseudo}`}>
+      <span>
+        Contestée par {c.par} · <b>{c.pour}</b> pour · <b>{c.contre}</b> contre
+      </span>
+      <form action={voterAction.bind(null, code, c.id, true)}>
+        <button className={`vote ${c.monVote === true ? "is-on" : ""}`} type="submit" aria-pressed={c.monVote === true}>
+          D&apos;accord
+        </button>
+      </form>
+      <form action={voterAction.bind(null, code, c.id, false)}>
+        <button className={`vote ${c.monVote === false ? "is-on" : ""}`} type="submit" aria-pressed={c.monVote === false}>
+          Pas d&apos;accord
+        </button>
+      </form>
+    </div>
   );
 }

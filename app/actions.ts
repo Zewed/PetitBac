@@ -4,6 +4,7 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { obtenirDb } from "@/db/client";
 import { commencerDefi } from "@/lib/jeu/defi";
+import { contester, voter } from "@/lib/jeu/contestation";
 import { reagir } from "@/lib/jeu/decouverte";
 import { choisirPseudo } from "@/lib/jeu/joueurs";
 import { obtenirJuge } from "@/lib/jeu/juge";
@@ -141,5 +142,20 @@ export async function reagirAction(code: string, reponseId: string, emoji: strin
   const joueur = await joueurCourant();
   if (!joueur) return;
   const resultat = await reagir(await obtenirDb(), code, reponseId, joueur.id, emoji);
+  if (resultat.ok) refresh();
+}
+
+/** Remet en cause la décision du Juge sur une Réponse ; le Salon vote. */
+export async function contesterAction(code: string, reponseId: string) {
+  const joueur = await joueurCourant();
+  if (!joueur) return;
+  const resultat = await contester(await obtenirDb(), code, reponseId, joueur.id);
+  if (resultat.ok) refresh();
+}
+
+export async function voterAction(code: string, contestationId: string, pour: boolean) {
+  const joueur = await joueurCourant();
+  if (!joueur) return;
+  const resultat = await voter(await obtenirDb(), code, contestationId, joueur.id, pour);
   if (resultat.ok) refresh();
 }

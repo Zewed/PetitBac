@@ -3,6 +3,7 @@ id: 12
 title: Un Joueur conteste une décision du Juge et le Salon vote
 milestone: null
 depends_on: [11]
+status: done
 design: null
 tracker: null            # filled after the push: { tool, id, url }
 ---
