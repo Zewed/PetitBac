@@ -1,0 +1,53 @@
+app/accueil.css
+  s_f47e83bd1733a2::t_dacb41d289ab1a 226-227
+  s_f47e83bd1733a2::t_0f175f96afc1ef 1-196,198-225,228-234
+  s_f47e83bd1733a2::t_e797f2e62e2857 235-236
+  s_f47e83bd1733a2::t_57f50fdf51440b 197
+.aeom/direction/accueil/suite-libre.html
+  s_f47e83bd1733a2::t_45636106ddf108 1-38
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_45636106ddf108 4-5,41,46
+.aeom/direction/accueil/index.html
+  s_f47e83bd1733a2::t_45636106ddf108 1-93
+.veebee/autopilot/blocked.json
+  s_f47e83bd1733a2::t_45636106ddf108 6-15
+app/page.tsx
+  s_f47e83bd1733a2::t_58bbfd93aeb095 3,6-7,9-10,12,14,16-19,22,24,29,37-43,46,48,60-71,73-77,82-83,86-104,108-110,112-116,121-124
+components/feuille.tsx
+  s_f47e83bd1733a2::t_e797f2e62e2857 1-56
+components/tuiles-accueil.tsx
+  s_f47e83bd1733a2::t_5679a709a050b6 1-92
+.aeom/direction/accueil/suite.html
+  s_f47e83bd1733a2::t_45636106ddf108 1-38
+components/choix-prereglage.tsx
+  s_f47e83bd1733a2::t_e797f2e62e2857 21,28-29,31-35
+.aeom/direction/accueil/style.css
+  s_f47e83bd1733a2::t_45636106ddf108 1-219
+app/manche/[id]/page.tsx
+  s_f47e83bd1733a2::t_a55aeffde45ff8 8-9,16-18,99,101,103-109,212,215-216
+  s_f47e83bd1733a2::t_bbfefb3e63fb5f 100,102,120,130,211,213-214
+  s_f47e83bd1733a2::t_628b1b0c5c13c2 217
+app/globals.css
+  s_f47e83bd1733a2::t_0f175f96afc1ef 4
+.veebee/tickets/30-accueil-sans-defiler.md
+  s_f47e83bd1733a2::t_2e47a55189fa38 8
+  s_f47e83bd1733a2::t_45636106ddf108 1-7,9-47
+.aeom/direction/accueil/kit.css
+  s_f47e83bd1733a2::t_45636106ddf108 1-327
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6705f8d0e408f4681290045fc52753b95d704def",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
