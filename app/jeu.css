@@ -62,3 +62,10 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 .fin__pts{font-size:72px;font-weight:800;letter-spacing:-.045em;line-height:.9;font-variant-numeric:tabular-nums}
 .fin__pts small{font-size:22px;letter-spacing:0;margin-left:6px}
 .fin__rec{font-family:var(--hand);font-weight:700;font-size:22px;color:var(--blue)}
+
+/* la Série vide : une invitation, jamais « 0 jour » */
+.serie--vide{grid-template-columns:minmax(0,1fr)}
+.partage{display:grid;gap:10px;margin-top:20px}
+.partage .btn{margin-top:0}
+.partage__msg{font-weight:700;color:var(--green)}
+.partage__texte{width:100%;padding:12px;border:0;background:var(--wash);font-family:var(--sans);font-size:16px;resize:none}
