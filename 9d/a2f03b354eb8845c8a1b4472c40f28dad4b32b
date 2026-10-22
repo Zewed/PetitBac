@@ -1,0 +1,69 @@
+db/schema.ts
+  s_f47e83bd1733a2::t_fa421764ba0e10 152-155,160-210
+  s_f47e83bd1733a2::t_b0532d3c68a503 211
+lib/jeu/salons.test.ts
+  s_f47e83bd1733a2::t_d59fccca766a46 19,36-37
+lib/jeu/grossieretes.ts
+  s_f47e83bd1733a2::t_2c349f691b050c 23-46
+app/manche/[id]/page.tsx
+  s_f47e83bd1733a2::t_843dda25b2a380 6,12
+  s_f47e83bd1733a2::t_278149e0105f13 76-77,86,93,182-183
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_fa421764ba0e10 74-80
+db/migrations/meta/0010_snapshot.json
+  s_f47e83bd1733a2::t_fa421764ba0e10 1-1204
+.veebee/tickets/15-joueurs-discutent-dans-le-chat.md
+  s_f47e83bd1733a2::t_5a9988bb701a93 8
+lib/jeu/salons.ts
+  s_f47e83bd1733a2::t_5515a0365ad99a 2,42-43,55,67,78
+lib/jeu/partie-salon.ts
+  s_f47e83bd1733a2::t_5515a0365ad99a 4,81
+lib/jeu/chat.test.ts
+  s_f47e83bd1733a2::t_9aeb563a2f682d 1-51,64-78,80-97,100-119
+  s_f47e83bd1733a2::t_b8ee35de199f8b 52-63,79,98-99
+db/migrations/0010_flimsy_puff_adder.sql
+  s_f47e83bd1733a2::t_fa421764ba0e10 1-34
+app/actions.ts
+  s_f47e83bd1733a2::t_b114d763376f07 6,171-198
+app/api/salons/[code]/chat/route.ts
+  s_f47e83bd1733a2::t_b114d763376f07 1-13
+components/chat-salon.tsx
+  s_f47e83bd1733a2::t_2f772ed037166e 1-71,73-88,90-94,96-171
+  s_f47e83bd1733a2::t_5a9988bb701a93 72
+  s_f47e83bd1733a2::t_0cb29bdaa889c6 89
+  s_f47e83bd1733a2::t_15a16a27fefa8a 95
+lib/jeu/chat.ts
+  s_f47e83bd1733a2::t_f9eef2229562fd 1-162
+.veebee/autopilot/2026-10-22.md
+  s_f47e83bd1733a2::t_ef3d7c22c7c81e 25
+app/jeu.css
+  s_f47e83bd1733a2::t_0cb29bdaa889c6 174-177,179-196
+  s_f47e83bd1733a2::t_15a16a27fefa8a 178
+components/grille-en-cours.tsx
+  s_f47e83bd1733a2::t_843dda25b2a380 6,146
+  s_f47e83bd1733a2::t_67099d3d69b70d 147
+lib/jeu/presence.test.ts
+  s_f47e83bd1733a2::t_d59fccca766a46 79
+app/salon/[code]/page.tsx
+  s_f47e83bd1733a2::t_a55137745b2b8c 9,44-54,62-63
+components/salon-attente.tsx
+  s_f47e83bd1733a2::t_7b3b7a19f79894 5,8,10,98-99
+components/suivi-salon.tsx
+  s_f47e83bd1733a2::t_c90a24d511574f 32-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9da2f03b354eb8845c8a1b4472c40f28dad4b32b",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
