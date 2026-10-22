@@ -3,6 +3,7 @@ id: 14
 title: Le Salon tient quand un Joueur arrive en cours, se déconnecte ou que l'Hôte s'en va
 milestone: null
 depends_on: [09]
+status: done
 design: .aeom/direction/index.html
 tracker: null            # filled after the push: { tool, id, url }
 ---

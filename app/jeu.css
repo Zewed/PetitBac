@@ -164,3 +164,10 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 .rare::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--c,var(--wash));transform:skewX(var(--skew-tall)) rotate(-.6deg)}
 .rare .kick{color:var(--ink)}
 .rare__rep{font-family:var(--hand);font-weight:700;font-size:34px;color:var(--blue);line-height:1.1}
+
+/* présence et arrivée en cours de Partie */
+.chip.is-absent{opacity:.55}
+.spectateur{display:grid;gap:10px;padding:20px 22px;position:relative;isolation:isolate}
+.spectateur::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--wash);transform:skewX(var(--skew-tall))}
+.spectateur__t{font-size:20px;font-weight:800}
+.attente form + form{margin-top:0}

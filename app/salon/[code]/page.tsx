@@ -6,6 +6,8 @@ import { ChoisirPseudo } from "@/components/choisir-pseudo";
 import { EntrerDansLeSalon } from "@/components/entrer-dans-le-salon";
 import { SalonAttente } from "@/components/salon-attente";
 import { obtenirDb } from "@/db/client";
+import { etatPartieSalon } from "@/lib/jeu/partie-salon";
+import { marquerPresent } from "@/lib/jeu/presence";
 import { codeDepuisSaisie, lireSalon } from "@/lib/jeu/salons";
 import { joueurCourant } from "@/lib/session";
 
@@ -35,12 +37,15 @@ async function Ecran({ params }: { params: Promise<{ code: string }> }) {
   const code = codeDepuisSaisie((await params).code);
   const joueur = await joueurCourant();
   if (!joueur) return <ChoisirPseudo />;
-  const salon = await lireSalon(await obtenirDb(), code, joueur.id);
+  const db = await obtenirDb();
+  await marquerPresent(db, code, joueur.id);
+  const salon = await lireSalon(db, code, joueur.id);
   if (!salon) return <EntrerDansLeSalon code={code} />;
+  const partie = (await etatPartieSalon(db, code, joueur.id)) ?? null;
   const entetes = await headers();
   const hote = entetes.get("x-forwarded-host") ?? entetes.get("host") ?? "localhost:3000";
   const protocole = entetes.get("x-forwarded-proto") ?? (hote.startsWith("localhost") ? "http" : "https");
   const lien = `${protocole}://${hote}/salon/${salon.code}`;
   const qr = await QRCode.toString(lien, { type: "svg", margin: 1, color: { dark: "#15161f", light: "#ffffff" } });
-  return <SalonAttente initial={salon} lien={lien} qr={qr} />;
+  return <SalonAttente initial={{ ...salon, partie }} lien={lien} qr={qr} />;
 }

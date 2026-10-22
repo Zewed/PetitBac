@@ -147,6 +147,8 @@ export const salonJoueurs = pgTable(
       .notNull()
       .references(() => joueurs.id),
     rejointLe: timestamp("rejoint_le", { withTimezone: true }).notNull().default(sql`now()`),
+    /** La dernière fois que ce Joueur a relu le Salon : au-delà de quelques secondes, il est absent. */
+    vuLe: timestamp("vu_le", { withTimezone: true }).notNull().default(sql`now()`),
   },
   (t) => [primaryKey({ columns: [t.salonId, t.joueurId] })],
 );

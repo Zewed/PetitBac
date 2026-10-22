@@ -1,5 +1,6 @@
 import { obtenirDb } from "@/db/client";
 import { etatPartieSalon } from "@/lib/jeu/partie-salon";
+import { marquerPresent } from "@/lib/jeu/presence";
 import { lireSalon } from "@/lib/jeu/salons";
 import { joueurCourant } from "@/lib/session";
 
@@ -9,6 +10,7 @@ export async function GET(_request: Request, { params }: RouteContext<"/api/salo
   if (!joueur) return new Response("Non autorisé", { status: 401 });
   const db = await obtenirDb();
   const { code } = await params;
+  await marquerPresent(db, code, joueur.id);
   const salon = await lireSalon(db, code, joueur.id);
   if (!salon) return new Response("Introuvable", { status: 404 });
   const partie = (await etatPartieSalon(db, code, joueur.id)) ?? null;
