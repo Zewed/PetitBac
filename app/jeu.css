@@ -196,7 +196,8 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 .clock__t--libre{font-size:72px;line-height:.9}
 .stop__hint--seul{margin-top:0;padding:18px 8px;font-size:15px}
 .reglages{display:grid;gap:22px;margin:4px 0 22px;padding:22px 20px 20px;position:relative;isolation:isolate}
-.reglages::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--wash);transform:skewX(var(--skew-tall,var(--skew))) rotate(-.3deg)}
+/* pas de biais sur ce bloc : très haut, il déborderait de l'écran sur les côtés */
+.reglages::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--wash)}
 .reglage{display:grid;gap:10px;border:0;padding:0;margin:0;min-width:0}
 .reglage legend{padding:0;margin-bottom:10px}
 .reglage__choix{display:grid;gap:6px}
@@ -245,3 +246,11 @@ input.nombre{width:96px}
 /* les Catégories longues du Catalogue (« Personnage de bande dessinée ») passent sur deux lignes au lieu d'être coupées */
 .row .cat,.ligne .cat{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;padding-block:6px}
 @media (max-width:560px){.row,.ligne{--lab:118px}}
+
+/* ---------- « Mes règles » ---------- */
+.presets__mes{grid-column:1/-1;margin-top:6px}
+.preset--regle .preset__n{white-space:normal;overflow-wrap:anywhere}
+.preset__d--long{white-space:normal}
+.mes-regles{padding-top:6px;border-top:2px dashed color-mix(in srgb,var(--ink) 25%,transparent)}
+.mes-regles__form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px}
+.mes-regles__form .field{--bg:var(--paper)}

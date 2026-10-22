@@ -15,6 +15,7 @@ import { partieEnCoursDuJoueur } from "@/lib/jeu/presence";
 import { dernierResultat, serie } from "@/lib/jeu/serie";
 import { records } from "@/lib/jeu/parties";
 import { joueurCourant } from "@/lib/session";
+import { mesRegles } from "@/lib/jeu/regles";
 
 export default function Accueil() {
   return (
@@ -34,6 +35,7 @@ async function Contenu() {
   if (!joueur) return <ChoisirPseudo />;
   const db = await obtenirDb();
   const meilleurs = await records(db, joueur.id);
+  const regles = await mesRegles(db, joueur.id);
   const defi = await monDefi(db, joueur.id);
   const [laSerie, resultat] = await Promise.all([serie(db, joueur.id), dernierResultat(db, joueur.id)]);
   const position = resultat ? await positionAuDefi(db, joueur.id, resultat.numero) : null;
@@ -81,7 +83,7 @@ async function Contenu() {
           <span className="sec__hl">Seul</span>
         </h2>
         <form action={lancerPartieLibre} className="seul__form">
-          <ChoixPrereglage meilleurs={meilleurs} reglages="solo" />
+          <ChoixPrereglage meilleurs={meilleurs} reglages="solo" regles={regles} />
           <button className="libre" type="submit">
             <span className="libre__t">
               Partie libre <span aria-hidden="true">→</span>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState } from "react";
+import { enregistrerRegleAction } from "@/app/actions";
 import { ALPHABET, LETTRES_EXCLUES_PAR_DEFAUT } from "@/lib/jeu/lettres";
 import { CATEGORIES_DE_BASE, PACKS } from "@/lib/jeu/packs";
 import { CATEGORIES_MAX, DUREES_S, GRACE_MAX_S, GRACE_PAR_DEFAUT_S, lireReglages, MANCHES_MAX, MANCHES_MIN, OBJECTIF_MAX, OBJECTIF_MIN } from "@/lib/jeu/reglages";
@@ -27,6 +28,7 @@ export function ReglagesPersonnalises({ salon }: { salon: boolean }) {
   const [packs, setPacks] = useState<string[]>(["classique"]);
   const [nbCategories, setNbCategories] = useState(8);
   const [erreur, setErreur] = useState<string | null>(null);
+  const [regle, enregistrer, enregistrement] = useActionState(enregistrerRegleAction.bind(null, salon), null);
   const nbDansLaGrille = modeCategories === "main" ? choisies.length : nbCategories;
 
   function verifier() {
@@ -44,6 +46,12 @@ export function ReglagesPersonnalises({ salon }: { salon: boolean }) {
     // Les Réglages se ferment quand on revient à un Préréglage : le formulaire ne doit plus rien leur demander.
     return () => radio?.setCustomValidity("");
   });
+
+  // Hors de l'envoi du formulaire : un envoi le remettrait à zéro, et on lancerait autre chose que ce qu'on vient de garder.
+  function sauver() {
+    const form = racine.current?.closest("form");
+    if (form) startTransition(() => enregistrer(new FormData(form)));
+  }
 
   function basculer(l: string) {
     setLettres((avant) => (avant.includes(l) ? avant.filter((x) => x !== l) : ALPHABET.filter((x) => avant.includes(x) || x === l)));
@@ -273,6 +281,24 @@ export function ReglagesPersonnalises({ salon }: { salon: boolean }) {
       )}
 
       <p className="reglage__aide">Le barème ne change pas : un Palier rapporte les mêmes points quel que soit le réglage.</p>
+      <div className="reglage mes-regles">
+        <label className="kick" htmlFor="nom-regle">
+          Garder ces réglages
+        </label>
+        <div className="mes-regles__form">
+          <div className="field">
+            <input id="nom-regle" name="nom_regle" placeholder="Nom, ex. Ciné du dimanche" maxLength={30} autoComplete="off" />
+          </div>
+          <button className="btn btn--ink" type="button" onClick={sauver} disabled={enregistrement}>
+            Enregistrer
+          </button>
+        </div>
+        {regle && (
+          <p className={regle.ok ? "partage__msg" : "pseudo__err"} role={regle.ok ? "status" : "alert"}>
+            {regle.message}
+          </p>
+        )}
+      </div>
       {erreur && (
         <p className="pseudo__err" role="alert">
           {erreur}

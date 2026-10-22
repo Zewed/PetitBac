@@ -6,8 +6,9 @@ import { ChatSalon } from "@/components/chat-salon";
 import { ChoixPrereglage } from "@/components/choix-prereglage";
 import { SuiviSalon, type SalonEnDirect } from "@/components/suivi-salon";
 import type { ChatVu } from "@/lib/jeu/chat";
+import type { RegleVue } from "@/lib/jeu/regles";
 
-export function SalonAttente({ initial, lien, qr, chat }: { initial: SalonEnDirect; lien: string; qr: string; chat: ChatVu }) {
+export function SalonAttente({ initial, lien, qr, chat, regles }: { initial: SalonEnDirect; lien: string; qr: string; chat: ChatVu; regles: RegleVue[] }) {
   const [salon, setSalon] = useState<SalonEnDirect>(initial);
   const spectateur = salon.partie?.partie.etat === "en_cours" && !salon.partie.maMancheId ? salon.partie : null;
   const [copie, setCopie] = useState<string | null>(null);
@@ -88,7 +89,7 @@ export function SalonAttente({ initial, lien, qr, chat }: { initial: SalonEnDire
       {salon.jeSuisHote && !spectateur && salon.partie?.partie.etat !== "en_cours" && (
         <form className="lancer" action={lancerPartieSalonAction.bind(null, initial.code)}>
           <h2 className="kick">Préréglage de la partie</h2>
-          <ChoixPrereglage defaut={salon.prereglage} reglages="salon" />
+          <ChoixPrereglage defaut={salon.prereglage} reglages="salon" regles={regles} />
           <button className="btn btn--xl btn--wide" type="submit" disabled={salon.enAttente}>
             Lancer la partie <span aria-hidden="true">→</span>
           </button>

@@ -1,1 +1,7 @@
-{}
+{
+  "19": {
+    "kind": "waiting-human",
+    "reason": "Les Comptes touchent à l'authentification : pas de faux. Il faut un vrai fournisseur (Supabase Auth via la Marketplace Vercel, ticket 29), un envoi d'e-mails pour le lien de connexion, et un client OAuth Google (ID et secret), que seul Antoine peut créer.",
+    "pr": ""
+  }
+}
