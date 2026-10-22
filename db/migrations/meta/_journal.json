@@ -15,6 +15,13 @@
       "when": 1792678423236,
       "tag": "0001_modern_shockwave",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792680637545,
+      "tag": "0002_wide_blue_blade",
+      "breakpoints": true
     }
   ]
 }

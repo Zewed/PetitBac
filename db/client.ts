@@ -4,15 +4,17 @@ import postgres from "postgres";
 import type { Db } from "./types";
 import * as schema from "./schema";
 
-let db: Promise<Db> | undefined;
+// Une seule base par processus : en développement, les pages, les actions et les routes peuvent charger ce module
+// plusieurs fois, et deux PGlite ouvertes sur le même dossier .pglite/ ne voient pas les écritures l'une de l'autre.
+const partage = globalThis as typeof globalThis & { __petitBacDb?: Promise<Db> };
 
 /**
  * La base du jeu. En production, DATABASE_URL pointe sur Supabase.
  * Sans DATABASE_URL, en développement, une base Postgres embarquée (PGlite) vit dans .pglite/.
  */
 export function obtenirDb(): Promise<Db> {
-  db ??= ouvrir();
-  return db;
+  partage.__petitBacDb ??= ouvrir();
+  return partage.__petitBacDb;
 }
 
 async function ouvrir(): Promise<Db> {

@@ -1,6 +1,7 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { cotes, manches, parties, reponses, reponsesJugees } from "@/db/schema";
 import type { Db } from "@/db/types";
+import { coupleJoue } from "./cotes";
 import type { Decision, Juge } from "./juge/types";
 import { lireManche } from "./manches";
 import { palierPourPart } from "./paliers";
@@ -80,12 +81,16 @@ async function compterPartie(db: Db, partieId: string, derniere: boolean) {
     .where(eq(parties.id, partieId));
 }
 
-/** La Cote de la Réponse ; au démarrage, quand personne ne l'a encore donnée, l'estimation du Juge la fixe. */
+/**
+ * La Cote de la Réponse. Un couple assez joué ne connaît que les vraies Réponses : une Réponse qui n'y figure pas
+ * n'a jamais été donnée, elle est Légendaire. Au démarrage, l'estimation du Juge fixe la Cote jusqu'au recalcul.
+ */
 async function partDe(db: Db, categorie: string, lettre: string, decision: Decision): Promise<number | null> {
   const formeReference = decision.formeReference!;
   const where = and(eq(cotes.categorie, categorie), eq(cotes.lettre, lettre), eq(cotes.formeReference, formeReference));
   const [cote] = await db.select().from(cotes).where(where);
   if (cote) return cote.part;
+  if (await coupleJoue(db, categorie, lettre)) return 0;
   if (decision.partEstimee == null) return null;
   await db.insert(cotes).values({ categorie, lettre, formeReference, part: decision.partEstimee }).onConflictDoNothing();
   return decision.partEstimee;

@@ -95,3 +95,15 @@ export const cotes = pgTable(
   },
   (t) => [primaryKey({ columns: [t.categorie, t.lettre, t.formeReference] })],
 );
+
+/** Un couple Catégorie + Lettre assez joué : sa Cote vient des vraies Réponses, recalculée chaque nuit. */
+export const couples = pgTable(
+  "couples",
+  {
+    categorie: text("categorie").notNull(),
+    lettre: text("lettre").notNull(),
+    joues: integer("joues").notNull(),
+    recalculeLe: timestamp("recalcule_le", { withTimezone: true }).notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.categorie, t.lettre] })],
+);
