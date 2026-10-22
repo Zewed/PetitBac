@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { enregistrerAction, terminerAction } from "@/app/actions";
+import { direStopAction, enregistrerAction, terminerAction } from "@/app/actions";
 import { SuiviSalon } from "@/components/suivi-salon";
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
   titre: string;
   etiquette: string;
   /** Entre amis : le Salon, et le classement avant cette Manche. Pas de « J'ai fini » : la Manche s'arrête pour tous à la fin du chrono. */
-  salon?: { code: string; titreScores: string; scores: { pseudo: string; total: number; moi: boolean }[] };
+  salon?: { code: string; titreScores: string; scores: { pseudo: string; total: number; moi: boolean }[]; stopPar: string | null };
 };
 
 function formater(s: number) {
@@ -68,6 +68,19 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
       aSauver.current = {};
       void enregistrerAction(id, lot);
     }, 500);
+  }
+
+  const [erreurStop, setErreurStop] = useState<string | null>(null);
+  const [stopEnCours, startStop] = useTransition();
+
+  function direStop() {
+    startStop(async () => {
+      const r = await direStopAction(id, valeursRef.current);
+      if (r.ok) {
+        termine.current = true;
+        setTermine(true);
+      } else setErreurStop(r.erreur);
+    });
   }
 
   const resteS = Math.max(0, Math.ceil(resteMs / 1000));
@@ -172,9 +185,36 @@ export function GrilleEnCours({ id, lettre, categories, saisies, finitLe, mainte
         </section>
 
         {salon ? (
-          <p className="fini__hint fini__hint--salon">
-            {ferme ? "Le Juge corrige les grilles de tout le monde…" : "La manche s'arrête pour tout le monde à la fin du chrono."}
-          </p>
+          <div className="stop">
+            {salon.stopPar && !ferme && (
+              <p className="stop__annonce" role="alert">
+                <b>STOP de {salon.stopPar} !</b> Plus que {resteS} s pour finir ta grille.
+              </p>
+            )}
+            <button
+              className="stop__btn"
+              type="button"
+              onClick={direStop}
+              disabled={ferme || stopEnCours || remplies < categories.length || salon.stopPar !== null}
+              aria-describedby="stop-h"
+            >
+              <span className="stop__fill" aria-hidden="true" style={{ width: `${(remplies / categories.length) * 100}%` }} />
+              <span className="stop__w">STOP</span>
+              <span className="stop__n">
+                <b>{remplies}</b>/{categories.length}
+              </span>
+            </button>
+            <p className="stop__hint" id="stop-h" role={erreurStop ? "alert" : undefined}>
+              {erreurStop ??
+                (ferme
+                  ? "Le Juge corrige les grilles de tout le monde…"
+                  : salon.stopPar
+                    ? "Un seul STOP compte par manche."
+                    : remplies < categories.length
+                      ? `Encore ${categories.length - remplies} case${categories.length - remplies > 1 ? "s" : ""} à remplir pour dire STOP.`
+                      : "Ta grille est pleine : dis STOP, les autres n'auront plus que 10 s.")}
+            </p>
+          </div>
         ) : (
           <div className="fini stop">
             <button className="btn btn--xl" type="button" onClick={terminer} disabled={ferme}>

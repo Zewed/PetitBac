@@ -43,6 +43,13 @@
       "when": 1792685168939,
       "tag": "0005_furry_lord_hawal",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792685914840,
+      "tag": "0006_cultured_korvac",
+      "breakpoints": true
     }
   ]
 }

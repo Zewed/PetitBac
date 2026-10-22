@@ -3,6 +3,7 @@ id: 10
 title: Un Joueur dit STOP et les autres n'ont plus que le Temps de grâce
 milestone: null
 depends_on: [09]
+status: done
 design: .aeom/direction/manche.html
 tracker: null            # filled after the push: { tool, id, url }
 ---
