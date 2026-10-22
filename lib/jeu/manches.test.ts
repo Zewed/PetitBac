@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { commencerPartieLibre, enregistrerReponses, lireManche, terminerManche } from "./manches";
+import { enregistrerReponses, lireManche, terminerManche } from "./manches";
+import { commencerPartieLibre } from "./parties";
 import { T0, plus, unJoueur } from "./test-outils";
 
 describe("« Partie libre » lance une Manche", () => {

@@ -1,5 +1,5 @@
-import { and, eq, inArray } from "drizzle-orm";
-import { cotes, manches, reponses, reponsesJugees } from "@/db/schema";
+import { and, eq, inArray, sql } from "drizzle-orm";
+import { cotes, manches, parties, reponses, reponsesJugees } from "@/db/schema";
 import type { Db } from "@/db/types";
 import type { Decision, Juge } from "./juge/types";
 import { lireManche } from "./manches";
@@ -65,6 +65,19 @@ export async function jugerManche(db: Db, juge: Juge, id: string, joueurId: stri
       .onConflictDoUpdate({ target: [reponses.mancheId, reponses.categorie], set: valeurs });
   }
   await db.update(manches).set({ etat: "jugee", total }).where(eq(manches.id, id));
+  if (manche.partie) await compterPartie(db, manche.partie.id, manche.partie.numero === manche.partie.nbManches);
+}
+
+/** Le total de la Partie suit ses Manches jugées ; après la dernière, la Partie est terminée. */
+async function compterPartie(db: Db, partieId: string, derniere: boolean) {
+  const [{ total }] = await db
+    .select({ total: sql<number>`coalesce(sum(${manches.total}), 0)::int` })
+    .from(manches)
+    .where(and(eq(manches.partieId, partieId), eq(manches.etat, "jugee")));
+  await db
+    .update(parties)
+    .set(derniere ? { total, etat: "terminee", termineeLe: new Date() } : { total })
+    .where(eq(parties.id, partieId));
 }
 
 /** La Cote de la Réponse ; au démarrage, quand personne ne l'a encore donnée, l'estimation du Juge la fixe. */

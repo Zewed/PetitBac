@@ -6,7 +6,9 @@ import { obtenirDb } from "@/db/client";
 import { choisirPseudo } from "@/lib/jeu/joueurs";
 import { obtenirJuge } from "@/lib/jeu/juge";
 import { jugerManche } from "@/lib/jeu/jugement";
-import { commencerPartieLibre, enregistrerReponses, terminerManche, type Saisies } from "@/lib/jeu/manches";
+import { enregistrerReponses, terminerManche, type Saisies } from "@/lib/jeu/manches";
+import { commencerPartieLibre, mancheSuivante } from "@/lib/jeu/parties";
+import { estPrereglage } from "@/lib/jeu/prereglages";
 import { joueurCourant, retenirJoueur } from "@/lib/session";
 
 export type EtatPseudo = { erreur?: string; saisie?: string };
@@ -20,11 +22,20 @@ export async function choisirPseudoAction(_avant: EtatPseudo, form: FormData): P
   return {};
 }
 
-export async function lancerPartieLibre() {
+export async function lancerPartieLibre(form: FormData) {
   const joueur = await joueurCourant();
   if (!joueur) redirect("/");
-  const manche = await commencerPartieLibre(await obtenirDb(), joueur.id);
+  const choix = form.get("prereglage");
+  const manche = await commencerPartieLibre(await obtenirDb(), joueur.id, { prereglage: estPrereglage(choix) ? choix : "classique" });
   redirect(`/manche/${manche.id}`);
+}
+
+export async function mancheSuivanteAction(partieId: string) {
+  const joueur = await joueurCourant();
+  if (!joueur) redirect("/");
+  const manche = await mancheSuivante(await obtenirDb(), partieId, joueur.id);
+  if (!manche) refresh();
+  else redirect(`/manche/${manche.id}`);
 }
 
 export async function enregistrerAction(id: string, saisies: Saisies) {

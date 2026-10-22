@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { FakeJuge } from "./juge/fake-juge";
 import { JugeIndisponible, type Decision, type Juge, type ReponseAJuger } from "./juge/types";
 import { jugerManche } from "./jugement";
-import { commencerPartieLibre, lireManche, terminerManche } from "./manches";
+import { lireManche, terminerManche } from "./manches";
+import { commencerPartieLibre } from "./parties";
 import { PALIERS, palierPourPart } from "./paliers";
 import { T0, plus, uneMancheEn } from "./test-outils";
 

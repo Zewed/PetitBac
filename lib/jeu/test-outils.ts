@@ -2,7 +2,8 @@ import { ouvrirPglite } from "@/db/pglite";
 import { expect } from "vitest";
 import type { Db } from "@/db/types";
 import { choisirPseudo } from "./joueurs";
-import { commencerPartieLibre, terminerManche, type Saisies } from "./manches";
+import { terminerManche, type Saisies } from "./manches";
+import { commencerPartieLibre } from "./parties";
 
 export async function unJoueur() {
   const db = await ouvrirPglite();
