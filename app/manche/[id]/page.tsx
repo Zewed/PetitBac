@@ -10,6 +10,7 @@ import { CLASSE_PALIER, LegendePaliers } from "@/components/paliers";
 import { obtenirDb } from "@/db/client";
 import { lireManche, type Manche } from "@/lib/jeu/manches";
 import { decouverte } from "@/lib/jeu/decouverte";
+import { finDePartie, type FinDePartie } from "@/lib/jeu/fin-partie";
 import { etatPartieSalon, type EtatPartieSalon } from "@/lib/jeu/partie-salon";
 import { lirePartie, type Partie } from "@/lib/jeu/parties";
 import { joueurCourant } from "@/lib/session";
@@ -69,7 +70,8 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
   }
   const partie = manche.partieId && !manche.salonCode ? await lirePartie(db, manche.partieId, joueur.id) : undefined;
   const reponsesDeTous = manche.salonCode ? await decouverte(db, manche.salonCode, joueur.id) : null;
-  return <Resultat manche={manche} partie={partie} salon={salon} reponsesDeTous={reponsesDeTous} />;
+  const fin = manche.salonCode && salon?.partie.etat === "terminee" ? await finDePartie(db, manche.salonCode, joueur.id) : null;
+  return <Resultat manche={manche} partie={partie} salon={salon} reponsesDeTous={reponsesDeTous} fin={fin} />;
 }
 
 function Resultat({
@@ -77,11 +79,13 @@ function Resultat({
   partie,
   salon,
   reponsesDeTous,
+  fin,
 }: {
   manche: Manche;
   partie?: Partie;
   salon?: EtatPartieSalon;
   reponsesDeTous?: Awaited<ReturnType<typeof decouverte>>;
+  fin?: FinDePartie | null;
 }) {
   const derniere = !manche.partie || manche.partie.numero >= manche.partie.nbManches;
   const defi = manche.defiNumero !== null;
@@ -105,6 +109,7 @@ function Resultat({
         </div>
       </header>
       <main className="wrap res">
+        {salon && manche.salonCode && fin && <Podium code={manche.salonCode} fin={fin} />}
         <div className="res__head">
           <span className="lettre" aria-label={`Lettre ${manche.lettre}`}>
             {manche.lettre}
@@ -219,9 +224,12 @@ function ApresMancheSalon({ code, mancheId, salon }: { code: string; mancheId: s
   return (
     <section className="res" aria-labelledby="cl-t">
       <SuiviSalon code={code} mancheId={mancheId} />
-      <h2 id="cl-t" className="kick">
-        {finie ? "Partie terminée · classement final" : `Classement après la manche ${salon.manche.numero}/${salon.manche.nbManches}`}
-      </h2>
+      {!finie && (
+        <h2 id="cl-t" className="kick">
+          Classement après la manche {salon.manche.numero}/{salon.manche.nbManches}
+        </h2>
+      )}
+      {!finie && (
       <ol className="classement">
         {salon.classement.map((j, i) => (
           <li key={j.pseudo + i} className={j.moi ? "is-me" : ""}>
@@ -231,10 +239,11 @@ function ApresMancheSalon({ code, mancheId, salon }: { code: string; mancheId: s
           </li>
         ))}
       </ol>
+      )}
       <div className="res__actions">
         {finie ? (
           <Link className="btn btn--wide" href={`/salon/${code}`}>
-            Retour au salon <span aria-hidden="true">→</span>
+            Rejouer <span aria-hidden="true">→</span>
           </Link>
         ) : !salon.manche.close ? (
           <p className="attente__p" role="status">
@@ -255,6 +264,54 @@ function ApresMancheSalon({ code, mancheId, salon }: { code: string; mancheId: s
           Quitter le salon
         </Link>
       </div>
+    </section>
+  );
+}
+
+const MARCHES = ["1er", "2e", "3e"];
+
+function Podium({ code, fin }: { code: string; fin: FinDePartie }) {
+  const [premier, deuxieme, troisieme, ...suite] = fin.podium;
+  const marches = [deuxieme, premier, troisieme];
+  return (
+    <section className="podium" aria-labelledby="podium-t">
+      <h2 id="podium-t" className="sec">
+        <span className="sec__hl">Partie terminée</span>
+      </h2>
+      <p className="kick">Salon {code} · {fin.nom}</p>
+      <ol className="podium__marches">
+        {marches.map((j, i) =>
+          j ? (
+            <li key={j.pseudo} className={`marche marche--${[2, 1, 3][i]} ${j.moi ? "is-me" : ""}`}>
+              <span className="marche__n">{j.moi ? "Toi" : j.pseudo}</span>
+              <span className="marche__p">{j.total} pts</span>
+              <span className="marche__r">{MARCHES[[2, 1, 3][i] - 1]}</span>
+            </li>
+          ) : null,
+        )}
+      </ol>
+      {suite.length > 0 && (
+        <ol className="classement" start={4}>
+          {suite.map((j, i) => (
+            <li key={j.pseudo} className={j.moi ? "is-me" : ""}>
+              <span className="classement__r">{i + 4}</span>
+              <span className="classement__n">{j.pseudo}</span>
+              <span className="classement__p">{j.total}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+      {fin.plusRare ? (
+        <div className={`rare ${CLASSE_PALIER[fin.plusRare.palier] ?? ""}`}>
+          <p className="kick">La réponse la plus rare</p>
+          <p className="rare__rep">{fin.plusRare.reponse}</p>
+          <p>
+            {fin.plusRare.categorie} en {fin.plusRare.lettre} · par <b>{fin.plusRare.pseudo}</b> · {fin.plusRare.palier}, {fin.plusRare.points} pts
+          </p>
+        </div>
+      ) : (
+        <p className="attente__p">Aucune réponse valable cette partie : la prochaine sera la bonne.</p>
+      )}
     </section>
   );
 }

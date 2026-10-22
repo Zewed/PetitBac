@@ -3,6 +3,7 @@ id: 13
 title: La Partie se termine sur un podium et « Rejouer » garde le Salon
 milestone: null
 depends_on: [09]
+status: done
 design: null
 tracker: null            # filled after the push: { tool, id, url }
 ---
