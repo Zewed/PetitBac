@@ -245,7 +245,7 @@ input.nombre{width:96px}
 .catalogue__packs .cat-c:has(input:checked)::before{background:var(--y)}
 /* les Catégories longues du Catalogue (« Personnage de bande dessinée ») passent sur deux lignes au lieu d'être coupées */
 .row .cat,.ligne .cat{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;padding-block:6px}
-@media (max-width:560px){.row,.ligne{--lab:118px}}
+@media (max-width:560px){.row{--lab:118px}}
 
 /* ---------- « Mes règles » ---------- */
 .presets__mes{grid-column:1/-1;margin-top:6px}
@@ -254,3 +254,12 @@ input.nombre{width:96px}
 .mes-regles{padding-top:6px;border-top:2px dashed color-mix(in srgb,var(--ink) 25%,transparent)}
 .mes-regles__form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px}
 .mes-regles__form .field{--bg:var(--paper)}
+
+/* ---------- Signaler une décision du Juge, en solo ---------- */
+.signaler{display:grid;gap:10px;padding:4px 2px}
+.signaler summary{min-height:44px;display:flex;align-items:center;font-weight:700;font-size:16px;color:var(--blue);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px;cursor:pointer}
+.signaler__p{font-size:15px;color:var(--ink-2)}
+.signaler__liste{display:grid;gap:4px;list-style:none;margin:0;padding:0}
+.signaler__liste li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 14px;min-height:44px;border-bottom:1px solid color-mix(in srgb,var(--ink) 12%,transparent)}
+.signaler__rep{min-width:0;font-size:15px;overflow-wrap:anywhere}
+.signaler__fait{font-size:14px;font-weight:700;color:var(--green)}

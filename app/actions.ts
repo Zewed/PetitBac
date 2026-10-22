@@ -15,6 +15,7 @@ import { commencerPartieLibre, lirePartie, mancheSuivante } from "@/lib/jeu/part
 import { estPrereglage } from "@/lib/jeu/prereglages";
 import { lireReglages } from "@/lib/jeu/reglages";
 import { enregistrerRegle, regleDuJoueur } from "@/lib/jeu/regles";
+import { signalerDecision } from "@/lib/jeu/signalement";
 import { choisirLettreSuivante, cloturerManche, lancerPartieSalon, mancheSuivanteSalon } from "@/lib/jeu/partie-salon";
 import { quitterSalon } from "@/lib/jeu/presence";
 import { creerSalon, rejoindreSalon, type ResultatRejoindre } from "@/lib/jeu/salons";
@@ -246,4 +247,12 @@ export async function enregistrerRegleAction(salon: boolean, _avant: EtatRegle, 
   if (!r.ok) return { ok: false, message: r.erreur };
   refresh();
   return { ok: true, message: `« ${nom.trim()} » est dans Mes règles.` };
+}
+
+/** En solo ou au Défi : le Joueur signale la décision du Juge sur une de ses Réponses. */
+export async function signalerDecisionAction(reponseId: string) {
+  const joueur = await joueurCourant();
+  if (!joueur) return;
+  const resultat = await signalerDecision(await obtenirDb(), reponseId, joueur.id);
+  if (resultat.ok) refresh();
 }

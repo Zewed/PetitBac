@@ -1,5 +1,5 @@
-import { and, eq, sql } from "drizzle-orm";
-import { manches, parties, reponses, salons, type EtatManche } from "@/db/schema";
+import { and, eq, inArray, sql } from "drizzle-orm";
+import { manches, parties, reponses, salons, signalementsReponses, type EtatManche } from "@/db/schema";
 import type { Db } from "@/db/types";
 
 import { PREREGLAGES, type IdPrereglage } from "./prereglages";
@@ -13,7 +13,18 @@ export type Manche = {
   finitLe: Date;
   etat: EtatManche;
   total: number | null;
-  reponses: { categorie: string; saisie: string; valide: boolean | null; formeReference: string | null; palier: string | null; points: number | null }[];
+  reponses: {
+    /** null tant que la Réponse n'est pas enregistrée. */
+    id: string | null;
+    categorie: string;
+    saisie: string;
+    valide: boolean | null;
+    formeReference: string | null;
+    palier: string | null;
+    points: number | null;
+    /** Le Joueur a signalé la décision du Juge sur cette Réponse. */
+    signalee: boolean;
+  }[];
   /** Secondes qui restent au chrono selon l'horloge du serveur, 0 quand il est écoulé. */
   resteS: number;
   /** La Partie de cette Manche : son Préréglage, le numéro de la Manche et le total de la Partie. */
@@ -46,6 +57,13 @@ export async function lireManche(db: Db, id: string, joueurId: string, maintenan
   const [partie] = manche.partieId ? await db.select().from(parties).where(eq(parties.id, manche.partieId)) : [];
   const [salon] = partie?.salonId ? await db.select({ code: salons.code }).from(salons).where(eq(salons.id, partie.salonId)) : [];
   const parCategorie = new Map(lignes.map((r) => [r.categorie, r]));
+  const signalees = lignes.length
+    ? new Set(
+        (await db.select({ id: signalementsReponses.reponseId }).from(signalementsReponses).where(inArray(signalementsReponses.reponseId, lignes.map((r) => r.id)))).map(
+          (x) => x.id,
+        ),
+      )
+    : new Set<string>();
   return {
     id: manche.id,
     partieId: manche.partieId,
@@ -62,12 +80,14 @@ export async function lireManche(db: Db, id: string, joueurId: string, maintenan
     reponses: manche.categories.map((categorie) => {
       const r = parCategorie.get(categorie);
       return {
+        id: r?.id ?? null,
         categorie,
         saisie: r?.saisie ?? "",
         valide: r?.valide ?? null,
         formeReference: r?.formeReference ?? null,
         palier: r?.palier ?? null,
         points: r?.points ?? null,
+        signalee: r ? signalees.has(r.id) : false,
       };
     }),
     resteS: Math.max(0, Math.ceil((manche.finitLe.getTime() - maintenant.getTime()) / 1000)),
