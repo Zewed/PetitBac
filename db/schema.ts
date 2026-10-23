@@ -16,6 +16,10 @@ import type { Reglages } from "@/lib/jeu/reglages";
 export const joueurs = pgTable("joueurs", {
   id: uuid("id").primaryKey().defaultRandom(),
   pseudo: text("pseudo").notNull(),
+  /** Le Compte (identifiant Neon Auth) qui retrouve ce Joueur sur tous ses appareils ; null sans Compte. */
+  compteId: text("compte_id").unique(),
+  /** Quand le Joueur a confirmé avoir 15 ans ou plus, en créant son Compte. */
+  quinzeAnsConfirmeLe: timestamp("quinze_ans_confirme_le", { withTimezone: true }),
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().default(sql`now()`),
 });
 

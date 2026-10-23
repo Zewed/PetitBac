@@ -18,3 +18,8 @@ export async function joueurCourant(): Promise<Joueur | undefined> {
 export async function retenirJoueur(id: string) {
   (await cookies()).set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 400, path: "/" });
 }
+
+/** Sans Compte, l'appareil oublie son Joueur : à la prochaine visite, il choisit un pseudo. */
+export async function oublierJoueur() {
+  (await cookies()).delete(COOKIE);
+}

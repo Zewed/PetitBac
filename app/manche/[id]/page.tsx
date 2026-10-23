@@ -16,6 +16,7 @@ import { lireChat, type ChatVu } from "@/lib/jeu/chat";
 import { positionAuDefi } from "@/lib/jeu/classement";
 import { jourAParis } from "@/lib/jeu/defi";
 import { dernierResultat, serie } from "@/lib/jeu/serie";
+import { compteDuJoueur } from "@/lib/jeu/comptes";
 import { freine, MESSAGES_D_ATTENTE } from "@/lib/jeu/limites";
 import { lireManche, type Manche } from "@/lib/jeu/manches";
 import { decouverte } from "@/lib/jeu/decouverte";
@@ -104,9 +105,9 @@ async function Ecran({ params }: { params: Promise<{ id: string }> }) {
 }
 
 async function apresLeDefi(db: Awaited<ReturnType<typeof obtenirDb>>, joueurId: string) {
-  const [laSerie, resultat] = await Promise.all([serie(db, joueurId), dernierResultat(db, joueurId)]);
+  const [laSerie, resultat, compte] = await Promise.all([serie(db, joueurId), dernierResultat(db, joueurId), compteDuJoueur(db, joueurId)]);
   const position = resultat ? await positionAuDefi(db, joueurId, resultat.numero) : null;
-  return { laSerie, resultat, position };
+  return { laSerie, resultat, position, sansCompte: !compte?.compteId };
 }
 
 function Resultat({
@@ -216,6 +217,15 @@ function Resultat({
         {apresDefi && manche.defiNumero !== null && (
           <>
             <Serie {...apresDefi.laSerie} numeroDuJour={manche.defiNumero} />
+            {apresDefi.sansCompte && (
+              <p className="compte__aide">
+                Sans compte, ta Série reste sur cet appareil.{" "}
+                <Link className="ink-link" href="/compte">
+                  Crée un compte pour la garder partout
+                </Link>{" "}
+                (dès 15 ans, par e-mail ou Google).
+              </p>
+            )}
             {apresDefi.resultat && <DernierResultat resultat={apresDefi.resultat} aujourdHui={jourAParis(new Date())} position={apresDefi.position} />}
           </>
         )}

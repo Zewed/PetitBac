@@ -16,9 +16,9 @@ Le petit bac en ligne, en solo ou entre amis, où une Réponse rapporte d'autant
 - Toute décision structurante (pile technique, règle de jeu difficile à défaire) va dans un nouvel ADR numéroté, dans `docs/adr/` : un titre qui énonce la décision, puis un court texte qui donne le pourquoi, les options écartées et les conséquences.
 - Pile technique prévue :
   - Next.js 16 (App Router), Tailwind 4, TypeScript, pnpm, Vitest, sur Vercel ;
-  - Supabase (Postgres, temps réel, comptes) avec Drizzle ;
+  - Neon (Postgres, Comptes avec Neon Auth, temps réel) avec Drizzle, voir l'ADR 0004 ;
   - Claude Haiku 5.5 via l'AI SDK et Vercel AI Gateway.
-- Les intégrations externes (Supabase…) s'installent via la Marketplace Vercel.
+- Les intégrations externes (Neon…) s'installent via la Marketplace Vercel.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

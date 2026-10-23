@@ -1,5 +1,7 @@
 # Supabase plutôt que Neon, pour le temps réel des salons et les comptes sans inscription
 
+> Remplacé par l'ADR 0004 (Neon), le 23 octobre 2026.
+
 D'habitude, on part sur Neon et Drizzle. Ici, les Salons ont besoin de temps réel : savoir qui est connecté, diffuser un STOP en quelques dizaines de millisecondes, revenir après une déconnexion. Les comptes doivent aussi permettre de jouer sans inscription, puis de devenir un vrai Compte (lien par e-mail ou Google) sans perdre son historique. Supabase fournit les deux avec la même base Postgres, et on garde Drizzle par-dessus.
 
 On a écarté :

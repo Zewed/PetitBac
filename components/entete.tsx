@@ -28,9 +28,9 @@ async function Pseudo() {
   const joueur = await joueurCourant();
   if (!joueur) return null;
   return (
-    <span className="me">
+    <Link className="me" href="/compte" aria-label={`Ton pseudo : ${joueur.pseudo}. Ton compte`}>
       <span className="me__k">Ton pseudo</span>
       <span className="me__n">{joueur.pseudo}</span>
-    </span>
+    </Link>
   );
 }
