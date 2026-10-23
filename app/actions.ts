@@ -22,7 +22,8 @@ import { choisirLettreSuivante, cloturerManche, lancerPartieSalon, mancheSuivant
 import { quitterSalon } from "@/lib/jeu/presence";
 import { creerSalon, rejoindreSalon, type ResultatRejoindre } from "@/lib/jeu/salons";
 import { direStop } from "@/lib/jeu/stop";
-import { joueurCourant, retenirJoueur } from "@/lib/session";
+import { joueurCourant, oublierJoueur, retenirJoueur } from "@/lib/session";
+import { auth } from "@/lib/auth/server";
 
 export type EtatPseudo = { erreur?: string; saisie?: string };
 
@@ -278,4 +279,11 @@ export async function signalerDecisionAction(reponseId: string) {
   if (!joueur) return;
   const resultat = await signalerDecision(await obtenirDb(), reponseId, joueur.id);
   if (resultat.ok) refresh();
+}
+
+/** Se déconnecter : la session du Compte est fermée et l'appareil redevient un appareil sans Compte. */
+export async function deconnecterAction() {
+  await auth().signOut();
+  await oublierJoueur();
+  redirect("/");
 }

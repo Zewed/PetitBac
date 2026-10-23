@@ -267,3 +267,10 @@ input.nombre{width:96px}
 /* ---------- hors ligne ---------- */
 .hors-ligne{position:fixed;left:0;right:0;bottom:0;z-index:50;margin:0;padding:14px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--ink);color:#fff;font-size:15px;line-height:1.4;text-align:center}
 .hors-ligne b{color:var(--y)}
+
+/* ---------- Ton compte (ticket 19) ---------- */
+.compte{padding-bottom:56px}
+.compte .pseudo{max-width:620px}
+.compte__form{display:grid;gap:14px}
+.compte__aide{font-size:14px;line-height:1.4;color:var(--ink-2)}
+.compte__autre{justify-self:start;border:0;background:none;padding:6px 0;font:inherit;font-size:15px;cursor:pointer}

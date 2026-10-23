@@ -126,7 +126,7 @@ Une manche = une lettre et une grille de catégories, une réponse par case.
 
 ### Comptes et pseudos
 - **Sans compte** : on choisit un pseudo et on joue tout de suite, reconnu sur son appareil. On ne collecte aucune donnée personnelle.
-- **Compte optionnel**, par lien envoyé par e-mail ou par Google, réservé aux 15 ans et plus :
+- **Compte optionnel**, par un code envoyé par e-mail ou par Google, réservé aux 15 ans et plus :
   - il garde la série, les stats, « Mes règles » et la place au classement, sur tous ses appareils ;
   - le joueur sans compte qui en crée un garde son historique.
 - **Pseudos** : un filtre anti-grossièretés, et un signalement possible depuis le classement.
@@ -157,4 +157,4 @@ Une manche = une lettre et une grille de catégories, une réponse par case.
 - la monétisation.
 
 ### Stack prévue
-Next.js 16 (App Router), Tailwind 4, TypeScript, pnpm et Vitest, hébergé sur Vercel. Supabase pour la base Postgres, le temps réel des salons et les comptes, avec Drizzle par-dessus. Le serveur fait foi pour le chrono. Claude Haiku 5.5 juge les réponses via l'AI SDK et Vercel AI Gateway. Une tâche programmée recalcule la cote chaque nuit. Les raisons sont dans `docs/adr/`.
+Next.js 16 (App Router), Tailwind 4, TypeScript, pnpm et Vitest, hébergé sur Vercel. Neon pour la base Postgres, les comptes (Neon Auth) et le temps réel des salons, avec Drizzle par-dessus (ADR 0004). Le serveur fait foi pour le chrono. Claude Haiku 5.5 juge les réponses via l'AI SDK et Vercel AI Gateway. Une tâche programmée recalcule la cote chaque nuit. Les raisons sont dans `docs/adr/`.

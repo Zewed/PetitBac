@@ -13,3 +13,5 @@ node_modules/
 next-env.d.ts
 .pnpm-debug.log*
 .pglite/
+.vercel
+.env*.local

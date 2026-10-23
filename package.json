@@ -12,6 +12,7 @@
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
+    "@neondatabase/auth": "0.6.0-beta",
     "@vercel/analytics": "1.6.1",
     "drizzle-orm": "0.45.4",
     "next": "16.4.2",
