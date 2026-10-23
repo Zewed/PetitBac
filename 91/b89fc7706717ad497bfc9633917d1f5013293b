@@ -1,0 +1,53 @@
+lib/jeu/regles.test.ts
+  s_5f09916f32682d::t_cbf2590addb9e3 3,62-89
+  s_5f09916f32682d::t_d43442b3f766e3 90
+lib/jeu/regles.ts
+  s_5f09916f32682d::t_768ff90c752ae3 38-45
+app/jeu.css
+  s_5f09916f32682d::t_d29d1bc78e1d9c 33-36
+  s_5f09916f32682d::t_a4da1faaff8f1a 257-263,266
+  s_5f09916f32682d::t_1e124068f570b7 264-265
+lib/jeu/chat.test.ts
+  s_5f09916f32682d::t_40359a5e871ea7 3,6,120-164
+components/choix-prereglage.tsx
+  s_5f09916f32682d::t_1e124068f570b7 105-112
+  s_5f09916f32682d::t_a4da1faaff8f1a 3-4,65-72,79-104,113-124
+  s_5f09916f32682d::t_7d18c6338d86fb 125-126
+app/manche/[id]/page.tsx
+  s_5f09916f32682d::t_d29d1bc78e1d9c 196,200-204,267-274
+  s_5f09916f32682d::t_24988b6fbbaac3 275-276
+app/actions.ts
+  s_5f09916f32682d::t_768ff90c752ae3 18,237,275-281
+  s_5f09916f32682d::t_1fa41c79415fc8 282-283
+lib/jeu/parties.ts
+  s_5f09916f32682d::t_768ff90c752ae3 81,83,96-98,111,115,124
+db/schema.ts
+  s_5f09916f32682d::t_8d72048d58fea2 179
+lib/jeu/chat.ts
+  s_5f09916f32682d::t_af0ee80a74d99e 1,5,13-14,91-92,101,161-168
+  s_5f09916f32682d::t_6afa9453b3509a 169-170
+lib/jeu/parties.test.ts
+  s_5f09916f32682d::t_cbf2590addb9e3 4,6,9,13,74-79,81-86,88,91-101,111-122
+  s_5f09916f32682d::t_956bd0c0db0a39 123
+app/api/cron/cotes/route.ts
+  s_5f09916f32682d::t_768ff90c752ae3 17-22
+  s_5f09916f32682d::t_4a93cc2b603abd 2,6-7,23-24
+lib/jeu/limites.ts
+  s_5f09916f32682d::t_af0ee80a74d99e 9,14,57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "91b89fc7706717ad497bfc9633917d1f5013293b",
+  "prompts": {},
+  "sessions": {
+    "s_5f09916f32682d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73c317f2-8566-4211-8f5f-65dc405941ae",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
