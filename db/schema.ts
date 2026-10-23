@@ -176,7 +176,7 @@ export const salonExclus = pgTable(
   (t) => [primaryKey({ columns: [t.salonId, t.joueurId] })],
 );
 
-/** Les messages du chat d'un Salon, grossièretés déjà masquées. Effacés à la fin de chaque Partie. */
+/** Les messages du chat d'un Salon, grossièretés déjà masquées. Effacés à la fin de chaque Partie, et la nuit après 24 h. */
 export const messages = pgTable("messages", {
   id: uuid("id").primaryKey().defaultRandom(),
   salonId: uuid("salon_id")

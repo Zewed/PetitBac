@@ -15,7 +15,7 @@ import { enregistrerReponses, lireManche, terminerManche, type Saisies } from "@
 import { commencerPartieLibre, lirePartie, mancheSuivante } from "@/lib/jeu/parties";
 import { estPrereglage } from "@/lib/jeu/prereglages";
 import { lireReglages } from "@/lib/jeu/reglages";
-import { enregistrerRegle, regleDuJoueur } from "@/lib/jeu/regles";
+import { enregistrerRegle, regleDuJoueur, supprimerRegle } from "@/lib/jeu/regles";
 import { signalerDecision } from "@/lib/jeu/signalement";
 import { consommer } from "@/lib/jeu/limites";
 import { choisirLettreSuivante, cloturerManche, lancerPartieSalon, mancheSuivanteSalon } from "@/lib/jeu/partie-salon";
@@ -234,7 +234,7 @@ export type ResultatChat = { ok: true; message?: string } | { ok: false; erreur:
 export async function ecrireAction(code: string, texte: string): Promise<ResultatChat> {
   const joueur = await joueurCourant();
   if (!joueur) return { ok: false, erreur: "Choisis d'abord un pseudo." };
-  return ecrire(await obtenirDb(), code, joueur.id, texte);
+  return ecrire(await obtenirDb(), code, joueur.id, texte, new Date(), await adresseIp());
 }
 
 export async function signalerAction(code: string, messageId: string): Promise<ResultatChat> {
@@ -270,6 +270,15 @@ export async function enregistrerRegleAction(salon: boolean, _avant: EtatRegle, 
   if (!r.ok) return { ok: false, message: r.erreur };
   refresh();
   return { ok: true, message: `« ${nom.trim()} » est dans Mes règles.` };
+}
+
+/** Retire une de ses règles de « Mes règles » ; jamais celle d'un autre Joueur. */
+export async function supprimerRegleAction(id: string): Promise<{ ok: true } | { ok: false; erreur: string }> {
+  const joueur = await joueurCourant();
+  if (!joueur) return { ok: false, erreur: "Choisis d'abord un pseudo." };
+  const r = await supprimerRegle(await obtenirDb(), joueur.id, id);
+  if (r.ok) refresh();
+  return r;
 }
 
 /** En solo ou au Défi : le Joueur signale la décision du Juge sur une de ses Réponses. */

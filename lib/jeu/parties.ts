@@ -78,9 +78,9 @@ export type Partie = {
   lettresRestantes: string[];
   /** « Le premier à X points gagne » : l'objectif ; null pour un nombre de Manches. */
   objectif: number | null;
-  /** Le meilleur total des autres Parties terminées avec ce Préréglage, ou null s'il n'y en a pas (ni en Personnalisé). */
+  /** Le meilleur total des autres Parties terminées avec ce Préréglage ; null tant qu'il ne dépasse pas 0 (et en Personnalisé). */
   record: number | null;
-  /** La Partie est terminée et bat (ou établit) le record de ce Préréglage. */
+  /** La Partie est terminée, au-dessus de 0, et bat (ou établit) le record de ce Préréglage. */
   nouveauRecord: boolean;
 };
 
@@ -92,9 +92,10 @@ export async function lirePartie(db: Db, id: string, joueurId: string): Promise<
     .select({ total: parties.total })
     .from(parties)
     .where(and(eq(parties.joueurId, joueurId), eq(parties.prereglage, prereglage), eq(parties.etat, "terminee"), ne(parties.id, id)));
-  // Des Réglages Personnalisés ne se comparent pas d'une Partie à l'autre : pas de record.
-  const record = autres.length && prereglage !== "personnalise" ? Math.max(...autres.map((p) => p.total)) : null;
   const personnalise = prereglage === "personnalise";
+  // Des Réglages Personnalisés ne se comparent pas d'une Partie à l'autre : pas de record. Ni à 0 point : pas de « 0 pts ».
+  const meilleur = Math.max(0, ...autres.map((p) => p.total));
+  const record = !personnalise && meilleur > 0 ? meilleur : null;
   return {
     id: partie.id,
     prereglage,
@@ -107,11 +108,11 @@ export async function lirePartie(db: Db, id: string, joueurId: string): Promise<
     objectif: objectifDe(reglagesDe(partie)),
     reglages: partie.reglages,
     lettresRestantes: lettresRestantes(reglagesDe(partie), (await db.select({ lettre: manches.lettre }).from(manches).where(eq(manches.partieId, partie.id))).map((m) => m.lettre)),
-    nouveauRecord: !personnalise && partie.etat === "terminee" && (record === null || partie.total > record),
+    nouveauRecord: !personnalise && partie.etat === "terminee" && partie.total > (record ?? 0),
   };
 }
 
-/** Le meilleur total par Préréglage, sur les seules Parties terminées. */
+/** Le meilleur total par Préréglage, sur les seules Parties terminées ; aucun record tant qu'il ne dépasse pas 0. */
 export async function records(db: Db, joueurId: string): Promise<Partial<Record<IdPrereglage, number>>> {
   const lignes = await db
     .select({ prereglage: parties.prereglage, total: parties.total })
@@ -120,7 +121,7 @@ export async function records(db: Db, joueurId: string): Promise<Partial<Record<
   const meilleurs: Partial<Record<IdPrereglage, number>> = {};
   for (const { prereglage, total } of lignes) {
     const id = prereglage as IdPrereglage;
-    if (id === "personnalise") continue;
+    if (id === "personnalise" || total <= 0) continue;
     meilleurs[id] = Math.max(meilleurs[id] ?? 0, total);
   }
   return meilleurs;

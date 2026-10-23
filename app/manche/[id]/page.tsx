@@ -193,10 +193,15 @@ function Resultat({
             const vide = r.saisie.trim() === "";
             const refus = !vide && r.valide === false;
             const classe = manche.etat !== "jugee" || vide || refus ? "" : CLASSE_PALIER[r.palier ?? ""] ?? "";
+            const texte = vide ? "Case vide" : (r.formeReference ?? r.saisie);
             return (
               <li key={r.categorie} className={`ligne ${classe} ${vide ? "is-vide" : ""} ${refus ? "is-refus" : ""}`}>
                 <span className="cat">{r.categorie}</span>
-                <span className="ligne__rep">{vide ? "Case vide" : (r.formeReference ?? r.saisie)}</span>
+                <span className="ligne__rep">
+                  <span className="ligne__mots" style={vide ? undefined : ({ "--mot": motLePlusLarge(texte) } as React.CSSProperties)}>
+                    {texte}
+                  </span>
+                </span>
                 {manche.etat === "jugee" && (
                   <span className="ligne__pal">
                     <b>{r.points ?? 0}</b>
@@ -257,6 +262,16 @@ function Resultat({
       </main>
     </>
   );
+}
+
+/**
+ * La largeur, en em, du mot le plus large d'une Réponse dans l'écriture à la main (Shantell Sans 600), un peu
+ * au-dessus du vrai : la Réponse rapetisse juste assez pour que ce mot tienne sur une ligne (app/jeu.css, .ligne__mots).
+ */
+function motLePlusLarge(texte: string) {
+  const largeur = (c: string) =>
+    /[ijlfîïíì'’.,]/.test(c) ? 0.36 : /[trscç-]/.test(c) ? 0.52 : /[mwMWœæŒÆ]/.test(c) ? 1 : c !== c.toLowerCase() ? 0.78 : 0.66;
+  return Math.max(...texte.split(/\s+/).map((mot) => [...mot].reduce((em, c) => em + largeur(c), 0))).toFixed(2);
 }
 
 function FinDePartie({ partie }: { partie: Partie }) {

@@ -30,7 +30,10 @@ button.libre{width:100%;border:0;background:none;text-align:left;cursor:pointer;
 .ligne::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--c,var(--wash));transform:skewX(var(--skew)) rotate(var(--rot,0deg))}
 .ligne:nth-child(odd){--rot:-.5deg}
 .ligne:nth-child(even){--rot:.45deg}
-.ligne__rep{min-width:0;font-family:var(--hand);font-weight:600;font-size:26px;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ligne__rep{container-type:inline-size;min-width:0;padding-block:6px;font-family:var(--hand);font-weight:600;font-size:26px;line-height:1.05;color:var(--blue)}
+/* la Réponse s'affiche en entier : elle passe à la ligne entre deux mots, et rapetisse si son mot le plus large
+   (--mot, en em, calculé par la page) ne tient pas dans la case ; un mot interminable se coupe en dernier recours */
+.ligne__mots{display:block;font-size:max(15px,min(1em,100cqi / var(--mot,1)));overflow-wrap:anywhere}
 .ligne__pal{display:grid;justify-items:end;line-height:1.05;white-space:nowrap}
 .ligne__pal b{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
 .ligne__pal span{font-size:13px;font-weight:700}
@@ -251,6 +254,16 @@ input.nombre{width:96px}
 .presets__mes{grid-column:1/-1;margin-top:6px}
 .preset--regle .preset__n{white-space:normal;overflow-wrap:anywhere}
 .preset__d--long{white-space:normal}
+/* chaque règle garde sous sa carte un « Supprimer » discret, confirmé sur place */
+.regle{display:grid;align-content:start}
+.regle:nth-of-type(even) .preset{--rot:.7deg}
+.regle__suppr{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:0 12px;font-size:13px;font-weight:700;color:var(--ink-2)}
+.regle__suppr button{min-height:32px;padding:0;border:0;background:none;font:inherit;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.regle__suppr button:hover{color:var(--ink)}
+.regle__suppr button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.regle__suppr button.is-danger{color:var(--red)}
+.regle__choix{display:inline-flex;gap:12px}
+.regle__err{flex-basis:100%;text-align:right;color:var(--red)}
 .mes-regles{padding-top:6px;border-top:2px dashed color-mix(in srgb,var(--ink) 25%,transparent)}
 .mes-regles__form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px}
 .mes-regles__form .field{--bg:var(--paper)}

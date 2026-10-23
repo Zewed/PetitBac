@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { supprimerRegleAction } from "@/app/actions";
 import { ReglagesPersonnalises } from "@/components/reglages-personnalises";
 import { ORDRE_PREREGLAGES, PREREGLAGES, type IdPrereglage } from "@/lib/jeu/prereglages";
 import type { RegleVue } from "@/lib/jeu/regles";
@@ -61,14 +62,65 @@ export function ChoixPrereglage({
         </label>
         {regles.length > 0 && <p className="presets__mes kick">Mes règles</p>}
         {regles.map((r) => (
-          <label key={r.id} className="preset preset--regle">
-            <input type="radio" name="prereglage" value={`regle:${r.id}`} checked={choix === `regle:${r.id}`} onChange={() => setChoix(`regle:${r.id}`)} />
-            <span className="preset__n">{r.nom}</span>
-            <span className="preset__d preset__d--long">{r.resume}</span>
-          </label>
+          <div key={r.id} className="regle">
+            <label className="preset preset--regle">
+              <input type="radio" name="prereglage" value={`regle:${r.id}`} checked={choix === `regle:${r.id}`} onChange={() => setChoix(`regle:${r.id}`)} />
+              <span className="preset__n">{r.nom}</span>
+              <span className="preset__d preset__d--long">{r.resume}</span>
+            </label>
+            <SupprimerRegle regle={r} apres={() => choix === `regle:${r.id}` && setChoix(defaut)} />
+          </div>
         ))}
       </fieldset>
       {reglages && choix === "personnalise" && <ReglagesPersonnalises salon={reglages === "salon"} />}
     </>
+  );
+}
+
+/** Le « Supprimer » discret sous une de ses règles, confirmé sur place avant de partir. */
+function SupprimerRegle({ regle, apres }: { regle: RegleVue; apres: () => void }) {
+  const [confirme, setConfirme] = useState(false);
+  const [envoi, setEnvoi] = useState(false);
+  const [erreur, setErreur] = useState<string | null>(null);
+  const bouton = useRef<HTMLButtonElement>(null);
+
+  async function supprimer() {
+    setEnvoi(true);
+    const r = await supprimerRegleAction(regle.id);
+    setEnvoi(false);
+    if (!r.ok) return setErreur(r.erreur);
+    apres();
+  }
+
+  function annuler() {
+    setConfirme(false);
+    requestAnimationFrame(() => bouton.current?.focus());
+  }
+
+  return (
+    <div className="regle__suppr">
+      {confirme ? (
+        <>
+          <span>Supprimer « {regle.nom} » ?</span>
+          <span className="regle__choix">
+            <button type="button" className="is-danger" disabled={envoi} onClick={supprimer}>
+              Oui, supprimer
+            </button>
+            <button type="button" autoFocus onClick={annuler}>
+              Non
+            </button>
+          </span>
+        </>
+      ) : (
+        <button type="button" ref={bouton} aria-label={`Supprimer « ${regle.nom} »`} onClick={() => setConfirme(true)}>
+          Supprimer
+        </button>
+      )}
+      {erreur && (
+        <span className="regle__err" role="alert">
+          {erreur}
+        </span>
+      )}
+    </div>
   );
 }
