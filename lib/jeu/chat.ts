@@ -1,7 +1,8 @@
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, lt } from "drizzle-orm";
 import { joueurs, manches, messages, parties, salonExclus, salonJoueurs, salons, signalementsMessages, type MessageDuContexte } from "@/db/schema";
 import type { Db } from "@/db/types";
 import { masquerGrossieretes } from "./grossieretes";
+import { consommer, MESSAGES_D_ATTENTE } from "./limites";
 import { codeDepuisSaisie } from "./salons";
 
 export const LONGUEUR_MAX_MESSAGE = 280;
@@ -9,6 +10,8 @@ export const LONGUEUR_MAX_MESSAGE = 280;
 const MESSAGES_MONTRES = 60;
 /** Les messages recopiés de part et d'autre d'un message signalé, pour le contexte. */
 const CONTEXTE = 5;
+/** Au-delà, le message d'un Salon où aucune Partie ne finit est effacé la nuit. */
+const DUREE_DE_VIE_MESSAGE_MS = 24 * 3600 * 1000;
 
 type Resultat = { ok: true } | { ok: false; erreur: string };
 
@@ -85,7 +88,8 @@ export async function lireChat(db: Db, code: string, joueurId: string): Promise<
   };
 }
 
-export async function ecrire(db: Db, code: string, joueurId: string, saisie: string, maintenant = new Date()): Promise<Resultat> {
+/** Écrit dans le chat ; un appareil (ou son adresse IP) qui écrit en rafale attend la minute suivante. */
+export async function ecrire(db: Db, code: string, joueurId: string, saisie: string, maintenant = new Date(), ip: string | null = null): Promise<Resultat> {
   const salon = await leSalon(db, code);
   const moi = salon && (await membre(db, salon.id, joueurId));
   if (!salon || !moi) return { ok: false, erreur: "Tu n'es pas dans ce salon." };
@@ -94,6 +98,7 @@ export async function ecrire(db: Db, code: string, joueurId: string, saisie: str
   const texte = saisie.trim().replace(/\s+/g, " ");
   if (!texte) return { ok: false, erreur: "Écris quelque chose avant d'envoyer." };
   if (texte.length > LONGUEUR_MAX_MESSAGE) return { ok: false, erreur: `${LONGUEUR_MAX_MESSAGE} caractères au plus.` };
+  if (!(await consommer(db, "messages", { joueurId, ip }, 1, maintenant))) return { ok: false, erreur: MESSAGES_D_ATTENTE.messages };
   await db.insert(messages).values({ salonId: salon.id, joueurId, texte: masquerGrossieretes(texte), envoyeLe: maintenant });
   return { ok: true };
 }
@@ -151,6 +156,16 @@ export async function signaler(db: Db, code: string, messageId: string, joueurId
 /** Rien du chat n'est gardé après la Partie : seuls les Signalements restent. */
 export async function viderChat(db: Db, salonId: string) {
   await db.delete(messages).where(eq(messages.salonId, salonId));
+}
+
+/**
+ * Le ménage de la nuit : un Salon où aucune Partie ne finit ne vide jamais son chat, alors on efface tout message de
+ * plus de 24 h. Les Signalements sont des copies : ils restent pour /admin. Renvoie le nombre de messages effacés.
+ */
+export async function effacerVieuxMessages(db: Db, maintenant = new Date()) {
+  const avant = new Date(maintenant.getTime() - DUREE_DE_VIE_MESSAGE_MS);
+  const effaces = await db.delete(messages).where(lt(messages.envoyeLe, avant)).returning({ id: messages.id });
+  return effaces.length;
 }
 
 /** Les messages signalés, du plus ancien au plus récent, pour /admin (ticket 24). */

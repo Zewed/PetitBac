@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { Db } from "@/db/types";
-import { couperLaParole, ecrire, exclure, lireChat, signaler } from "./chat";
+import { couperLaParole, ecrire, effacerVieuxMessages, exclure, lireChat, signalementsDeMessages, signaler } from "./chat";
 import { FakeJuge } from "./juge/fake-juge";
 import { choisirPseudo } from "./joueurs";
+import { LIMITES, MESSAGES_D_ATTENTE } from "./limites";
 import { cloturerManche, lancerPartieSalon, mancheSuivanteSalon } from "./partie-salon";
 import { creerSalon, lireSalon, rejoindreSalon } from "./salons";
 import { T0, plus, unJoueur } from "./test-outils";
@@ -113,7 +114,51 @@ describe("Après la Partie", () => {
       if (n < 3) await mancheSuivanteSalon(db, code, juju.id, { maintenant: plus(n * 100 + 10) });
     }
     expect((await lireChat(db, code, lea.id))!.messages).toEqual([]);
-    const { signalementsDeMessages } = await import("./chat");
     expect((await signalementsDeMessages(db)).map((s) => s.texte)).toEqual(["À signaler"]);
+  });
+});
+
+describe("Un Joueur qui écrit en rafale", () => {
+  it("est freiné au-delà de la limite dans la minute, avec un message d'attente, puis repart à la minute suivante", async () => {
+    const { db, code, lea, hugo } = await unSalon();
+    for (let i = 0; i < LIMITES.messages.parAppareil; i++) expect(await ecrire(db, code, lea.id, `Message ${i}`, plus(i))).toEqual({ ok: true });
+    expect(await ecrire(db, code, lea.id, "Encore un", plus(30))).toEqual({ ok: false, erreur: MESSAGES_D_ATTENTE.messages });
+    expect((await lireChat(db, code, hugo.id))!.messages.map((m) => m.texte)).not.toContain("Encore un");
+    expect(await ecrire(db, code, lea.id, "Ça repart", plus(60))).toEqual({ ok: true });
+  });
+
+  it("ne freine pas les autres Joueurs du Salon", async () => {
+    const { db, code, lea, hugo } = await unSalon();
+    for (let i = 0; i <= LIMITES.messages.parAppareil; i++) await ecrire(db, code, lea.id, `Message ${i}`, plus(i));
+    expect(await ecrire(db, code, hugo.id, "Calme-toi Léa", plus(30))).toEqual({ ok: true });
+  });
+
+  it("un message refusé (vide, trop long, chat fermé) ne compte pas dans la limite", async () => {
+    const { db, code, lea } = await unSalon();
+    for (let i = 0; i < 30; i++) await ecrire(db, code, lea.id, "   ", plus(i));
+    expect(await ecrire(db, code, lea.id, "Enfin un vrai message", plus(31))).toEqual({ ok: true });
+  });
+});
+
+describe("Le chat d'un Salon où aucune Partie ne finit", () => {
+  const HEURE = 3600;
+
+  it("la nuit, ses messages de plus de 24 h sont effacés ; les plus récents et les Signalements restent", async () => {
+    const { db, code, lea, hugo } = await unSalon();
+    await ecrire(db, code, lea.id, "Vieux message", T0);
+    await ecrire(db, code, hugo.id, "Vieux et signalé", plus(1));
+    const cible = (await lireChat(db, code, lea.id))!.messages.find((m) => m.texte === "Vieux et signalé")!;
+    await signaler(db, code, cible.id, lea.id);
+    await ecrire(db, code, lea.id, "Récent", plus(20 * HEURE));
+    expect(await effacerVieuxMessages(db, plus(25 * HEURE))).toBe(2);
+    expect((await lireChat(db, code, lea.id))!.messages.map((m) => m.texte)).toEqual(["Récent"]);
+    expect((await signalementsDeMessages(db)).map((s) => s.texte)).toEqual(["Vieux et signalé"]);
+  });
+
+  it("un message d'il y a moins de 24 h n'est pas effacé", async () => {
+    const { db, code, lea } = await unSalon();
+    await ecrire(db, code, lea.id, "Hier soir", T0);
+    expect(await effacerVieuxMessages(db, plus(24 * HEURE - 1))).toBe(0);
+    expect((await lireChat(db, code, lea.id))!.messages.map((m) => m.texte)).toEqual(["Hier soir"]);
   });
 });

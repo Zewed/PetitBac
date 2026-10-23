@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { choisirPseudo } from "./joueurs";
-import { enregistrerRegle, mesRegles, regleDuJoueur, resumeReglages } from "./regles";
+import { enregistrerRegle, mesRegles, regleDuJoueur, resumeReglages, supprimerRegle } from "./regles";
 import { REGLAGES_PAR_DEFAUT, type Reglages } from "./reglages";
 import { unJoueur } from "./test-outils";
 
@@ -57,6 +57,35 @@ describe("« Mes règles »", () => {
     await enregistrerRegle(db, joueur.id, "Seul", solo, { salon: false });
     const [regle] = await mesRegles(db, joueur.id);
     expect(await regleDuJoueur(db, joueur.id, regle.id, { salon: true })).toMatchObject({ stop: { actif: true, des: "complete", graceS: 10 }, contestation: true });
+  });
+
+  it("le Joueur supprime une de ses règles, les autres restent", async () => {
+    const { db, joueur } = await unJoueur();
+    await enregistrerRegle(db, joueur.id, "Rapide", perso, { salon: true });
+    await enregistrerRegle(db, joueur.id, "Lent", { ...perso, dureeS: 240 }, { salon: true });
+    const [rapide] = await mesRegles(db, joueur.id);
+    expect(await supprimerRegle(db, joueur.id, rapide.id)).toEqual({ ok: true });
+    expect((await mesRegles(db, joueur.id)).map((r) => r.nom)).toEqual(["Lent"]);
+    expect(await regleDuJoueur(db, joueur.id, rapide.id, { salon: true })).toBeUndefined();
+  });
+
+  it("un Joueur ne supprime jamais la règle d'un autre", async () => {
+    const { db, joueur } = await unJoueur();
+    await enregistrerRegle(db, joueur.id, "À moi", perso, { salon: false });
+    const autre = await choisirPseudo(db, "Léa");
+    if (!autre.ok) throw new Error();
+    const [regle] = await mesRegles(db, joueur.id);
+    expect(await supprimerRegle(db, autre.joueur.id, regle.id)).toEqual({ ok: false, erreur: "Cette règle n'existe plus." });
+    expect((await mesRegles(db, joueur.id)).map((r) => r.nom)).toEqual(["À moi"]);
+  });
+
+  it("supprimer une règle déjà supprimée, ou inconnue, ne casse rien", async () => {
+    const { db, joueur } = await unJoueur();
+    await enregistrerRegle(db, joueur.id, "Une fois", perso, { salon: false });
+    const [regle] = await mesRegles(db, joueur.id);
+    await supprimerRegle(db, joueur.id, regle.id);
+    expect((await supprimerRegle(db, joueur.id, regle.id)).ok).toBe(false);
+    expect((await supprimerRegle(db, joueur.id, "pas-un-identifiant")).ok).toBe(false);
   });
 
   it("se résume en une ligne", () => {

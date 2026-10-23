@@ -35,6 +35,14 @@ export async function enregistrerRegle(db: Db, joueurId: string, saisie: string,
   return { ok: true };
 }
 
+/** Retire une règle de « Mes règles » ; seulement une des siennes. */
+export async function supprimerRegle(db: Db, joueurId: string, id: string): Promise<Resultat> {
+  const supprimees = /^[0-9a-f-]{36}$/i.test(id)
+    ? await db.delete(regles).where(and(eq(regles.id, id), eq(regles.joueurId, joueurId))).returning({ id: regles.id })
+    : [];
+  return supprimees.length ? { ok: true } : { ok: false, erreur: "Cette règle n'existe plus." };
+}
+
 /** « Mes règles » : celles du Joueur, dans l'ordre où il les a enregistrées. */
 export async function mesRegles(db: Db, joueurId: string): Promise<RegleVue[]> {
   const lignes = await db.select().from(regles).where(eq(regles.joueurId, joueurId)).orderBy(asc(regles.creeLe));

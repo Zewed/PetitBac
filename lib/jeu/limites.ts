@@ -6,10 +6,12 @@ import type { Db } from "@/db/types";
  * Les limites anti-abus, par minute, pour protéger le budget du Juge : par appareil (le Joueur de son cookie),
  * et plus large par adresse IP, qui peut être partagée par toute une école ou une famille.
  * Un Joueur qui enchaîne des Manches de Marathon envoie au plus une cinquantaine de Réponses par minute.
+ * Le chat, lui, est freiné contre le flood : un message toutes les trois secondes, c'est déjà beaucoup.
  */
 export const LIMITES = {
   reponses: { parAppareil: 100, parIp: 400 },
   salons: { parAppareil: 5, parIp: 20 },
+  messages: { parAppareil: 20, parIp: 200 },
 } as const;
 
 export type Limite = keyof typeof LIMITES;
@@ -52,4 +54,5 @@ export async function freine(db: Db, limite: Limite, { joueurId, ip }: { joueurI
 export const MESSAGES_D_ATTENTE: Record<Limite, string> = {
   reponses: "Trop de réponses envoyées en une minute : attends un peu, puis relance la correction.",
   salons: "Trop de salons créés en une minute : attends un peu avant d'en créer un autre.",
+  messages: "Trop de messages en une minute : attends un peu avant d'écrire à nouveau.",
 };

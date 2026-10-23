@@ -1,14 +1,16 @@
 import { describe, expect, it } from "vitest";
 import type { Db } from "@/db/types";
 import { FakeJuge } from "./juge/fake-juge";
+import { LISTES_FAKE } from "./juge/liste-fake";
 import { jugerManche } from "./jugement";
-import { lireManche, terminerManche } from "./manches";
+import { lireManche, terminerManche, type Saisies } from "./manches";
 import { PACK_CLASSIQUE } from "./packs";
 import { commencerPartieLibre, lirePartie, mancheSuivante, records } from "./parties";
+import { normaliser } from "./texte";
 import { T0, plus, unJoueur } from "./test-outils";
 
 /** Joue une Manche jusqu'au bout : la première Réponse connue du FakeJuge dans chaque Catégorie. */
-async function jouer(db: Db, joueurId: string, mancheId: string, saisies: Record<string, string> = {}) {
+async function jouer(db: Db, joueurId: string, mancheId: string, saisies: Saisies = {}) {
   await terminerManche(db, mancheId, joueurId, saisies, plus(20));
   await jugerManche(db, new FakeJuge(), mancheId, joueurId);
   return (await lireManche(db, mancheId, joueurId))!;
@@ -69,22 +71,34 @@ describe("Les Manches s'enchaînent", () => {
   });
 });
 
-describe("À la fin de la Partie", () => {
-  async function partieComplete(db: Db, joueurId: string, saisies: Record<string, string>) {
-    let manche = await commencerPartieLibre(db, joueurId, { prereglage: "express", maintenant: T0 });
-    for (let n = 1; n <= 3; n++) {
-      await jouer(db, joueurId, manche.id, Object.fromEntries(manche.categories.map((c) => [c, saisies[c] ?? ""])));
-      if (n < 3) manche = (await mancheSuivante(db, manche.partieId!, joueurId))!;
-    }
-    return (await lirePartie(db, manche.partieId!, joueurId))!;
+/** Une Partie Express jouée jusqu'au bout ; `remplir` donne les Réponses de chaque Manche (aucune par défaut : 0 point). */
+async function partieExpress(db: Db, joueurId: string, remplir: (manche: { lettre: string; categories: string[] }) => Saisies = () => ({})) {
+  let manche = await commencerPartieLibre(db, joueurId, { prereglage: "express", maintenant: T0 });
+  for (let n = 1; n <= 3; n++) {
+    await jouer(db, joueurId, manche.id, remplir(manche));
+    if (n < 3) manche = (await mancheSuivante(db, manche.partieId!, joueurId))!;
   }
+  return (await lirePartie(db, manche.partieId!, joueurId))!;
+}
 
+/** Des Réponses que le FakeJuge valide, dans la Lettre de la Manche : de quoi marquer des points. */
+const valables = ({ lettre, categories }: { lettre: string; categories: string[] }): Saisies =>
+  Object.fromEntries(categories.map((c) => [c, (LISTES_FAKE[c] ?? [`${lettre}abcd`]).find((mot) => normaliser(mot).startsWith(lettre.toLowerCase())) ?? ""]));
+
+describe("À la fin de la Partie", () => {
   it("le Joueur voit son total et son nouveau record s'il l'a battu", async () => {
     const { db, joueur } = await unJoueur();
-    const premiere = await partieComplete(db, joueur.id, {});
-    expect(premiere).toMatchObject({ etat: "terminee", total: 0, nouveauRecord: true });
-    const moins = await partieComplete(db, joueur.id, {});
-    expect(moins).toMatchObject({ etat: "terminee", nouveauRecord: false, record: 0 });
+    const premiere = await partieExpress(db, joueur.id, valables);
+    expect(premiere.total).toBeGreaterThan(0);
+    expect(premiere).toMatchObject({ etat: "terminee", nouveauRecord: true, record: null });
+    const moins = await partieExpress(db, joueur.id);
+    expect(moins).toMatchObject({ etat: "terminee", total: 0, nouveauRecord: false, record: premiere.total });
+  });
+
+  it("une Partie finie à 0 point n'est pas un record", async () => {
+    const { db, joueur } = await unJoueur();
+    expect(await partieExpress(db, joueur.id)).toMatchObject({ etat: "terminee", total: 0, nouveauRecord: false, record: null });
+    expect(await partieExpress(db, joueur.id)).toMatchObject({ total: 0, nouveauRecord: false, record: null });
   });
 });
 
@@ -92,6 +106,19 @@ describe("L'accueil affiche le record par Préréglage", () => {
   it("sans Partie terminée, aucun record (pas de « 0 pts »)", async () => {
     const { db, joueur } = await unJoueur();
     expect(await records(db, joueur.id)).toEqual({});
+  });
+
+  it("une Partie finie à 0 point ne donne pas de « Record 0 pts »", async () => {
+    const { db, joueur } = await unJoueur();
+    await partieExpress(db, joueur.id);
+    expect(await records(db, joueur.id)).toEqual({});
+  });
+
+  it("le record apparaît dès que le meilleur total dépasse 0", async () => {
+    const { db, joueur } = await unJoueur();
+    await partieExpress(db, joueur.id);
+    const marquee = await partieExpress(db, joueur.id, valables);
+    expect(await records(db, joueur.id)).toEqual({ express: marquee.total });
   });
 
   it("une Partie quittée en cours ne compte pas, et n'empêche pas d'en lancer une autre", async () => {
