@@ -132,7 +132,7 @@ Une manche = une lettre et une grille de catégories, une réponse par case.
 - **Pseudos** : un filtre anti-grossièretés, et un signalement possible depuis le classement.
 
 ### Le catalogue
-- Environ 10 packs de 10 à 15 catégories, soit 100 à 150 catégories, générées par l'IA puis relues par Antoine.
+- Au lancement, le seul pack « Classique » et ses 12 catégories (décidé par Antoine le 23 octobre). Les autres catégories s'ajoutent une par une, relues par Antoine, jusqu'à une dizaine de packs : les propositions de l'IA attendent dans `lib/jeu/propositions.ts`.
 - Le pack « Classique » (Prénom, Pays, Animal, Métier, Fruit ou légume…) sert par défaut.
 - Contenu adapté aux familles. Les joueurs ne peuvent pas inventer leurs propres catégories en v1.
 
