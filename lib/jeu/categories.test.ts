@@ -4,6 +4,7 @@ import { FakeJuge } from "./juge/fake-juge";
 import { jugerManche } from "./jugement";
 import { lireManche, terminerManche } from "./manches";
 import { CATALOGUE, PACK_CLASSIQUE, PACKS } from "./packs";
+import { PROPOSITIONS } from "./propositions";
 import { commencerPartieLibre, mancheSuivante } from "./parties";
 import { lireReglages, REGLAGES_PAR_DEFAUT, type Reglages } from "./reglages";
 import { T0, plus, unJoueur } from "./test-outils";
@@ -19,14 +20,13 @@ function formulaire(champs: Record<string, string | string[]>) {
 }
 
 describe("Le Catalogue", () => {
-  it("propose une dizaine de Packs, soit 100 à 150 Catégories, chacune dans un seul Pack", () => {
-    expect(PACKS.length).toBeGreaterThanOrEqual(9);
-    expect(PACKS.length).toBeLessThanOrEqual(12);
-    expect(CATALOGUE.length).toBeGreaterThanOrEqual(100);
-    expect(CATALOGUE.length).toBeLessThanOrEqual(150);
-    expect(new Set(CATALOGUE).size).toBe(CATALOGUE.length);
-    for (const p of PACKS) expect(p.categories.length).toBeGreaterThanOrEqual(10);
-    expect(PACKS[0]).toMatchObject({ id: "classique", nom: "Classique", categories: PACK_CLASSIQUE });
+  it("démarre avec les 12 Catégories du Pack Classique ; les propositions de l'IA ne sont pas dans le jeu", () => {
+    expect(PACKS).toEqual([{ id: "classique", nom: "Classique", categories: PACK_CLASSIQUE }]);
+    expect(CATALOGUE).toHaveLength(12);
+    const proposees = PROPOSITIONS.flatMap((p) => p.categories);
+    expect(proposees.length).toBeGreaterThan(90);
+    expect(proposees.some((c) => CATALOGUE.includes(c))).toBe(false);
+    expect(new Set(proposees).size).toBe(proposees.length);
   });
 
   it("le Pack Classique sert par défaut", () => {
@@ -36,18 +36,18 @@ describe("Le Catalogue", () => {
 
 describe("Les Catégories d'une Partie Personnalisée", () => {
   it("se choisissent à la main, de 1 à 20", () => {
-    const r = lireReglages(formulaire({ categories_mode: "main", categories: ["Dessert", "Capitale", "Jouet"] }), { salon: false });
-    expect(r.ok && r.reglages.categories).toEqual({ mode: "main", liste: ["Dessert", "Capitale", "Jouet"] });
+    const r = lireReglages(formulaire({ categories_mode: "main", categories: ["Ville", "Couleur", "Sport"] }), { salon: false });
+    expect(r.ok && r.reglages.categories).toEqual({ mode: "main", liste: ["Ville", "Couleur", "Sport"] });
     expect(lireReglages(formulaire({ categories_mode: "main", categories: [] }), { salon: false })).toEqual({ ok: false, erreur: "Choisis de 1 à 20 catégories." });
-    expect(lireReglages(formulaire({ categories_mode: "main", categories: CATALOGUE.slice(0, 21) }), { salon: false }).ok).toBe(false);
+    expect(lireReglages(formulaire({ categories_mode: "main", categories: ["Dessert"] }), { salon: false }).ok).toBe(false);
     expect(lireReglages(formulaire({ categories_mode: "main", categories: ["Gros mot"] }), { salon: false }).ok).toBe(false);
   });
 
   it("se tirent au hasard dans les Packs cochés, une fois pour la Partie", async () => {
     const { db, joueur } = await unJoueur();
-    const lus = lireReglages(formulaire({ categories_mode: "packs", packs: ["cinema", "sport-jeux"], nb_categories: "8" }), { salon: false });
-    expect(lus.ok && lus.reglages.categories).toEqual({ mode: "packs", packs: ["cinema", "sport-jeux"], nombre: 8 });
-    const permises = PACKS.filter((p) => ["cinema", "sport-jeux"].includes(p.id)).flatMap((p) => p.categories);
+    const lus = lireReglages(formulaire({ categories_mode: "packs", packs: ["classique"], nb_categories: "8" }), { salon: false });
+    expect(lus.ok && lus.reglages.categories).toEqual({ mode: "packs", packs: ["classique"], nombre: 8 });
+    const permises = PACK_CLASSIQUE;
     const premiere = await commencerPartieLibre(db, joueur.id, { prereglage: "personnalise", reglages: lus.ok ? lus.reglages : REGLAGES_PAR_DEFAUT, maintenant: T0 });
     expect(premiere.categories).toHaveLength(8);
     expect(premiere.categories.every((c) => permises.includes(c))).toBe(true);
@@ -61,7 +61,7 @@ describe("Les Catégories d'une Partie Personnalisée", () => {
     const { db, joueur } = await unJoueur();
     let n = 0;
     const aleatoire = () => ((n = (n * 7 + 3) % 97) + 0.5) / 97;
-    const r = reglages({ categories: { mode: "chaque_manche", packs: ["nature", "cuisine", "geographie"], nombre: 6 } });
+    const r = reglages({ categories: { mode: "chaque_manche", packs: ["classique"], nombre: 6 } });
     const premiere = await commencerPartieLibre(db, joueur.id, { prereglage: "personnalise", reglages: r, maintenant: T0, aleatoire });
     await terminerManche(db, premiere.id, joueur.id, {}, plus(10));
     await jugerManche(db, new FakeJuge(), premiere.id, joueur.id);
@@ -76,18 +76,18 @@ describe("Les Catégories d'une Partie Personnalisée", () => {
       ok: false,
       erreur: "Coche au moins un pack.",
     });
-    expect(lireReglages(formulaire({ categories_mode: "packs", packs: ["voyages"], nb_categories: "15" }), { salon: false }).ok).toBe(false);
+    expect(lireReglages(formulaire({ categories_mode: "packs", packs: ["classique"], nb_categories: "13" }), { salon: false }).ok).toBe(false);
   });
 });
 
 describe("Le Défi du jour", () => {
-  it("tire ses 12 Catégories dans tout le Catalogue", async () => {
+  it("tire ses 12 Catégories dans tout le Catalogue (les 12 du Classique, dans le désordre, au lancement)", async () => {
     const db = await ouvrirPglite();
     let n = 0;
     const defi = await defiDuJour(db, T0, () => ((n = (n * 31 + 11) % 101) + 0.5) / 101);
     expect(defi.categories).toHaveLength(12);
     expect(defi.categories.every((c) => CATALOGUE.includes(c))).toBe(true);
-    expect(defi.categories.some((c) => !PACK_CLASSIQUE.includes(c))).toBe(true);
+    expect(new Set(defi.categories)).toEqual(new Set(PACK_CLASSIQUE));
   });
 });
 

@@ -9,7 +9,7 @@ const perso: Reglages = {
   manches: { mode: "nombre", n: 3 },
   dureeS: 120,
   stop: { actif: false, des: "complete", graceS: 10 },
-  categories: { mode: "packs", packs: ["cinema", "sport-jeux"], nombre: 8 },
+  categories: { mode: "packs", packs: ["classique"], nombre: 8 },
 };
 
 describe("« Mes règles »", () => {
