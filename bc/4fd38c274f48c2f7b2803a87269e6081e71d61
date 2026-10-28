@@ -1,0 +1,46 @@
+db/migrations/0016_slippery_prowler.sql
+  s_f47e83bd1733a2::t_a67bc1b6206910 1-2
+app/compte/page.tsx
+  s_f47e83bd1733a2::t_8b2961fbad9812 7,65-69
+lib/jeu/arbitrage.test.ts
+  s_f47e83bd1733a2::t_d7de798d92b82e 102,104,118
+  s_f47e83bd1733a2::t_1f5358bda3e8de 5-6,11-13,15,30-31,34,36,40-41,79-96
+  s_f47e83bd1733a2::t_5ddd3bca26ef46 1-2,4,7-10,14,16-29,32-33,35,37-39,42-78,97-101,103,105-108,110-117,119-128
+  s_f47e83bd1733a2::t_34ae14a4acd32b 109
+  s_f47e83bd1733a2::t_0468e5222d8b29 3
+db/migrations/meta/0016_snapshot.json
+  s_f47e83bd1733a2::t_a67bc1b6206910 1-1439
+lib/auth/admin.ts
+  s_f47e83bd1733a2::t_0468e5222d8b29 1-9
+app/admin/actions.ts
+  s_f47e83bd1733a2::t_c6df639cb75e1f 1-24
+db/migrations/meta/_journal.json
+  s_f47e83bd1733a2::t_a67bc1b6206910 116-122
+lib/jeu/arbitrage.ts
+  s_f47e83bd1733a2::t_0468e5222d8b29 1-142
+app/not-found.tsx
+  s_f47e83bd1733a2::t_68e1ebe80546b9 1-22
+db/schema.ts
+  s_f47e83bd1733a2::t_a67bc1b6206910 110-113
+app/admin/page.tsx
+  s_f47e83bd1733a2::t_c6df639cb75e1f 1-80
+app/jeu.css
+  s_f47e83bd1733a2::t_8b2961fbad9812 295
+  s_f47e83bd1733a2::t_c6df639cb75e1f 290-294,296-306
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bc4fd38c274f48c2f7b2803a87269e6081e71d61",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
