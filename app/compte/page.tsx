@@ -4,6 +4,7 @@ import { deconnecterAction } from "@/app/actions";
 import { Entete } from "@/components/entete";
 import { FormulaireCompte } from "@/components/formulaire-compte";
 import { obtenirDb } from "@/db/client";
+import { estAdmin } from "@/lib/auth/admin";
 import { auth } from "@/lib/auth/server";
 import { compteDuJoueur, REFUS_MOINS_DE_15_ANS } from "@/lib/jeu/comptes";
 import { joueurCourant } from "@/lib/session";
@@ -61,6 +62,11 @@ async function Contenu({ searchParams }: { searchParams: Promise<Record<string, 
             </button>
           </form>
           <p className="compte__aide">Après la déconnexion, cet appareil redevient un appareil sans compte.</p>
+          {estAdmin(session?.user.email) && (
+            <Link className="ink-link" href="/admin">
+              Ouvrir /admin
+            </Link>
+          )}
         </>
       ) : (
         <>

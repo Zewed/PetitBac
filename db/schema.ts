@@ -107,6 +107,10 @@ export const reponsesJugees = pgTable(
     valide: boolean("valide").notNull(),
     formeReference: text("forme_reference"),
     partEstimee: real("part_estimee"),
+    /** La Réponse, contestée ou signalée dans plusieurs Parties, a été rejugée par le Juge avant d'aller dans /admin. */
+    rejugeeLe: timestamp("rejugee_le", { withTimezone: true }),
+    /** Antoine a tranché dans /admin : sa décision remplace celle du Juge pour les Parties suivantes. */
+    trancheeLe: timestamp("tranchee_le", { withTimezone: true }),
   },
   (t) => [primaryKey({ columns: [t.categorie, t.lettre, t.cle] })],
 );
