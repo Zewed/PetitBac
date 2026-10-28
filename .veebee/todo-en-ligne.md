@@ -3,8 +3,8 @@
 Site : https://petit-bac-mu.vercel.app. On règle une étape à la fois, dans l'ordre.
 
 ## Ce qui bloque
-- [ ] **1. Remplir la base de production.** Appliquer les 17 migrations sur Neon. Aujourd'hui, la base ne contient que les tables des Comptes, et « C'est parti » plante.
-- [ ] **2. Ajouter les deux variables manquantes dans Vercel.**
+- [x] **1. Remplir la base de production.** Fait le 28 octobre (PR #29) : les migrations passent toutes seules à chaque déploiement de production.
+- [x] **2. Ajouter les deux variables manquantes dans Vercel.** Ajoutées en production et redéployées le 28 octobre.
   - `NEON_AUTH_COOKIE_SECRET` : un secret généré, jamais affiché. Sans lui, la connexion au Compte ne marche pas en ligne.
   - `ADMIN_EMAILS` : dewez.antoine2@gmail.com. Sans elle, /admin n'existe pas en ligne.
 - [ ] **3. Redéployer et jouer en ligne pour de vrai.** Tester, dans cet ordre :
