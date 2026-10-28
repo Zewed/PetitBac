@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Entete } from "@/components/entete";
 import { obtenirDb } from "@/db/client";
 import { estAdmin } from "@/lib/auth/admin";
@@ -12,6 +13,8 @@ export const instant = false;
 
 /** /admin, réservé au Compte d'Antoine : la file des Réponses signalées ou contestées à trancher (ticket 22). */
 export default async function PageAdmin() {
+  // Rien à pré-rendre : la page dépend de qui la demande, et Neon Auth n'a pas ses secrets pendant le build.
+  await connection();
   const { data: session } = await auth().getSession();
   if (!estAdmin(session?.user.email)) notFound();
   const file = await fileDArbitrage(await obtenirDb(), obtenirJuge());
