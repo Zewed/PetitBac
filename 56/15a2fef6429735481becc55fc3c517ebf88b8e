@@ -1,0 +1,22 @@
+.veebee/todo-en-ligne.md
+  s_f47e83bd1733a2::t_8119fcee07905c 6
+  s_f47e83bd1733a2::t_fa6bd934806f5f 7
+vercel.ts
+  s_f47e83bd1733a2::t_c3cf5d5e3ed273 5-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5615a2fef6429735481becc55fc3c517ebf88b8e",
+  "prompts": {},
+  "sessions": {
+    "s_f47e83bd1733a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39a2d9-b7a4-4808-903c-49231de0404e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Zewed <dewez.antoine2@gmail.com>"
+    }
+  }
+}
