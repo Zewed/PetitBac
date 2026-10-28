@@ -14,7 +14,7 @@ Site : https://petit-bac-mu.vercel.app. On règle une étape à la fois, dans l'
   - [x] la création d'un Compte par code e-mail (Antoine).
 
 ## Ce qui gâche le jeu
-- [ ] **4. Brancher le vrai Juge (ticket 28).** Remplacer le faux Juge par Claude Haiku via AI Gateway. D'abord vérifier si AI Gateway s'authentifie tout seul une fois sur Vercel ; si ce n'est pas le cas, il faudra une clé `AI_GATEWAY_API_KEY`.
+- [ ] **4. Brancher le vrai Juge (ticket 28).** Antoine choisit Jev (TypeSafe AI), un modèle de décision, à la place de Claude Haiku. Le Juge Claude, mergé puis retiré le 28 octobre, n'a jamais été allumé.
 
 ## À finir
 - [x] **5. Livrer /admin (ticket 22).** Livré le 28 octobre ; Antoine vérifie la page sur le vrai site.
