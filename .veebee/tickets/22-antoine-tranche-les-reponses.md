@@ -5,6 +5,7 @@ milestone: null
 depends_on: [12, 19, 21]
 design: null
 tracker: null            # filled after the push: { tool, id, url }
+status: done
 ---
 
 ## Ce que l'utilisateur fait

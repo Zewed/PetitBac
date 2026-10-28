@@ -7,17 +7,17 @@ Site : https://petit-bac-mu.vercel.app. On règle une étape à la fois, dans l'
 - [x] **2. Ajouter les deux variables manquantes dans Vercel.** Ajoutées en production et redéployées le 28 octobre.
   - `NEON_AUTH_COOKIE_SECRET` : un secret généré, jamais affiché. Sans lui, la connexion au Compte ne marche pas en ligne.
   - `ADMIN_EMAILS` : dewez.antoine2@gmail.com. Sans elle, /admin n'existe pas en ligne.
-- [ ] **3. Redéployer et jouer en ligne pour de vrai.** Tester, dans cet ordre :
-  - une Manche en solo ;
-  - le Défi du jour ;
-  - un Salon à deux appareils, jusqu'au podium ;
-  - la création d'un Compte par code e-mail.
+- [x] **3. Redéployer et jouer en ligne pour de vrai.** Tout passe, le 28 octobre. Tester, dans cet ordre :
+  - [x] une Manche en solo : fait le 28 octobre. Le Juge corrigeait en 8 à 15 s, et répond maintenant en 0,6 s depuis que les fonctions tournent à Francfort, à côté de la base (PR #30) ;
+  - [x] le Défi du jour : fait le 28 octobre, avec 12 pts et la Série à 1 jour ;
+  - [x] un Salon à deux appareils, jusqu'au podium (Antoine) ;
+  - [x] la création d'un Compte par code e-mail (Antoine).
 
 ## Ce qui gâche le jeu
 - [ ] **4. Brancher le vrai Juge (ticket 28).** Remplacer le faux Juge par Claude Haiku via AI Gateway. D'abord vérifier si AI Gateway s'authentifie tout seul une fois sur Vercel ; si ce n'est pas le cas, il faudra une clé `AI_GATEWAY_API_KEY`.
 
 ## À finir
-- [ ] **5. Livrer /admin (ticket 22).** Antoine ouvre http://localhost:3100/admin et valide la page ; ensuite PR, puis merge.
+- [x] **5. Livrer /admin (ticket 22).** Livré le 28 octobre ; Antoine vérifie la page sur le vrai site.
 
 ## Plus tard, ça ne bloque pas
 - [ ] Le temps réel des Salons avec Neon Realtime (aujourd'hui, ils se relisent chaque seconde, et ça marche).
